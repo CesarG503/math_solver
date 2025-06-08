@@ -1,0 +1,103 @@
+{% extends 'metodos_numericos/base.html' %}
+
+{% block title %}Inicio - Métodos Numéricos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mt-2">
+        <div class="bg-secondary-neon text-white rounded p-5 mb-4">
+            <h1>
+                <i class="fas fa-calculator me-3"></i>
+                Métodos Numéricos
+            </h1>
+            <p>
+                Aplicación web para resolver problemas de interpolación e integración numérica
+                con soluciones paso a paso detalladas.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-chart-line fa-3x text-warning mt-2"></i>
+                </div>
+                <h5 class="card-title text-warning">Interpolación de Hermite</h5>
+                <p class="card-text text-dark">
+                    Encuentra el polinomio interpolante que pasa por puntos dados
+                    considerando tanto los valores de la función como sus derivadas.
+                </p>
+                <ul class="text-start text-dark">
+                    <li><i class="fas fa-check text-success me-2"></i>Entrada: Puntos (x, f(x), f'(x))</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Tabla de diferencias divididas</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Polinomio resultante</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Evaluación en punto específico</li>
+                </ul>
+                <a href="{% url 'metodos_numericos:hermite' %}" class="btn btn-warning">
+                    <i class="fas fa-arrow-right me-2"></i>Comenzar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-wave-square fa-3x text-success mt-2"></i>
+                </div>
+                <h5 class="card-title text-success">Integración Numérica</h5>
+                <p class="card-text text-dark">
+                    Calcula aproximaciones de integrales definidas usando métodos
+                    compuestos con explicación detallada de cada paso.
+                </p>
+                <ul class="text-dark text-start">
+                    <li><i class="fas fa-check text-success me-2"></i>Regla del Trapecio</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Simpson 1/3</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Simpson 3/8</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Cálculos paso a paso</li>
+                </ul>
+                <a href="{% url 'metodos_numericos:integracion' %}" class="btn btn-success">
+                    <i class="fas fa-arrow-right me-2"></i>Comenzar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info-neon text-white">
+                <h5 class="">
+                    <i class="fas fa-info-circle me-2 fs-4"></i>
+                    Instrucciones de Uso
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-dark">
+                        <h6>Interpolación de Hermite</h6>
+                        <p>
+                            Ingresa los puntos en el formato: <code>x1,f1,df1;x2,f2,df2;...</code><br>
+                            Ejemplo: <code>0,1,2;1,3,4</code> representa los puntos (0,1,2) y (1,3,4)
+                            donde el tercer valor es la derivada.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-dark">
+                        <h6>Integración Numérica</h6>
+                        <p>
+                            Ingresa la función usando notación Python: <code>x**2 + 2*x + 1</code><br>
+                            Funciones disponibles: sin, cos, tan, exp, log, sqrt, etc.<br>
+                            Ejemplo: <code>sin(x) + x**2</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

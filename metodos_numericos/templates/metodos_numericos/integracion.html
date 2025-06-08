@@ -1,0 +1,186 @@
+{% extends 'metodos_numericos/base.html' %}
+
+{% block title %}Integración Numérica - Métodos Numéricos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4 text-success">
+            <i class="fas fa-wave-square text-success me-2"></i>
+            Integración Numérica Compuesta
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="">
+                    <i class="fas fa-keyboard me-2"></i>Datos de Entrada
+                </h4>
+            </div>
+            <div class="card-body text-dark">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3 mt-3">
+                        <label for="funcion" class="form-label">
+                            <i class="fas fa-function me-1"></i>Función f(x)
+                        </label>
+                        <input type="text" class="form-control mt-2 mb-2" id="funcion" name="funcion" 
+                               placeholder="x**2 + 2*x + 1" value="{{ funcion_input }}" required>
+                        <div class="form-text">
+                            Usa notación: x**2, sin(x), exp(x), etc.
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="a" class="form-label">
+                                    <i class="fas fa-arrow-right me-1"></i>Límite inferior (a)
+                                </label>
+                                <input type="number" class="form-control mt-2 mb-2" id="a" name="a" 
+                                       step="any" value="{{ a|default:'0' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label for="b" class="form-label">
+                                    <i class="fas fa-arrow-left me-1"></i>Límite superior (b)
+                                </label>
+                                <input type="number" class="form-control mt-2 mb-2" id="b" name="b" 
+                                       step="any" value="{{ b|default:'1' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="n" class="form-label">
+                            <i class="fas fa-th me-1"></i>Número de subintervalos (n)
+                        </label>
+                        <input type="number" class="form-control" id="n" name="n" 
+                               min="1" value="{{ n|default:'4' }}" required>
+                        <div class="form-text mt-2 mb-2">
+                            Para Simpson 1/3: n debe ser par<br>
+                            Para Simpson 3/8: n debe ser múltiplo de 3
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="metodo" class="form-label">
+                            <i class="fas fa-cogs me-1"></i>Método
+                        </label>
+                        <select class="form-select" id="metodo" name="metodo" required>
+                            <option value="trapecio" {% if metodo == 'trapecio' %}selected{% endif %}>
+                                Regla del Trapecio
+                            </option>
+                            <option value="simpson13" {% if metodo == 'simpson13' %}selected{% endif %}>
+                                Simpson 1/3
+                            </option>
+                            <option value="simpson38" {% if metodo == 'simpson38' %}selected{% endif %}>
+                                Simpson 3/8
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-calculator me-2"></i>Calcular Integral
+                    </button>
+                </form>
+                
+                <div class="mt-4">
+                    <h6><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplos</h6>
+                    <p class="small text-muted">
+                        <code>x**2</code> - Polinomio cuadrático<br>
+                        <code>sin(x)</code> - Función seno<br>
+                        <code>exp(x)</code> - Función exponencial<br>
+                        <code>1/(1+x**2)</code> - Función racional
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        {% if resultado is not None %}
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="">
+                    <i class="fas fa-check-circle me-2"></i>Resultado
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <h6 class="text-alert"><i class="fas fa-integral me-2 "></i>Integral aproximada:</h6>
+                    <h4 class="text-dark">∫ {{ funcion }} dx ≈ {{ resultado }}</h4>
+                    <small class="text-muted">Método: {{ metodo|title }}</small>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Intervalo</small><br>
+                            <strong>[{{ a }}, {{ b }}]</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Subintervalos</small><br>
+                            <strong>{{ n }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Ancho h</small><br>
+                            <strong>{{ h|floatformat:6 }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Método</small><br>
+                            <strong>{{ metodo|title }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header bg-info-neon text-white">
+                <h4 class="">
+                    <i class="fas fa-list-ol me-2"></i>Solución Paso a Paso
+                </h4>
+            </div>
+            <div class="card-body text-dark">
+                <div class="solution-steps">
+                    {% for paso in pasos %}
+                        {% if "===" in paso %}
+                            <p class="fs-3 mt-3">{{ paso|slice:"3:-3" }}</p>
+                        {% elif paso == "" %}
+                            <br>
+                        {% elif "∫" in paso or "≈" in paso %}
+                            <div class="bg-light p-2 rounded mb-2">
+                                <code>{{ paso }}</code>
+                            </div>
+                        {% elif "Fórmula" in paso %}
+                            <h5 class="text-alert">{{ paso }}</h5>
+                        {% else %}
+                            <p class="mb-1">{{ paso }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center text-muted">
+                <i class="fas fa-arrow-left fa-3x mb-3"></i>
+                <h5>Ingresa los datos para comenzar</h5>
+                <p>Completa el formulario de la izquierda para calcular la integral numérica.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
