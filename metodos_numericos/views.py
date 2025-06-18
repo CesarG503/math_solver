@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from django.contrib import messages
+from django.contrib import messages 
 from .utils import interpolacion_hermite, integracion_compuesta
-import json
 
 def index(request):
     """Vista principal con opciones de métodos numéricos"""
