@@ -1,0 +1,266 @@
+{% extends 'metodos_numericos/base.html' %}
+
+{% block title %}Método Simplex - Métodos Numéricos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4 text-info">
+            <i class="fas fa-chart-bar text-info me-2"></i>
+            Método Simplex - Programación Lineal
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-info-neon text-white">
+                <h4 class="">
+                    <i class="fas fa-keyboard me-2"></i>Datos de Entrada
+                </h4>
+            </div>
+            <div class="card-body text-dark">
+                <form method="post" id="simplexForm">
+                    {% csrf_token %}
+                    
+                    <!-- Tipo de optimización -->
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">
+                            <i class="fas fa-target me-1"></i>Tipo de Optimización
+                        </label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipo_optimizacion" 
+                                   id="maximizar" value="maximizar" 
+                                   {% if tipo_optimizacion == 'maximizar' or not tipo_optimizacion %}checked{% endif %}>
+                            <label class="form-check-label" for="maximizar">
+                                Maximizar
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="tipo_optimizacion" 
+                                   id="minimizar" value="minimizar"
+                                   {% if tipo_optimizacion == 'minimizar' %}checked{% endif %}>
+                            <label class="form-check-label" for="minimizar">
+                                Minimizar
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Función objetivo -->
+                    <div class="mb-3">
+                        <label for="funcion_objetivo" class="form-label">
+                            <i class="fas fa-function me-1"></i>Función Objetivo (coeficientes)
+                        </label>
+                        <input type="text" class="form-control mt-2 mb-2" id="funcion_objetivo" 
+                               name="funcion_objetivo" placeholder="3,2,1" 
+                               value="{{ funcion_objetivo_input }}" required>
+                        <div class="form-text">
+                            Coeficientes separados por comas (ej: 3,2,1 para 3x₁ + 2x₂ + x₃)
+                        </div>
+                    </div>
+                    
+                    <!-- Restricciones -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-list me-1"></i>Restricciones
+                        </label>
+                        <div id="restricciones-container">
+                            <!-- Las restricciones se añaden dinámicamente -->
+                        </div>
+                        <button type="button" class="btn btn-outline-info btn-sm mt-2" 
+                                onclick="agregarRestriccion()">
+                            <i class="fas fa-plus me-1"></i>Añadir Restricción
+                        </button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-info w-100">
+                        <i class="fas fa-calculator me-2"></i>Resolver con Simplex
+                    </button>
+                </form>
+                
+                <div class="mt-4">
+                    <h6><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplo</h6>
+                    <p class="small text-muted">
+                        <strong>Maximizar:</strong> 3x₁ + 2x₂<br>
+                        <strong>Función objetivo:</strong> <code>3,2</code><br>
+                        <strong>Restricción 1:</strong> <code>1,1</code> ≤ <code>4</code><br>
+                        <strong>Restricción 2:</strong> <code>2,1</code> ≤ <code>6</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        {% if solucion is not None %}
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="">
+                    <i class="fas fa-check-circle me-2"></i>Solución Óptima
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-bullseye me-2"></i>Variables:</h6>
+                    {% for valor in solucion %}
+                        <p class="mb-1"><strong>x{{ forloop.counter }} = {{ valor|floatformat:6 }}</strong></p>
+                    {% endfor %}
+                    <hr>
+                    <h5 class="text-dark">Valor óptimo: Z = {{ valor_objetivo|floatformat:6 }}</h5>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Tipo</small><br>
+                            <strong>{{ tipo_optimizacion|title }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Variables</small><br>
+                            <strong>{{ solucion|length }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-light p-2 rounded">
+                            <small class="text-muted">Restricciones</small><br>
+                            <strong>{{ num_restricciones }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header bg-info-neon text-white">
+                <h4 class="">
+                    <i class="fas fa-table me-2"></i>Proceso Simplex Paso a Paso
+                </h4>
+            </div>
+            <div class="card-body text-dark">
+                <div class="solution-steps">
+                    {% for paso in pasos %}
+                        {% if "===" in paso %}
+                            <h3 class="text-info mt-3">{{ paso|slice:"3:-3" }}</h3>
+                        {% elif paso == "" %}
+                            <br>
+                        {% elif "ITERACIÓN" in paso %}
+                            <h4 class="text-warning mt-4">{{ paso }}</h4>
+                        {% elif "Tabla Simplex:" in paso %}
+                            <h5 class="text-success">{{ paso }}</h5>
+                        {% elif paso|slice:":4" == "Base" or paso|slice:":1" == "-" %}
+                            <pre class="bg-light p-2 rounded small">{{ paso }}</pre>
+                        {% elif "✓" in paso or "❌" in paso %}
+                            <div class="alert alert-{% if '✓' in paso %}success{% else %}danger{% endif %} py-2">
+                                {{ paso }}
+                            </div>
+                        {% elif "Variable entrante:" in paso or "Variable saliente:" in paso or "Elemento pivote:" in paso %}
+                            <p class="text-primary fw-bold">{{ paso }}</p>
+                        {% elif "Operaciones de pivoteo:" in paso %}
+                            <h6 class="text-warning">{{ paso }}</h6>
+                        {% elif paso|slice:":2" == "1." or paso|slice:":2" == "2." or paso|slice:":2" == "3." %}
+                            <h5 class="text-info">{{ paso }}</h5>
+                        {% else %}
+                            <p class="mb-1">{{ paso }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        {% elif error %}
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Error
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h6>{{ error }}</h6>
+                </div>
+                {% if pasos %}
+                <div class="solution-steps">
+                    {% for paso in pasos %}
+                        {% if "===" in paso %}
+                            <h4 class="text-info">{{ paso|slice:"3:-3" }}</h4>
+                        {% elif paso != "" %}
+                            <p class="mb-1">{{ paso }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center text-muted">
+                <i class="fas fa-arrow-left fa-3x mb-3"></i>
+                <h5>Configura tu problema de programación lineal</h5>
+                <p>Completa el formulario de la izquierda para resolver usando el método Simplex.</p>
+                
+                <div class="mt-4">
+                    <h6>Formato de entrada:</h6>
+                    <ul class="text-start">
+                        <li><strong>Función objetivo:</strong> Coeficientes separados por comas</li>
+                        <li><strong>Restricciones:</strong> Coeficientes, tipo (≤, ≥, =) y valor</li>
+                        <li><strong>Variables:</strong> Automáticamente no negativas (xi ≥ 0)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+let contadorRestricciones = 0;
+
+function agregarRestriccion() {
+    const container = document.getElementById('restricciones-container');
+    const div = document.createElement('div');
+    div.className = 'mb-2 p-2 border rounded';
+    div.innerHTML = `
+        <div class="row">
+            <div class="col-5">
+                <input type="text" class="form-control form-control-sm" 
+                       name="restriccion_${contadorRestricciones}_coeficientes" 
+                       placeholder="1,2,1" required>
+                <small class="text-muted">Coeficientes</small>
+            </div>
+            <div class="col-2">
+                <select class="form-select form-select-sm" 
+                        name="restriccion_${contadorRestricciones}_tipo">
+                    <option value="<=">&le;</option>
+                    <option value=">=">&ge;</option>
+                    <option value="=">=</option>
+                </select>
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm" 
+                       name="restriccion_${contadorRestricciones}_valor" 
+                       placeholder="0" step="any" required>
+                <small class="text-muted">Valor</small>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-outline-danger btn-sm" 
+                        onclick="this.parentElement.parentElement.parentElement.remove()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(div);
+    contadorRestricciones++;
+}
+
+// Añadir restricción inicial
+document.addEventListener('DOMContentLoaded', function() {
+    agregarRestriccion();
+    agregarRestriccion();
+});
+</script>
+{% endblock %}

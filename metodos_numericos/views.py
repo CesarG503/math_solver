@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
-from .utils import interpolacion_hermite, integracion_compuesta
+from .utils import interpolacion_hermite, integracion_compuesta, metodo_simplex
 import json
 
 def index(request):
@@ -81,3 +81,79 @@ def integracion_view(request):
             messages.error(request, f'Error en el cálculo: {str(e)}')
     
     return render(request, 'metodos_numericos/integracion.html', context)
+
+def simplex_view(request):
+    """Vista para el método Simplex"""
+    context = {}
+    
+    if request.method == 'POST':
+        try:
+            # Obtener función objetivo
+            funcion_objetivo_str = request.POST.get('funcion_objetivo', '')
+            tipo_optimizacion = request.POST.get('tipo_optimizacion', 'maximizar')
+            
+            # Parsear función objetivo
+            funcion_objetivo = []
+            for coef_str in funcion_objetivo_str.split(','):
+                if coef_str.strip():
+                    funcion_objetivo.append(float(coef_str.strip()))
+            
+            if not funcion_objetivo:
+                messages.error(request, 'Debe ingresar al menos un coeficiente en la función objetivo.')
+                return render(request, 'metodos_numericos/simplex.html', context)
+            
+            # Obtener restricciones
+            restricciones = []
+            i = 0
+            while True:
+                coef_key = f'restriccion_{i}_coeficientes'
+                tipo_key = f'restriccion_{i}_tipo'
+                valor_key = f'restriccion_{i}_valor'
+                
+                if coef_key not in request.POST:
+                    break
+                
+                coef_str = request.POST.get(coef_key, '')
+                tipo_rest = request.POST.get(tipo_key, '<=')
+                valor_str = request.POST.get(valor_key, '0')
+                
+                if coef_str.strip():
+                    coeficientes = []
+                    for coef in coef_str.split(','):
+                        if coef.strip():
+                            coeficientes.append(float(coef.strip()))
+                    
+                    # Ajustar longitud de coeficientes a la función objetivo
+                    while len(coeficientes) < len(funcion_objetivo):
+                        coeficientes.append(0)
+                    coeficientes = coeficientes[:len(funcion_objetivo)]
+                    
+                    restricciones.append({
+                        'coeficientes': coeficientes,
+                        'tipo': tipo_rest,
+                        'valor': float(valor_str)
+                    })
+                
+                i += 1
+            
+            if not restricciones:
+                messages.error(request, 'Debe ingresar al menos una restricción.')
+                return render(request, 'metodos_numericos/simplex.html', context)
+            
+            # Resolver usando Simplex
+            resultado = metodo_simplex(funcion_objetivo, restricciones, tipo_optimizacion)
+            
+            context.update(resultado)
+            context.update({
+                'funcion_objetivo_input': funcion_objetivo_str,
+                'tipo_optimizacion': tipo_optimizacion,
+                'num_restricciones': len(restricciones),
+                'restricciones_data': restricciones
+            })
+            
+        except ValueError as e:
+            messages.error(request, f'Error en los datos de entrada: {str(e)}')
+        except Exception as e:
+            messages.error(request, f'Error en el cálculo: {str(e)}')
+    
+    return render(request, 'metodos_numericos/simplex.html', context)
