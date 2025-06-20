@@ -447,10 +447,13 @@ def _resolver_simplex(problema, pasos):
         
         if all(r[0] == float('inf') for r in razones):
             pasos.append("❌ Solución no acotada (todos los coeficientes ≤ 0)")
+            # Extraer HTML de las tablas simplex generadas hasta ahora
+            tablas_html = [t['tabla_html'] for t in tablas_simplex]
             return {
                 'error': 'Solución no acotada',
                 'pasos': pasos,
-                'tablas': tablas_simplex
+                'tablas': tablas_simplex,
+                'tablas_html': tablas_html
             }
         
         razon_min, fila_pivote = min(razones)
@@ -518,7 +521,7 @@ def _resolver_simplex(problema, pasos):
     }
 
 def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
-    """Muestra la tabla Simplex de manera formateada"""
+    """Muestra la tabla Simplex de manera formateada con HTML"""
     
     m = len(tabla) - 1  # número de restricciones
     n = len(tabla[0]) - 1  # número de variables
@@ -526,33 +529,47 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
     pasos.append("Tabla Simplex:")
     pasos.append("")
     
+    # Crear tabla HTML
+    tabla_html = '<div class="simplex-table-container">'
+    tabla_html += '<table class="simplex-table">'
+    
     # Encabezado
-    encabezado = "Base".ljust(8)
+    tabla_html += '<thead><tr>'
+    tabla_html += '<th>Base</th>'
     for j in range(n):
         if j < len(variables_basicas):
-            encabezado += f"x{j+1}".rjust(10)
+            tabla_html += f'<th>x{j+1}</th>'
         else:
-            encabezado += f"s{j-len(variables_basicas)+1}".rjust(10)
-    encabezado += "RHS".rjust(12)
-    pasos.append(encabezado)
-    pasos.append("-" * len(encabezado))
+            tabla_html += f'<th>s{j-len(variables_basicas)+1}</th>'
+    tabla_html += '<th>RHS</th>'
+    tabla_html += '</tr></thead>'
+    
+    # Cuerpo de la tabla
+    tabla_html += '<tbody>'
     
     # Filas de restricciones
     for i in range(m):
-        fila = variables_basicas[i].ljust(8)
+        tabla_html += '<tr>'
+        tabla_html += f'<td class="base-column">{variables_basicas[i]}</td>'
         for j in range(len(tabla[i])):
-            fila += f"{tabla[i][j]:10.4f}"
-        pasos.append(fila)
+            tabla_html += f'<td>{tabla[i][j]:.4f}</td>'
+        tabla_html += '</tr>'
     
     # Fila objetivo
-    fila_z = "Z".ljust(8)
+    tabla_html += '<tr class="objective-row">'
+    tabla_html += '<td class="base-column">Z</td>'
     for j in range(len(tabla[-1])):
-        fila_z += f"{tabla[-1][j]:10.4f}"
-    pasos.append(fila_z)
+        tabla_html += f'<td>{tabla[-1][j]:.4f}</td>'
+    tabla_html += '</tr>'
+    
+    tabla_html += '</tbody></table></div>'
+    
+    pasos.append(tabla_html)
     pasos.append("")
     
     return {
         'iteracion': iteracion,
         'tabla': [fila[:] for fila in tabla],  # Copia profunda
-        'variables_basicas': variables_basicas[:]
+        'variables_basicas': variables_basicas[:],
+        'tabla_html': tabla_html
     }

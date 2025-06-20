@@ -3,13 +3,16 @@
 {% block title %}Método Simplex - Métodos Numéricos{% endblock %}
 
 {% block content %}
-<div class="row">
+<button class="theme-toggle bg-secondary-neon" onclick="toggleTheme()" title="Cambiar tema">
+    <i class="fas fa-moon" id="theme-icon"></i>
+</button>
+<div class="row justify-content-end">
     <div class="col-12">
         <h2 class="mb-4 text-info">
             <i class="fas fa-chart-bar text-info me-2"></i>
             Método Simplex - Programación Lineal
         </h2>
-    </div>
+    </div> 
 </div>
 
 <div class="row">
@@ -65,7 +68,7 @@
                         <label class="form-label">
                             <i class="fas fa-list me-1"></i>Restricciones
                         </label>
-                        <div id="restricciones-container">
+                        <div id="restricciones-container" class="pt-4">
                             <!-- Las restricciones se añaden dinámicamente -->
                         </div>
                         <button type="button" class="btn btn-outline-info btn-sm mt-2" 
@@ -82,10 +85,21 @@
                 <div class="mt-4">
                     <h6><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplo</h6>
                     <p class="small text-muted">
-                        <strong>Maximizar:</strong> 3x₁ + 2x₂<br>
-                        <strong>Función objetivo:</strong> <code>3,2</code><br>
-                        <strong>Restricción 1:</strong> <code>1,1</code> ≤ <code>4</code><br>
-                        <strong>Restricción 2:</strong> <code>2,1</code> ≤ <code>6</code>
+                        <p><strong>Maximizar:</strong> <code>3x₁ + 2x₂ </code></p>
+                        <p><strong>Función objetivo:</strong> <code>3,2</code></p>
+                        <p><strong>Restricción 1:</strong> <code>x₁ + x₂ &le; 4</code></p>
+                        <p><strong>Restricción 1:</strong> <code>1,1 &le; 4</code></p>
+                        <p class="mt-2"><strong>¿Cómo introducir los datos?</strong></p>
+                        <ul class="small text-muted ps-3">
+                            <li>En <strong>Función objetivo</strong>: escribe los coeficientes separados por comas. Ejemplo: <code>3,2</code></li>
+                            <li>En <strong>Restricciones</strong>: 
+                                <ul>
+                                    <li>En <strong>Coeficientes</strong>: escribe los coeficientes separados por comas. Ejemplo: <code>1,1</code></li>
+                                    <li>Selecciona el tipo de restricción: <code>&le;</code>, <code>&ge;</code> o <code>=</code></li>
+                                    <li>En <strong>Valor</strong>: escribe el número del lado derecho. Ejemplo: <code>4</code></li>
+                                </ul>
+                            </li>
+                        </ul></ul>
                     </p>
                 </div>
             </div>
@@ -150,8 +164,8 @@
                             <h4 class="text-warning mt-4">{{ paso }}</h4>
                         {% elif "Tabla Simplex:" in paso %}
                             <h5 class="text-success">{{ paso }}</h5>
-                        {% elif paso|slice:":4" == "Base" or paso|slice:":1" == "-" %}
-                            <pre class="bg-light p-2 rounded small">{{ paso }}</pre>
+                        {% elif "<div class=\"simplex-table-container\">" in paso %}
+                            {{ paso|safe }}
                         {% elif "✓" in paso or "❌" in paso %}
                             <div class="alert alert-{% if '✓' in paso %}success{% else %}danger{% endif %} py-2">
                                 {{ paso }}
@@ -181,10 +195,19 @@
                 <div class="alert alert-danger">
                     <h6>{{ error }}</h6>
                 </div>
+                {% if tablas_html %}
+                <div class="solution-steps">
+                    {% for tabla in tablas_html %}
+                        {{ tabla|safe }}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% if pasos %}
                 <div class="solution-steps">
                     {% for paso in pasos %}
-                        {% if "===" in paso %}
+                        {% if '<div class="simplex-table-container">' in paso %}
+                            {# No mostrar el HTML de la tabla aquí, ya se mostró arriba #}
+                        {% elif "===" in paso %}
                             <h4 class="text-info">{{ paso|slice:"3:-3" }}</h4>
                         {% elif paso != "" %}
                             <p class="mb-1">{{ paso }}</p>
@@ -217,6 +240,99 @@
 </div>
 
 <script>
+// Función para dividir por espacios (filtro personalizado)
+function splitBySpaces(str) {
+    return str.trim().split(/\s+/);
+}
+
+// Función para alternar tema
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeButton(newTheme);
+}
+
+// Actualiza el icono y las clases del botón según el tema
+function updateThemeButton(theme) {
+    const icon = document.getElementById('theme-icon');
+    const boton = document.querySelector('.theme-toggle');
+    const body = document.body;
+    if (theme === 'dark') {
+        if (icon) icon.className = 'fas fa-sun';
+        if (boton) {
+            boton.classList.remove('bg-secondary-neon');
+            boton.classList.add('bg-warning-neon');
+        }
+        body.classList.add('bg-secondary-neon');
+    } else {
+        if (icon) icon.className = 'fas fa-moon';
+        if (boton) {
+            boton.classList.remove('bg-warning-neon');
+            boton.classList.add('bg-secondary-neon');
+        }
+        body.classList.remove('bg-secondary-neon');
+    }
+}
+
+// Cargar tema guardado
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeButton(savedTheme);
+    // Mejorar la visualización de tablas Simplex
+    enhanceSimplexTables();
+});
+
+function enhanceSimplexTables() {
+    // Buscar todas las tablas Simplex y mejorar su visualización
+    const tables = document.querySelectorAll('.simplex-table');
+    
+    tables.forEach(function(table) {
+        const rows = table.querySelectorAll('tbody tr');
+        
+        rows.forEach(function(row, rowIndex) {
+            const cells = row.querySelectorAll('td');
+            
+            // Marcar la última fila como fila objetivo si contiene 'Z'
+            if (cells.length > 0 && cells[0].textContent.trim() === 'Z') {
+                row.classList.add('objective-row');
+            }
+        });
+    });
+}
+
+// Función para resaltar elementos pivote (se puede llamar desde el backend)
+function highlightPivotElements(tableIndex, pivotRow, pivotCol) {
+    const tables = document.querySelectorAll('.simplex-table');
+    if (tables[tableIndex]) {
+        const table = tables[tableIndex];
+        const rows = table.querySelectorAll('tbody tr');
+        
+        // Resaltar columna entrante
+        rows.forEach(function(row) {
+            const cells = row.querySelectorAll('td');
+            if (cells[pivotCol]) {
+                cells[pivotCol].classList.add('entering-variable');
+            }
+        });
+        
+        // Resaltar fila saliente
+        if (rows[pivotRow]) {
+            const cells = rows[pivotRow].querySelectorAll('td');
+            cells.forEach(function(cell) {
+                cell.classList.add('leaving-variable');
+            });
+        }
+        
+        // Resaltar elemento pivote
+        if (rows[pivotRow] && rows[pivotRow].querySelectorAll('td')[pivotCol]) {
+            rows[pivotRow].querySelectorAll('td')[pivotCol].classList.add('pivot-cell');
+        }
+    }
+}
+
 let contadorRestricciones = 0;
 
 function agregarRestriccion() {
@@ -225,13 +341,13 @@ function agregarRestriccion() {
     div.className = 'mb-2 p-2 border rounded';
     div.innerHTML = `
         <div class="row">
-            <div class="col-5">
+            <div class="col-5 col-lg-4  col-xl-5 m-0">
                 <input type="text" class="form-control form-control-sm" 
                        name="restriccion_${contadorRestricciones}_coeficientes" 
                        placeholder="1,2,1" required>
                 <small class="text-muted">Coeficientes</small>
             </div>
-            <div class="col-2">
+            <div class="col-2  col-lg-4 col-xl-3 m-0 ">
                 <select class="form-select form-select-sm" 
                         name="restriccion_${contadorRestricciones}_tipo">
                     <option value="<=">&le;</option>
@@ -239,28 +355,35 @@ function agregarRestriccion() {
                     <option value="=">=</option>
                 </select>
             </div>
-            <div class="col-3">
+            <div class="col-3 col-lg-4 col-xl-4 m-0">
                 <input type="number" class="form-control form-control-sm" 
                        name="restriccion_${contadorRestricciones}_valor" 
                        placeholder="0" step="any" required>
                 <small class="text-muted">Valor</small>
             </div>
-            <div class="col-2">
-                <button type="button" class="btn btn-outline-danger btn-sm" 
+            <div class="col-2 col-lg-12">
+                <button type="button" class="btn btn-outline-danger btn-sm ancho" 
                         onclick="this.parentElement.parentElement.parentElement.remove()">
-                    <i class="fas fa-trash"></i>
+                    <i class="fas fa-trash"></i> Eliminar
                 </button>
             </div>
         </div>
+    `;
+    div.querySelector('.btn-outline-danger').innerHTML = `
+        <i class="fas fa-trash"></i> 
+        <span class="d-none d-md-inline">Eliminar</span>
     `;
     container.appendChild(div);
     contadorRestricciones++;
 }
 
 // Añadir restricción inicial
-document.addEventListener('DOMContentLoaded', function() {
+if (document.getElementById('restricciones-container')) {
     agregarRestriccion();
     agregarRestriccion();
-});
+}
 </script>
+
+<!-- Toggle de tema -->
+
 {% endblock %}
