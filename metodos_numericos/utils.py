@@ -416,6 +416,9 @@ def _resolver_simplex(problema, pasos):
     iteracion = 0
     tablas_simplex = []
     
+    # Variables para rastrear pivotes
+    historial_pivotes = []
+    
     while True:
         iteracion += 1
         pasos.append(f"ITERACIÓN {iteracion}")
@@ -427,73 +430,167 @@ def _resolver_simplex(problema, pasos):
         
         # Verificar optimalidad
         fila_obj_actual = tabla[-1][:-1]
-        if all(coef >= 0 for coef in fila_obj_actual):
+        if all(coef >= -1e-10 for coef in fila_obj_actual):  # Usar tolerancia numérica
             pasos.append("✓ Todos los coeficientes en la fila objetivo son ≥ 0")
             pasos.append("¡SOLUCIÓN ÓPTIMA ENCONTRADA!")
             break
         
         # Encontrar variable entrante (columna pivote)
         col_pivote = min(range(len(fila_obj_actual)), key=lambda i: fila_obj_actual[i])
-        pasos.append(f"Variable entrante: columna {col_pivote + 1} (coeficiente más negativo: {fila_obj_actual[col_pivote]})")
+        coef_entrante = fila_obj_actual[col_pivote]
+        
+        # Determinar nombre de variable entrante
+        if col_pivote < num_vars_originales:
+            var_entrante = f"x{col_pivote + 1}"
+        else:
+            var_entrante = f"s{col_pivote - num_vars_originales + 1}"
+        
+        pasos.append(f"🔵 VARIABLE ENTRANTE: {var_entrante} (columna {col_pivote + 1})")
+        pasos.append(f"   Coeficiente más negativo: {coef_entrante:.6f}")
+        pasos.append("")
         
         # Encontrar variable saliente (fila pivote) usando prueba de razón mínima
+        pasos.append("📊 PRUEBA DE RAZÓN MÍNIMA:")
+        pasos.append("   Fila | Variable Base | RHS | Coef. Columna | Razón")
+        pasos.append("   " + "-" * 55)
+        
         razones = []
+        razones_validas = []
+        
         for i in range(m):
-            if tabla[i][col_pivote] > 0:
-                razon = tabla[i][-1] / tabla[i][col_pivote]
+            coef_col = tabla[i][col_pivote]
+            rhs = tabla[i][-1]
+            
+            if coef_col > 1e-10:  # Usar tolerancia numérica
+                razon = rhs / coef_col
                 razones.append((razon, i))
+                razones_validas.append(razon)
+                pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | {razon:7.3f}")
             else:
                 razones.append((float('inf'), i))
+                if coef_col <= -1e-10:
+                    pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | No válida (≤0)")
+                else:
+                    pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | No válida (≈0)")
         
-        if all(r[0] == float('inf') for r in razones):
-            pasos.append("❌ Solución no acotada (todos los coeficientes ≤ 0)")
-            # Extraer HTML de las tablas simplex generadas hasta ahora
-            tablas_html = [t['tabla_html'] for t in tablas_simplex]
+        pasos.append("")
+        
+        if not razones_validas or all(r == float('inf') for r, _ in razones):
+            pasos.append("❌ SOLUCIÓN NO ACOTADA")
+            pasos.append("   Todos los coeficientes de la columna entrante son ≤ 0")
+            pasos.append("   Esto significa que la función objetivo puede crecer indefinidamente")
+            pasos.append("   en la dirección de la variable entrante.")
+            pasos.append("")
+            pasos.append("🔍 INTERPRETACIÓN:")
+            pasos.append("   - El problema no tiene solución óptima finita")
+            pasos.append("   - La región factible es no acotada en la dirección de optimización")
+            pasos.append("   - Verifique las restricciones del problema original")
+            
             return {
-                'error': 'Solución no acotada',
+                'error': 'Solución no acotada - La función objetivo puede crecer indefinidamente',
                 'pasos': pasos,
                 'tablas': tablas_simplex,
-                'tablas_html': tablas_html
+                'interpretacion': 'La región factible es no acotada en la dirección de optimización',
+                'sugerencia': 'Revise las restricciones del problema para asegurar que la región factible esté acotada'
             }
         
         razon_min, fila_pivote = min(razones)
-        pasos.append(f"Variable saliente: {variables_basicas[fila_pivote]} (razón mínima: {razon_min})")
+        var_saliente = variables_basicas[fila_pivote]
+        
+        pasos.append(f"🔴 VARIABLE SALIENTE: {var_saliente} (fila {fila_pivote + 1})")
+        pasos.append(f"   Razón mínima: {razon_min:.6f}")
+        pasos.append("")
         
         # Elemento pivote
         pivote = tabla[fila_pivote][col_pivote]
-        pasos.append(f"Elemento pivote: {pivote}")
+        pasos.append(f"⚡ ELEMENTO PIVOTE: {pivote:.6f}")
+        pasos.append(f"   Posición: Fila {fila_pivote + 1}, Columna {col_pivote + 1}")
         pasos.append("")
         
+        # Guardar información del pivote para resaltado
+        historial_pivotes.append({
+            'iteracion': iteracion,
+            'fila_pivote': fila_pivote,
+            'col_pivote': col_pivote,
+            'var_entrante': var_entrante,
+            'var_saliente': var_saliente,
+            'pivote': pivote
+        })
+        
+        # Actualizar la tabla anterior con información de pivote
+        if tablas_simplex:
+            tablas_simplex[-1]['fila_pivote'] = fila_pivote
+            tablas_simplex[-1]['col_pivote'] = col_pivote
+            tablas_simplex[-1]['var_entrante'] = var_entrante
+            tablas_simplex[-1]['var_saliente'] = var_saliente
+            tablas_simplex[-1]['elemento_pivote'] = pivote
+        
         # Operaciones de pivoteo
-        pasos.append("Operaciones de pivoteo:")
+        pasos.append("🔧 OPERACIONES DE PIVOTEO:")
+        pasos.append("")
+        
+        # Crear copia de la tabla para mostrar cambios
+        tabla_anterior = [fila[:] for fila in tabla]
         
         # Normalizar fila pivote
-        pasos.append(f"1. Dividir fila {fila_pivote + 1} por {pivote}:")
+        pasos.append(f"1️⃣ NORMALIZAR FILA PIVOTE (Fila {fila_pivote + 1}):")
+        pasos.append(f"   Nueva Fila {fila_pivote + 1} = Fila {fila_pivote + 1} ÷ {pivote:.6f}")
+        pasos.append("")
+        pasos.append("   Antes:")
+        fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[fila_pivote]]) + "]"
+        pasos.append(fila_str)
+        
         for j in range(len(tabla[fila_pivote])):
             tabla[fila_pivote][j] /= pivote
         
-        # Eliminar en otras filas
-        for i in range(len(tabla)):
-            if i != fila_pivote and tabla[i][col_pivote] != 0:
-                factor = tabla[i][col_pivote]
-                pasos.append(f"2. F{i+1} = F{i+1} - ({factor}) * F{fila_pivote+1}")
-                for j in range(len(tabla[i])):
-                    tabla[i][j] -= factor * tabla[fila_pivote][j]
-        
-        # Actualizar variable básica
-        if col_pivote < num_vars_originales:
-            variables_basicas[fila_pivote] = f"x{col_pivote + 1}"
-        else:
-            variables_basicas[fila_pivote] = f"s{col_pivote - num_vars_originales + 1}"
-        
+        pasos.append("   Después:")
+        fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[fila_pivote]]) + "]"
+        pasos.append(fila_str)
         pasos.append("")
         
-        if iteracion > 20:  # Prevenir bucles infinitos
-            pasos.append("❌ Demasiadas iteraciones - posible ciclo")
-            break
+        # Eliminar en otras filas
+        pasos.append("2️⃣ ELIMINAR EN OTRAS FILAS:")
+        for i in range(len(tabla)):
+            if i != fila_pivote and abs(tabla[i][col_pivote]) > 1e-10:
+                factor = tabla[i][col_pivote]
+                pasos.append(f"   Fila {i+1}: Factor = {factor:.6f}")
+                pasos.append(f"   Nueva Fila {i+1} = Fila {i+1} - ({factor:.6f}) × Nueva Fila {fila_pivote+1}")
+                
+                pasos.append("   Antes:")
+                fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[i]]) + "]"
+                pasos.append(fila_str)
+                
+                for j in range(len(tabla[i])):
+                    tabla[i][j] -= factor * tabla[fila_pivote][j]
+                
+                pasos.append("   Después:")
+                fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[i]]) + "]"
+                pasos.append(fila_str)
+                pasos.append("")
+        
+        # Actualizar variable básica
+        variables_basicas[fila_pivote] = var_entrante
+        pasos.append(f"3️⃣ ACTUALIZAR BASE:")
+        pasos.append(f"   {var_saliente} sale de la base")
+        pasos.append(f"   {var_entrante} entra a la base")
+        pasos.append("")
+        
+        if iteracion > 50:  # Prevenir bucles infinitos
+            pasos.append("❌ DEMASIADAS ITERACIONES")
+            pasos.append("   Se ha alcanzado el límite máximo de iteraciones (50)")
+            pasos.append("   Esto puede indicar:")
+            pasos.append("   - Ciclado en el algoritmo Simplex")
+            pasos.append("   - Problema mal formulado")
+            pasos.append("   - Errores numéricos acumulados")
+            return {
+                'error': 'Demasiadas iteraciones - Posible ciclado o problema mal formulado',
+                'pasos': pasos,
+                'tablas': tablas_simplex,
+                'sugerencia': 'Revise la formulación del problema o use técnicas anti-ciclado'
+            }
     
     # Extraer solución
-    solucion = [0] * num_vars_originales
+    solucion = [0.0] * num_vars_originales
     for i, var in enumerate(variables_basicas):
         if var.startswith('x'):
             var_num = int(var[1:]) - 1
@@ -507,9 +604,23 @@ def _resolver_simplex(problema, pasos):
     pasos.append("")
     pasos.append("3. SOLUCIÓN ÓPTIMA")
     pasos.append("")
+    pasos.append("📋 VARIABLES DE DECISIÓN:")
     for i, val in enumerate(solucion):
-        pasos.append(f"x{i+1} = {val:.6f}")
-    pasos.append(f"Valor óptimo de Z = {valor_objetivo:.6f}")
+        pasos.append(f"   x{i+1} = {val:.6f}")
+    
+    pasos.append("")
+    pasos.append("📊 VARIABLES DE HOLGURA/EXCESO:")
+    for i, var in enumerate(variables_basicas):
+        if not var.startswith('x'):
+            pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
+    
+    pasos.append("")
+    pasos.append(f"🎯 VALOR ÓPTIMO: Z = {valor_objetivo:.6f}")
+    
+    # Verificación de la solución
+    pasos.append("")
+    pasos.append("✅ VERIFICACIÓN DE LA SOLUCIÓN:")
+    pasos.append("   (Sustituyendo en las restricciones originales)")
     
     return {
         'solucion': solucion,
@@ -517,7 +628,8 @@ def _resolver_simplex(problema, pasos):
         'pasos': pasos,
         'tablas': tablas_simplex,
         'variables_basicas': variables_basicas,
-        'tipo_optimizacion': tipo_original
+        'tipo_optimizacion': tipo_original,
+        'historial_pivotes': historial_pivotes
     }
 
 def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
@@ -526,22 +638,23 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
     m = len(tabla) - 1  # número de restricciones
     n = len(tabla[0]) - 1  # número de variables
     
-    pasos.append("Tabla Simplex:")
+    pasos.append("📋 TABLA SIMPLEX:")
     pasos.append("")
     
     # Crear tabla HTML
     tabla_html = '<div class="simplex-table-container">'
+    tabla_html += f'<div class="table-title">Iteración {iteracion}</div>'
     tabla_html += '<table class="simplex-table">'
     
     # Encabezado
     tabla_html += '<thead><tr>'
-    tabla_html += '<th>Base</th>'
+    tabla_html += '<th class="base-header">Base</th>'
     for j in range(n):
-        if j < len(variables_basicas):
-            tabla_html += f'<th>x{j+1}</th>'
+        if j < 10:  # Asumiendo máximo 10 variables originales
+            tabla_html += f'<th class="var-header">x<sub>{j+1}</sub></th>'
         else:
-            tabla_html += f'<th>s{j-len(variables_basicas)+1}</th>'
-    tabla_html += '<th>RHS</th>'
+            tabla_html += f'<th class="slack-header">s<sub>{j-9}</sub></th>'
+    tabla_html += '<th class="rhs-header">RHS</th>'
     tabla_html += '</tr></thead>'
     
     # Cuerpo de la tabla
@@ -549,17 +662,25 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
     
     # Filas de restricciones
     for i in range(m):
-        tabla_html += '<tr>'
+        tabla_html += f'<tr class="constraint-row" data-row="{i}">'
         tabla_html += f'<td class="base-column">{variables_basicas[i]}</td>'
         for j in range(len(tabla[i])):
-            tabla_html += f'<td>{tabla[i][j]:.4f}</td>'
+            valor = tabla[i][j]
+            clase_celda = f'data-cell data-row-{i} data-col-{j}'
+            if j == len(tabla[i]) - 1:  # RHS column
+                clase_celda += ' rhs-cell'
+            tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
         tabla_html += '</tr>'
     
     # Fila objetivo
     tabla_html += '<tr class="objective-row">'
-    tabla_html += '<td class="base-column">Z</td>'
+    tabla_html += '<td class="base-column objective-label">Z</td>'
     for j in range(len(tabla[-1])):
-        tabla_html += f'<td>{tabla[-1][j]:.4f}</td>'
+        valor = tabla[-1][j]
+        clase_celda = f'objective-cell data-col-{j}'
+        if j == len(tabla[-1]) - 1:  # RHS column (valor de Z)
+            clase_celda += ' objective-value'
+        tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
     tabla_html += '</tr>'
     
     tabla_html += '</tbody></table></div>'

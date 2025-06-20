@@ -127,19 +127,19 @@
                 <div class="row text-center">
                     <div class="col-md-4">
                         <div class="bg-light p-2 rounded">
-                            <small class="text-muted">Tipo</small><br>
+                            <small class="text-muted">Tipo</small>
                             <strong>{{ tipo_optimizacion|title }}</strong>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light p-2 rounded">
-                            <small class="text-muted">Variables</small><br>
+                            <small class="text-muted">Variables</small>
                             <strong>{{ solucion|length }}</strong>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light p-2 rounded">
-                            <small class="text-muted">Restricciones</small><br>
+                            <small class="text-muted">Restricciones</small>
                             <strong>{{ num_restricciones }}</strong>
                         </div>
                     </div>
@@ -159,23 +159,61 @@
                         {% if "===" in paso %}
                             <h3 class="text-info mt-3">{{ paso|slice:"3:-3" }}</h3>
                         {% elif paso == "" %}
-                            <br>
+                            
                         {% elif "ITERACIÓN" in paso %}
-                            <h4 class="text-warning mt-4">{{ paso }}</h4>
-                        {% elif "Tabla Simplex:" in paso %}
-                            <h5 class="text-success">{{ paso }}</h5>
+                            <h4 class="text-warning mt-4 mb-3">
+                                <i class="fas fa-step-forward me-2"></i>{{ paso }}
+                            </h4>
+                        {% elif "📋 TABLA SIMPLEX:" in paso %}
+                            <h5 class="text-success mt-3">
+                                <i class="fas fa-table me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
                         {% elif "<div class=\"simplex-table-container\">" in paso %}
                             {{ paso|safe }}
-                        {% elif "✓" in paso or "❌" in paso %}
-                            <div class="alert alert-{% if '✓' in paso %}success{% else %}danger{% endif %} py-2">
-                                {{ paso }}
+                        {% elif "🔵 VARIABLE ENTRANTE:" in paso %}
+                            <div class="alert alert-info py-2 mb-2">
+                                <i class="fas fa-arrow-right me-2"></i>
+                                <strong>{{ paso|slice:"2:" }}</strong>
                             </div>
-                        {% elif "Variable entrante:" in paso or "Variable saliente:" in paso or "Elemento pivote:" in paso %}
-                            <p class="text-primary fw-bold">{{ paso }}</p>
-                        {% elif "Operaciones de pivoteo:" in paso %}
-                            <h6 class="text-warning">{{ paso }}</h6>
+                        {% elif "🔴 VARIABLE SALIENTE:" in paso %}
+                            <div class="alert alert-danger py-2 mb-2">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                <strong>{{ paso|slice:"2:" }}</strong>
+                            </div>
+                        {% elif "⚡ ELEMENTO PIVOTE:" in paso %}
+                            <div class="alert alert-warning py-2 mb-2">
+                                <i class="fas fa-crosshairs me-2"></i>
+                                <strong>{{ paso|slice:"2:" }}</strong>
+                            </div>
+                        {% elif "📊 PRUEBA DE RAZÓN MÍNIMA:" in paso %}
+                            <h6 class="text-primary mt-3">
+                                <i class="fas fa-calculator me-2"></i>{{ paso|slice:"2:" }}
+                            </h6>
+                        {% elif "🔧 OPERACIONES DE PIVOTEO:" in paso %}
+                            <h6 class="text-warning mt-3">
+                                <i class="fas fa-cogs me-2"></i>{{ paso|slice:"2:" }}
+                            </h6>
+                        {% elif "1️⃣" in paso or "2️⃣" in paso or "3️⃣" in paso %}
+                            <h6 class="text-info mt-2">{{ paso }}</h6>
+                        {% elif "✓" in paso %}
+                            <div class="alert alert-success py-2">
+                                <i class="fas fa-check-circle me-2"></i>{{ paso|slice:"2:" }}
+                            </div>
+                        {% elif "❌" in paso %}
+                            <div class="alert alert-danger py-2">
+                                <i class="fas fa-exclamation-triangle me-2"></i>{{ paso|slice:"2:" }}
+                            </div>
+                        {% elif "🎯" in paso %}
+                            <div class="alert alert-success py-2">
+                                <i class="fas fa-bullseye me-2"></i>
+                                <strong>{{ paso|slice:"2:" }}</strong>
+                            </div>
+                        {% elif "📋" in paso or "📊" in paso %}
+                            <h6 class="text-info mt-3">{{ paso }}</h6>
+                        {% elif paso|slice:":3" == "   " %}
+                            <pre class="bg-light p-2 rounded small mb-1">{{ paso }}</pre>
                         {% elif paso|slice:":2" == "1." or paso|slice:":2" == "2." or paso|slice:":2" == "3." %}
-                            <h5 class="text-info">{{ paso }}</h5>
+                            <h5 class="text-info mt-3">{{ paso }}</h5>
                         {% else %}
                             <p class="mb-1">{{ paso }}</p>
                         {% endif %}
@@ -188,31 +226,49 @@
         <div class="card">
             <div class="card-header bg-danger text-white">
                 <h4 class="">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Error
+                    <i class="fas fa-exclamation-triangle me-2"></i>Error en la Solución
                 </h4>
             </div>
             <div class="card-body">
                 <div class="alert alert-danger">
-                    <h6>{{ error }}</h6>
+                    <h6><i class="fas fa-times-circle me-2"></i>{{ error }}</h6>
+                    {% if interpretacion %}
+                        <hr>
+                        <p class="mb-1"><strong>Interpretación:</strong> {{ interpretacion }}</p>
+                    {% endif %}
+                    {% if sugerencia %}
+                        <p class="mb-0"><strong>Sugerencia:</strong> {{ sugerencia }}</p>
+                    {% endif %}
                 </div>
-                {% if tablas_html %}
-                <div class="solution-steps">
-                    {% for tabla in tablas_html %}
-                        {{ tabla|safe }}
-                    {% endfor %}
-                </div>
-                {% endif %}
+                
                 {% if pasos %}
-                <div class="solution-steps">
-                    {% for paso in pasos %}
-                        {% if '<div class="simplex-table-container">' in paso %}
-                            {# No mostrar el HTML de la tabla aquí, ya se mostró arriba #}
-                        {% elif "===" in paso %}
-                            <h4 class="text-info">{{ paso|slice:"3:-3" }}</h4>
-                        {% elif paso != "" %}
-                            <p class="mb-1">{{ paso }}</p>
-                        {% endif %}
-                    {% endfor %}
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Proceso hasta el Error
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="solution-steps">
+                            {% for paso in pasos %}
+                                {% if "===" in paso %}
+                                    <h4 class="text-info">{{ paso|slice:"3:-3" }}</h4>
+                                {% elif "<div class=\"simplex-table-container\">" in paso %}
+                                    {{ paso|safe }}
+                                {% elif "🔵 VARIABLE ENTRANTE:" in paso %}
+                                    <div class="alert alert-info py-2 mb-2">
+                                        <strong>{{ paso|slice:"2:" }}</strong>
+                                    </div>
+                                {% elif "❌" in paso %}
+                                    <div class="alert alert-danger py-2">
+                                        {{ paso|slice:"2:" }}
+                                    </div>
+                                {% elif paso != "" %}
+                                    <p class="mb-1">{{ paso }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
             </div>
@@ -239,150 +295,8 @@
     </div>
 </div>
 
-<script>
-// Función para dividir por espacios (filtro personalizado)
-function splitBySpaces(str) {
-    return str.trim().split(/\s+/);
-}
-
-// Función para alternar tema
-function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeButton(newTheme);
-}
-
-// Actualiza el icono y las clases del botón según el tema
-function updateThemeButton(theme) {
-    const icon = document.getElementById('theme-icon');
-    const boton = document.querySelector('.theme-toggle');
-    const body = document.body;
-    if (theme === 'dark') {
-        if (icon) icon.className = 'fas fa-sun';
-        if (boton) {
-            boton.classList.remove('bg-secondary-neon');
-            boton.classList.add('bg-warning-neon');
-        }
-        body.classList.add('bg-secondary-neon');
-    } else {
-        if (icon) icon.className = 'fas fa-moon';
-        if (boton) {
-            boton.classList.remove('bg-warning-neon');
-            boton.classList.add('bg-secondary-neon');
-        }
-        body.classList.remove('bg-secondary-neon');
-    }
-}
-
-// Cargar tema guardado
-document.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeButton(savedTheme);
-    // Mejorar la visualización de tablas Simplex
-    enhanceSimplexTables();
-});
-
-function enhanceSimplexTables() {
-    // Buscar todas las tablas Simplex y mejorar su visualización
-    const tables = document.querySelectorAll('.simplex-table');
-    
-    tables.forEach(function(table) {
-        const rows = table.querySelectorAll('tbody tr');
-        
-        rows.forEach(function(row, rowIndex) {
-            const cells = row.querySelectorAll('td');
-            
-            // Marcar la última fila como fila objetivo si contiene 'Z'
-            if (cells.length > 0 && cells[0].textContent.trim() === 'Z') {
-                row.classList.add('objective-row');
-            }
-        });
-    });
-}
-
-// Función para resaltar elementos pivote (se puede llamar desde el backend)
-function highlightPivotElements(tableIndex, pivotRow, pivotCol) {
-    const tables = document.querySelectorAll('.simplex-table');
-    if (tables[tableIndex]) {
-        const table = tables[tableIndex];
-        const rows = table.querySelectorAll('tbody tr');
-        
-        // Resaltar columna entrante
-        rows.forEach(function(row) {
-            const cells = row.querySelectorAll('td');
-            if (cells[pivotCol]) {
-                cells[pivotCol].classList.add('entering-variable');
-            }
-        });
-        
-        // Resaltar fila saliente
-        if (rows[pivotRow]) {
-            const cells = rows[pivotRow].querySelectorAll('td');
-            cells.forEach(function(cell) {
-                cell.classList.add('leaving-variable');
-            });
-        }
-        
-        // Resaltar elemento pivote
-        if (rows[pivotRow] && rows[pivotRow].querySelectorAll('td')[pivotCol]) {
-            rows[pivotRow].querySelectorAll('td')[pivotCol].classList.add('pivot-cell');
-        }
-    }
-}
-
-let contadorRestricciones = 0;
-
-function agregarRestriccion() {
-    const container = document.getElementById('restricciones-container');
-    const div = document.createElement('div');
-    div.className = 'mb-2 p-2 border rounded';
-    div.innerHTML = `
-        <div class="row">
-            <div class="col-5 col-lg-4  col-xl-5 m-0">
-                <input type="text" class="form-control form-control-sm" 
-                       name="restriccion_${contadorRestricciones}_coeficientes" 
-                       placeholder="1,2,1" required>
-                <small class="text-muted">Coeficientes</small>
-            </div>
-            <div class="col-2  col-lg-4 col-xl-3 m-0 ">
-                <select class="form-select form-select-sm" 
-                        name="restriccion_${contadorRestricciones}_tipo">
-                    <option value="<=">&le;</option>
-                    <option value=">=">&ge;</option>
-                    <option value="=">=</option>
-                </select>
-            </div>
-            <div class="col-3 col-lg-4 col-xl-4 m-0">
-                <input type="number" class="form-control form-control-sm" 
-                       name="restriccion_${contadorRestricciones}_valor" 
-                       placeholder="0" step="any" required>
-                <small class="text-muted">Valor</small>
-            </div>
-            <div class="col-2 col-lg-12">
-                <button type="button" class="btn btn-outline-danger btn-sm ancho" 
-                        onclick="this.parentElement.parentElement.parentElement.remove()">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-            </div>
-        </div>
-    `;
-    div.querySelector('.btn-outline-danger').innerHTML = `
-        <i class="fas fa-trash"></i> 
-        <span class="d-none d-md-inline">Eliminar</span>
-    `;
-    container.appendChild(div);
-    contadorRestricciones++;
-}
-
-// Añadir restricción inicial
-if (document.getElementById('restricciones-container')) {
-    agregarRestriccion();
-    agregarRestriccion();
-}
-</script>
+{% load static %}
+<script src="{% static 'metodos_numericos/js/simplex.js' %}"></script>
 
 <!-- Toggle de tema -->
 

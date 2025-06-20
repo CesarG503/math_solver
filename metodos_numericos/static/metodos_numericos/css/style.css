@@ -214,7 +214,7 @@ footer {
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.ancho{
+.ancho {
   width: 100%;
 }
 
@@ -364,14 +364,27 @@ footer {
   --border-table: #0056b3;
 }
 
-/* Estilos para tablas Simplex */
+/* Estilos mejorados para tablas Simplex */
 .simplex-table-container {
   background-color: var(--bg-primary);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 1rem 0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
   border: 2px solid var(--border-table);
   overflow-x: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+  padding: 0.5rem;
+  background-color: var(--bg-table-header);
+  color: var(--text-table-header);
+  border-radius: 0.5rem;
 }
 
 .simplex-table {
@@ -381,6 +394,8 @@ footer {
   font-size: 0.9rem;
   margin: 0;
   background-color: var(--bg-primary);
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 .simplex-table th {
@@ -395,12 +410,33 @@ footer {
   z-index: 10;
 }
 
+.simplex-table .base-header {
+  background-color: #6c757d;
+  min-width: 80px;
+}
+
+.simplex-table .var-header {
+  background-color: var(--bg-table-header);
+  min-width: 70px;
+}
+
+.simplex-table .slack-header {
+  background-color: #17a2b8;
+  min-width: 70px;
+}
+
+.simplex-table .rhs-header {
+  background-color: #28a745;
+  min-width: 80px;
+}
+
 .simplex-table td {
-  padding: 0.5rem;
+  padding: 0.6rem 0.4rem;
   text-align: center;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   background-color: var(--bg-table-row-odd);
+  transition: all 0.3s ease;
 }
 
 .simplex-table tr:nth-child(even) td {
@@ -409,33 +445,199 @@ footer {
 
 .simplex-table tr:hover td {
   background-color: rgba(0, 123, 255, 0.1);
+  transform: scale(1.03);
+  color: green;
 }
 
-/* Estilos especiales para diferentes tipos de filas */
+
+/* Estilos especiales para diferentes tipos de celdas */
 .simplex-table .base-column {
-  background-color: var(--bg-table-header);
-  color: var(--text-table-header);
+  background-color: #6c757d !important;
+  color: white !important;
   font-weight: 600;
+  min-width: 80px;
+}
+
+.simplex-table .rhs-cell {
+  background-color: rgba(40, 167, 69, 0.1) !important;
+  font-weight: 600;
+  border-left: 0px solid #28a745 !important;
 }
 
 .simplex-table .objective-row td {
-  background-color: rgba(40, 167, 69, 0.1);
+  background-color: rgba(40, 167, 69, 0.15) !important;
   font-weight: 600;
-  border-top: 2px solid var(--border-table);
+  border-top: 1px solid var(--border-table) !important;
 }
 
-.simplex-table .pivot-cell {
-  background-color: rgba(255, 193, 7, 0.3) !important;
+.simplex-table .objective-label {
+  background-color: #28a745 !important;
+  color: white !important;
   font-weight: bold;
-  border: 2px solid #ffc107 !important;
+}
+
+.simplex-table .objective-value {
+  background-color: rgba(40, 167, 69, 0.3) !important;
+  font-weight: bold;
+  font-size: 1.1em;
+  border: 0px solid #28a745 !important;
+}
+
+/* Estilos para resaltar pivotes */
+.simplex-table .pivot-cell {
+  background-color: rgba(255, 193, 7, 0.8) !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  font-size: 1.1em;
+  border: 3px solid #ffc107 !important;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  animation: pulse-pivot 2s infinite;
+}
+.simplex-table .pivot-cell:hover {
+  color: #fff900; /* Neon yellow */
+  text-shadow: 0 0 8px #fff900, 0 0 16px #fff900;
+}
+
+@keyframes pulse-pivot {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  }
 }
 
 .simplex-table .entering-variable {
-  background-color: rgba(40, 167, 69, 0.2) !important;
+  background-color: rgba(0, 123, 255, 0.3) !important;
+  border-left: 1px solid #007bff !important;
+  border-right: 1px solid #007bff !important;
 }
 
 .simplex-table .leaving-variable {
+  background-color: rgba(220, 53, 69, 0.3) !important;
+  border-top: 1.5px solid #dc3545 !important;
+  border-bottom: 1.5px solid #dc3545 !important;
+}
+
+/* Estilos para columna pivote */
+.simplex-table .pivot-column {
+  background-color: rgba(0, 123, 255, 0.2) !important;
+  
+}
+
+/* Estilos para fila pivote */
+.simplex-table .pivot-row {
   background-color: rgba(220, 53, 69, 0.2) !important;
+  border-top: 1px solid #dc3545 !important;
+  border-bottom: 1px solid #dc3545 !important;
+}
+
+/* Indicadores visuales mejorados */
+.variable-indicator {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0.25rem;
+}
+
+.entering-indicator {
+  background-color: rgba(0, 123, 255, 0.2);
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.leaving-indicator {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.pivot-indicator {
+  background-color: rgba(255, 193, 7, 0.3);
+  color: #856404;
+  border: 1px solid #ffc107;
+}
+
+/* Responsive para tablas mejorado */
+@media (max-width: 768px) {
+  .simplex-table {
+    font-size: 0.7rem;
+  }
+
+  .simplex-table th,
+  .simplex-table td {
+    padding: 0.3rem 0.2rem;
+  }
+
+  .simplex-table-container {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+
+  .table-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .simplex-table {
+    font-size: 0.6rem;
+  }
+
+  .simplex-table th,
+  .simplex-table td {
+    padding: 0.2rem 0.1rem;
+  }
+}
+
+/* Estilos para alertas de variables */
+.alert-info {
+  border-left: 4px solid #007bff;
+}
+
+.alert-danger {
+  border-left: 4px solid #dc3545;
+}
+
+.alert-warning {
+  border-left: 4px solid #ffc107;
+}
+
+.alert-success {
+  border-left: 4px solid #28a745;
+}
+
+/* Animaciones para transiciones */
+.simplex-table td {
+  transition: all 0.3s ease;
+}
+
+.simplex-table tr {
+  transition: all 0.3s ease;
+}
+
+/* Mejoras para el modo oscuro */
+[data-theme="dark"] .simplex-table-container {
+  background-color: var(--bg-primary);
+  border-color: #495057;
+}
+
+[data-theme="dark"] .table-title {
+  background-color: #495057;
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .simplex-table .base-column {
+  background-color: #495057 !important;
+}
+
+[data-theme="dark"] .simplex-table .objective-label {
+  background-color: #495057 !important;
 }
 
 /* Toggle de tema */
@@ -445,7 +647,7 @@ footer {
   right: 20px;
   float: right;
   z-index: 1000;
-  
+
   color: var(--text-table-header);
   border: none;
   border-radius: 50%;
