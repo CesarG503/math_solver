@@ -1,7 +1,9 @@
 from django import forms
-from .models import Usuarios
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import get_user_model
 
-class CustomUserCreationForm(forms.ModelForm):
-    class Meta:
-        model = Usuarios
-        fields = ('username', 'email', 'profile_picture', 'password')
+Usuarios = get_user_model()
+
+class LoginUsersForm(AuthenticationForm):
+    username = forms.CharField(label="Usuario", max_length=100)
+    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)

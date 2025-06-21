@@ -1,5 +1,7 @@
 from django.shortcuts import render
-from django.contrib import messages 
+from django.contrib import messages
+from django.contrib.auth.views import LoginView
+from .forms import LoginUsersForm
 from .utils import interpolacion_hermite, integracion_compuesta
 
 def index(request):
@@ -80,3 +82,8 @@ def integracion_view(request):
             messages.error(request, f'Error en el cálculo: {str(e)}')
     
     return render(request, 'metodos_numericos/integracion.html', context)
+
+class UsuarioLoginView(LoginView):
+    template_name = 'login.html'
+    authentication_form = LoginUsersForm
+    redirect_authenticated_user = True
