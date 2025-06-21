@@ -451,7 +451,7 @@ def _resolver_simplex(problema, pasos):
         
         # Encontrar variable saliente (fila pivote) usando prueba de razón mínima
         pasos.append("📊 PRUEBA DE RAZÓN MÍNIMA:")
-        pasos.append("   Fila | Variable Base | RHS | Coef. Columna | Razón")
+        pasos.append("   Fila | Variable Base | b(i) | Coef. Columna | Razón")
         pasos.append("   " + "-" * 55)
         
         razones = []
@@ -654,7 +654,7 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
             tabla_html += f'<th class="var-header">x<sub>{j+1}</sub></th>'
         else:
             tabla_html += f'<th class="slack-header">s<sub>{j-9}</sub></th>'
-    tabla_html += '<th class="rhs-header">RHS</th>'
+    tabla_html += '<th class="rhs-header">b(i)</th>'
     tabla_html += '</tr></thead>'
     
     # Cuerpo de la tabla
