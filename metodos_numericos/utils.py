@@ -409,8 +409,11 @@ def _resolver_simplex(problema, pasos):
         fila = A[i] + [b[i]]
         tabla.append(fila)
     
-    # Fila de la función objetivo (negativa para maximización)
-    fila_obj = [-coef for coef in c] + [0]
+    # Fila de la función objetivo
+    if tipo_original == 'maximizar':
+        fila_obj = [-coef for coef in c] + [0]  # Negativa para maximización
+    else:
+        fila_obj = [coef for coef in c] + [0]   # Positiva para minimización
     tabla.append(fila_obj)
     
     iteracion = 0
@@ -598,9 +601,12 @@ def _resolver_simplex(problema, pasos):
                 solucion[var_num] = tabla[i][-1]
     
     valor_objetivo = tabla[-1][-1]
+    # Mostrar siempre el valor óptimo como positivo
+    valor_objetivo_mostrar = abs(valor_objetivo)
     if tipo_original == 'minimizar':
         valor_objetivo = -valor_objetivo
-    
+        valor_objetivo_mostrar = abs(valor_objetivo)
+
     pasos.append("")
     pasos.append("3. SOLUCIÓN ÓPTIMA")
     pasos.append("")
@@ -615,7 +621,8 @@ def _resolver_simplex(problema, pasos):
             pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
     
     pasos.append("")
-    pasos.append(f"🎯 VALOR ÓPTIMO: Z = {valor_objetivo:.6f}")
+    # Mostrar valor óptimo siempre positivo en los pasos
+    pasos.append(f"🎯 VALOR ÓPTIMO: Z = {abs(valor_objetivo_mostrar):.6f}")
     
     # Verificación de la solución
     pasos.append("")
@@ -624,7 +631,7 @@ def _resolver_simplex(problema, pasos):
     
     return {
         'solucion': solucion,
-        'valor_objetivo': valor_objetivo,
+        'valor_objetivo': valor_objetivo_mostrar,
         'pasos': pasos,
         'tablas': tablas_simplex,
         'variables_basicas': variables_basicas,
