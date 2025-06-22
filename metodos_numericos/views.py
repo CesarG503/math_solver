@@ -48,7 +48,12 @@ def integracion_view(request):
     if request.method == 'POST':
         try:
             # Obtener datos del formulario
+            # Usar el campo oculto que contiene la expresión convertida
             funcion = request.POST.get('funcion', '')
+            if not funcion:
+                # Fallback al campo visible si el oculto está vacío
+                funcion = request.POST.get('funcion', '')
+            
             a = float(request.POST.get('a', 0))
             b = float(request.POST.get('b', 1))
             n = int(request.POST.get('n', 4))

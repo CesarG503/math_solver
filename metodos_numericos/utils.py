@@ -53,94 +53,213 @@ def interpolacion_hermite(puntos, x_eval):
     # Construir polinomio
     x = symbols('x')
     polinomio = Q[0][0]
-    
+
     pasos = []
     pasos.append("=== INTERPOLACIÓN DE HERMITE ===")
     pasos.append(f"Puntos dados: {puntos}")
     pasos.append(f"Punto de evaluación: x = {x_eval}")
     pasos.append("")
     pasos.append("1. Tabla de diferencias divididas:")
-    
+
     # Mostrar tabla
     pasos.append("   Xi    |  F[Xi]  |  Primera D.D  |  ...")
     pasos.append("   " + "-"*50)
     for i in range(2*n):
         fila = f"  {z[i]:6.3f} |"
         for j in range(min(i+1, 2*n)):
-            fila += f"  {Q[i][j]:8.4f}  |"
+            val = Q[i][j]
+            try:
+                fila += f"  {float(val):8.4f}  |"
+            except Exception:
+                fila += f"  {str(val):>8}  |"
         pasos.append(fila)
-    
+
     pasos.append("")
     pasos.append("2. Construcción del polinomio:")
-    pasos.append(f"H(x) = {Q[0][0]:.4f}")
-    
+    try:
+        pasos.append(f"$$H(x) = {float(Q[0][0]):.4f}$$")
+        terminos_latex = [f"{float(Q[0][0]):.4f}"]
+    except Exception:
+        pasos.append(f"$$H(x) = {Q[0][0]}$$")
+        terminos_latex = [f"{Q[0][0]}"]
+
     # Construir términos del polinomio
     termino_actual = 1
+
     for k in range(1, 2*n):
         termino_actual *= (x - z[k-1])
         coef = Q[k][k]
         polinomio += coef * termino_actual
         
-        # Mostrar paso
+        # Construir término en LaTeX
         termino_str = ""
         for j in range(k):
             if j == 0:
                 termino_str = f"(x - {z[j]:.3f})"
             else:
-                termino_str += f" * (x - {z[j]:.3f})"
+                termino_str += f"(x - {z[j]:.3f})"
         
-        pasos.append(f"     + {coef:.6f} * {termino_str}")
-    
+        if coef >= 0:
+            terminos_latex.append(f"+ {coef:.6f} \\cdot {termino_str}")
+        else:
+            terminos_latex.append(f"{coef:.6f} \\cdot {termino_str}")
+        
+        pasos.append(f"     {terminos_latex[-1]}")
+
     # Simplificar polinomio
     polinomio_expandido = sp.expand(polinomio)
-    
+
     pasos.append("")
     pasos.append("3. Polinomio expandido:")
-    pasos.append(f"H(x) = {polinomio_expandido}")
-    
+    # Convertir el polinomio a LaTeX
+    polinomio_latex = sp.latex(polinomio_expandido)
+    pasos.append(f"$$H(x) = {polinomio_latex}$$")
+
     # Evaluar en x_eval
     resultado = float(polinomio_expandido.subs(x, x_eval))
-    
+
     pasos.append("")
     pasos.append("4. Evaluación:")
-    pasos.append(f"H({x_eval}) = {resultado:.8f}")
-    
+    pasos.append(f"$$H({x_eval}) = {resultado:.8f}$$")
+
     return {
         'resultado': resultado,
         'polinomio': str(polinomio_expandido),
+        'polinomio_latex': polinomio_latex,
         'pasos': pasos,
         'puntos': puntos
     }
 
+def limpiar_funcion_mathlive(funcion_str):
+    """
+    Limpia la cadena de entrada proveniente de MathLive para que sea compatible con sympy.sympify
+    """
+    import re
+    
+    if not funcion_str:
+        return ""
+    
+    # Eliminar espacios extra
+    funcion_str = funcion_str.strip()
+    
+    # Conversiones básicas de LaTeX a Python
+    conversiones = [
+        # Funciones trigonométricas
+        (r'\\sin\s*\(', 'sin('),
+        (r'\\cos\s*\(', 'cos('),
+        (r'\\tan\s*\(', 'tan('),
+        (r'\\sec\s*\(', '1/cos('),
+        (r'\\csc\s*\(', '1/sin('),
+        (r'\\cot\s*\(', '1/tan('),
+        
+        # Funciones inversas
+        (r'\\arcsin\s*\(', 'asin('),
+        (r'\\arccos\s*\(', 'acos('),
+        (r'\\arctan\s*\(', 'atan('),
+        
+        # Funciones hiperbólicas
+        (r'\\sinh\s*\(', 'sinh('),
+        (r'\\cosh\s*\(', 'cosh('),
+        (r'\\tanh\s*\(', 'tanh('),
+        
+        # Funciones logarítmicas
+        (r'\\ln\s*\(', 'log('),
+        (r'\\log\s*\(', 'log10('),
+        
+        # Exponencial
+        (r'\\exp\s*\(', 'exp('),
+        (r'e\^', 'exp('),
+        
+        # Raíz cuadrada
+        (r'\\sqrt\s*\{([^}]+)\}', r'sqrt(\1)'),
+        (r'\\sqrt\s*\(', 'sqrt('),
+        
+        # Valor absoluto
+        (r'\\left\|([^|]+)\\right\|', r'abs(\1)'),
+        
+        # Limpiar comandos LaTeX
+        (r'\\left\(', '('),
+        (r'\\right\)', ')'),
+        (r'\\left\{', '('),
+        (r'\\right\}', ')'),
+        (r'\{', '('),
+        (r'\}', ')'),
+        
+        # Potencias
+        (r'\^', '**'),
+        
+        # Constantes matemáticas
+        (r'\\pi', 'pi'),
+        (r'\\e\b', 'E'),
+        
+        # Fracciones simples
+        (r'\\frac\s*\{([^}]+)\}\s*\{([^}]+)\}', r'(\1)/(\2)'),
+        
+        # Limpiar asteriscos múltiples (solo 3 o más, para no romper potencias)
+        (r'\*{3,}', '*'),
+        
+        # Multiplicación implícita
+        (r'(\d)([a-zA-Z])', r'\1*\2'),
+        (r'([a-zA-Z])(\d)', r'\1*\2'),
+        (r'\)\(', ')*('),
+        (r'\)([a-zA-Z])', r')*\1'),
+        (r'([a-zA-Z])\(', r'\1*('),
+    ]
+    
+    # Aplicar todas las conversiones
+    for patron, reemplazo in conversiones:
+        funcion_str = re.sub(patron, reemplazo, funcion_str)
+    
+    # Limpiar espacios finales
+    funcion_str = re.sub(r'\s+', '', funcion_str)
+    
+    return funcion_str
+
 def integracion_compuesta(funcion_str, a, b, n, metodo):
     """
     Implementa integración numérica compuesta
-    
-    Args:
-        funcion_str: Función como string (ej: 'x**2 + 1')
-        a, b: Límites de integración
-        n: Número de subintervalos
-        metodo: 'trapecio', 'simpson13', 'simpson38'
-    
-    Returns:
-        Dict con resultado y pasos detallados
     """
+    # Limpiar función de entrada
+    funcion_str = limpiar_funcion_mathlive(funcion_str)
+    
     # Parsear función
     x = symbols('x')
     try:
+        # Intentar parsear la función
         funcion_sym = sympify(funcion_str)
-        f = lambdify(x, funcion_sym, 'numpy')
-    except:
-        raise ValueError(f"No se pudo parsear la función: {funcion_str}")
+        f = lambdify(x, funcion_sym, ['numpy', 'math'])
+        
+        # Crear LaTeX para mostrar
+        try:
+            funcion_latex = sp.latex(funcion_sym)
+        except:
+            funcion_latex = str(funcion_sym)
+            
+    except Exception as e:
+        # Si falla el parsing, intentar con algunas correcciones adicionales
+        try:
+            # Correcciones adicionales para casos problemáticos
+            funcion_corregida = funcion_str
+            
+            # Asegurar que las funciones matemáticas estén bien formateadas
+            import re
+            funcion_corregida = re.sub(r'(\w+)\*\(', r'\1(', funcion_corregida)
+            
+            funcion_sym = sympify(funcion_corregida)
+            f = lambdify(x, funcion_sym, ['numpy', 'math'])
+            funcion_latex = sp.latex(funcion_sym)
+            
+        except Exception as e2:
+            raise ValueError(f"No se pudo parsear la función '{funcion_str}'. Error: {str(e2)}")
     
     h = (b - a) / n
     pasos = []
     
     pasos.append(f"=== INTEGRACIÓN NUMÉRICA COMPUESTA - {metodo.upper()} ===")
-    pasos.append(f"Función: f(x) = {funcion_str}")
-    pasos.append(f"Intervalo: [{a}, {b}]")
-    pasos.append(f"Número de subintervalos: n = {n}")
-    pasos.append(f"Ancho de subintervalo: h = (b-a)/n = ({b}-{a})/{n} = {h:.6f}")
+    pasos.append(f"Función: $$f(x) = {funcion_latex}$$")
+    pasos.append(f"Intervalo: $[{a}, {b}]$")
+    pasos.append(f"Número de subintervalos: $n = {n}$")
+    pasos.append(f"Ancho de subintervalo: $$h = \\frac{{b-a}}{{n}} = \\frac{{{b}-{a}}}{{{n}}} = {h:.6f}$$")
     pasos.append("")
     
     if metodo == 'trapecio':
@@ -166,7 +285,7 @@ def integracion_compuesta(funcion_str, a, b, n, metodo):
 def _trapecio_compuesto(f, a, b, n, h, pasos):
     """Regla del trapecio compuesta"""
     pasos.append("Fórmula del trapecio compuesto:")
-    pasos.append("∫f(x)dx ≈ (h/2)[f(x₀) + 2∑f(xᵢ) + f(xₙ)]")
+    pasos.append("$$\\int_a^b f(x)dx \\approx \\frac{h}{2}\\left[f(x_0) + 2\\sum_{i=1}^{n-1}f(x_i) + f(x_n)\\right]$$")
     pasos.append("")
     
     # Calcular puntos
@@ -190,14 +309,14 @@ def _trapecio_compuesto(f, a, b, n, h, pasos):
     resultado = (h/2) * suma
     
     pasos.append(f"Suma total = {suma:.6f}")
-    pasos.append(f"Resultado = (h/2) × suma = ({h:.6f}/2) × {suma:.6f} = {resultado:.8f}")
-    
+    pasos.append(f"$$\\mathrm{{Resultado}} = \\frac{{h}}{{2}} \\times \\text{{suma}} = \\frac{{{h:.6f}}}{{2}} \\times {suma:.6f} = {resultado:.8f}$$")
+
     return resultado
 
 def _simpson13_compuesto(f, a, b, n, h, pasos):
     """Regla de Simpson 1/3 compuesta"""
     pasos.append("Fórmula de Simpson 1/3 compuesta:")
-    pasos.append("∫f(x)dx ≈ (h/3)[f(x₀) + 4∑f(x₂ᵢ₋₁) + 2∑f(x₂ᵢ) + f(xₙ)]")
+    pasos.append("$$\\int_a^b f(x)dx \\approx \\frac{h}{3}\\left[f(x_0) + 4\\sum_{i=1}^{n/2}f(x_{2i-1}) + 2\\sum_{i=1}^{n/2-1}f(x_{2i}) + f(x_n)\\right]$$")
     pasos.append("")
     
     # Calcular puntos
@@ -224,14 +343,14 @@ def _simpson13_compuesto(f, a, b, n, h, pasos):
     resultado = (h/3) * suma_total
     
     pasos.append(f"Suma total = {suma_total:.6f}")
-    pasos.append(f"Resultado = (h/3) × suma = ({h:.6f}/3) × {suma_total:.6f} = {resultado:.8f}")
+    pasos.append(f"$$\\mathrm{{Resultado}} = \\frac{{h}}{{3}} \\times \\text{{suma}} = \\frac{{{h:.6f}}}{{3}} \\times {suma_total:.6f} = {resultado:.8f}$$")
     
     return resultado
 
 def _simpson38_compuesto(f, a, b, n, h, pasos):
     """Regla de Simpson 3/8 compuesta"""
     pasos.append("Fórmula de Simpson 3/8 compuesta:")
-    pasos.append("∫f(x)dx ≈ (3h/8)[f(x₀) + 3∑f(x₃ᵢ₋₂) + 3∑f(x₃ᵢ₋₁) + 2∑f(x₃ᵢ) + f(xₙ)]")
+    pasos.append("$$\\int_a^b f(x)dx \\approx \\frac{3h}{8}\\left[f(x_0) + 3\\sum_{i=1}^{n/3}f(x_{3i-2}) + 3\\sum_{i=1}^{n/3}f(x_{3i-1}) + 2\\sum_{i=1}^{n/3-1}f(x_{3i}) + f(x_n)\\right]$$")
     pasos.append("")
     
     # Calcular puntos
@@ -259,7 +378,7 @@ def _simpson38_compuesto(f, a, b, n, h, pasos):
     resultado = (3*h/8) * suma_total
     
     pasos.append(f"Suma total = {suma_total:.6f}")
-    pasos.append(f"Resultado = (3h/8) × suma = (3×{h:.6f}/8) × {suma_total:.6f} = {resultado:.8f}")
+    pasos.append(f"$$\\mathrm{{Resultado}} = \\frac{{3h}}{{8}} \\times \\text{{suma}} = \\frac{{3\\times{h:.6f}}}{{8}} \\times {suma_total:.6f} = {resultado:.8f}$$")
     
     return resultado
 
