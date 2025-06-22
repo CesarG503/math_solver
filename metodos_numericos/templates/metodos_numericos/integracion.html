@@ -138,9 +138,9 @@
                 </h4>
             </div>
             <div class="card-body">
-                <div class="alert alert-success">
+                <div class="alert alert-success ps-2">
                     <h6 class="text-alert"><i class="fas fa-integral me-2 "></i>Integral aproximada:</h6>
-                    <h4 class="text-dark">∫ {{ funcion }} dx ≈ {{ resultado }}</h4>
+                    <h4 class="text-dark">$$\int {{ funcion_latex|safe }}\,dx \approx {{ resultado }}$$</h4>
                     <small class="text-muted">Método: {{ metodo|title }}</small>
                 </div>
                 

@@ -61,6 +61,9 @@ function convertLatexToPython(latex) {
 
   let python = latex
 
+  // Fracciones LaTeX: \frac{a}{b} → (a)/(b) (¡PRIMERO!)
+  python = python.replace(/\\frac\s*\{([^}]*)\}\s*\{([^}]*)\}/g, "($1)/($2)");
+
   // Limpiar comandos LaTeX básicos primero
   python = python.replace(/\\left\(/g, "(")
   python = python.replace(/\\right\)/g, ")")
@@ -109,9 +112,6 @@ function convertLatexToPython(latex) {
   // Constantes matemáticas
   python = python.replace(/\\pi/g, "pi")
   python = python.replace(/\\e/g, "E")
-
-  // Fracciones simples
-  python = python.replace(/\\frac\s*$$\s*([^,]+)\s*,\s*([^)]+)\s*$$/g, "($1)/($2)")
 
   // Limpiar asteriscos extra que pueden aparecer
   // Solo reemplazar 3 o más asteriscos por uno, para no romper potencias
