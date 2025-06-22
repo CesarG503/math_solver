@@ -1,4 +1,5 @@
 {% extends 'metodos_numericos/base.html' %}
+{% load static %}
 
 {% block title %}Integración Numérica - Métodos Numéricos{% endblock %}
 
@@ -27,10 +28,36 @@
                         <label for="funcion" class="form-label">
                             <i class="fas fa-function me-1"></i>Función f(x)
                         </label>
-                        <input type="text" class="form-control mt-2 mb-2" id="funcion" name="funcion" 
-                               placeholder="x**2 + 2*x + 1" value="{{ funcion_input }}" required>
+                        <math-field id="funcion" name="funcion" class="form-control mt-2 mb-2" 
+                                    style="border: 1px solid #ced4da; border-radius: 0.375rem; padding: 0.375rem 0.75rem; min-height: 38px;"
+                                    virtual-keyboard-mode="manual">{{ funcion_input|default:"x^2 + 2x + 1" }}</math-field>
+                        <input type="hidden" id="funcion-hidden" name="funcion" value="{{ funcion_input }}">
                         <div class="form-text">
-                            Usa notación: x**2, sin(x), exp(x), etc.
+                            Usa el teclado matemático o escribe directamente: x^2, sin(x), exp(x), etc.
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="toggleMathKeyboard()">
+                            <i class="fas fa-keyboard me-1"></i>Mostrar/Ocultar Teclado
+                        </button>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <small class="text-muted d-block mb-2">Ejemplos rápidos:</small>
+                        <div class="btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('polynomial')">
+                                x²+2x+1
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('trigonometric')">
+                                sin(x)
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('exponential')">
+                                eˣ
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('logarithmic')">
+                                ln(x)
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('rational')">
+                                1/(1+x²)
+                            </button>
                         </div>
                     </div>
                     
@@ -111,9 +138,9 @@
                 </h4>
             </div>
             <div class="card-body">
-                <div class="alert alert-success">
+                <div class="alert alert-success ps-2">
                     <h6 class="text-alert"><i class="fas fa-integral me-2 "></i>Integral aproximada:</h6>
-                    <h4 class="text-dark">∫ {{ funcion }} dx ≈ {{ resultado }}</h4>
+                    <h4 class="text-dark">$$\int {{ funcion_latex|safe }}\,dx \approx {{ resultado }}$$</h4>
                     <small class="text-muted">Método: {{ metodo|title }}</small>
                 </div>
                 
@@ -156,15 +183,19 @@
                 <div class="solution-steps">
                     {% for paso in pasos %}
                         {% if "===" in paso %}
-                            <p class="fs-3 mt-3">{{ paso|slice:"3:-3" }}</p>
+                            <h3 class="text-success mt-3">{{ paso|slice:"3:-3" }}</h3>
                         {% elif paso == "" %}
                             <br>
+                        {% elif "$$" in paso %}
+                            <div class="math-display text-center my-3">{{ paso|safe }}</div>
+                        {% elif "$" in paso and not "===" in paso %}
+                            <p class="mb-1">{{ paso|safe }}</p>
                         {% elif "∫" in paso or "≈" in paso %}
                             <div class="bg-light p-2 rounded mb-2">
-                                <code>{{ paso }}</code>
+                                <div class="math-display">{{ paso|safe }}</div>
                             </div>
                         {% elif "Fórmula" in paso %}
-                            <h5 class="text-alert">{{ paso }}</h5>
+                            <h5 class="text-success">{{ paso }}</h5>
                         {% else %}
                             <p class="mb-1">{{ paso }}</p>
                         {% endif %}
@@ -183,4 +214,18 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'metodos_numericos/js/mathlive-config.js' %}"></script>
+<script>
+// Re-renderizar MathJax después de cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise();
+        }
+    }, 500);
+});
+</script>
 {% endblock %}

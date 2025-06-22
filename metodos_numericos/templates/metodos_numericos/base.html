@@ -7,10 +7,32 @@
     
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+    <!-- MathJax para renderizado de ecuaciones -->
+    <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\$$', '\$$']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- MathLive para teclado matemático -->
+    <script defer src="https://unpkg.com/mathlive"></script>
+    <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive-static.css">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/css/sci-fi.css">
     
     {% load static %}
-    <link href="{% static 'metodos_numericos/css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'metodos_numericos/css/style.css' %}">
 </head>
 <body>
     <nav class="navbar bg-secondary estilo-brillo border border-secondary hover-neon  position-sticky top-0 p-1">
@@ -32,6 +54,7 @@
             {% else %}
                 <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
             {% endif %}
+
         </div>
     </nav>
 
@@ -62,5 +85,21 @@
     <script src="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/js/retrosci-fi.js"></script>
     {% block scripts %}
     {% endblock %}
+
+    <script>
+    // Configuración global de MathJax
+    window.addEventListener('load', function() {
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise();
+        }
+    });
+
+    // Función para re-renderizar MathJax después de cambios dinámicos
+    function rerenderMath() {
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise();
+        }
+    }
+    </script>
 </body>
 </html>
