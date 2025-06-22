@@ -22,9 +22,16 @@
         </button>
         </div>
         <div class="navbar-nav">
-        <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:index' %}">Inicio</a>
-        <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:hermite' %}"> Hermite</a>
-        <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:integracion' %}">Integracion</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:index' %}">Inicio</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:hermite' %}"> Hermite</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:integracion' %}">Integracion</a>
+            {% if request.user.is_authenticated %}
+                <!--Aqui pondre la funcion para poder ver el perfil del usuario pero de momento solo cierra la sesion-->
+                <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:logout' %}">Usuario: {{ request.user.username }}</a>
+                <a class="nav-item rounded" href="{% url 'metodos_numericos:logout' %}"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></a>
+            {% else %}
+                <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
+            {% endif %}
         </div>
     </nav>
 

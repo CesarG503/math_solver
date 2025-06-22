@@ -1,9 +1,20 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import Usuarios
 
-Usuarios = get_user_model()
+class FormCrearUsuario(UserCreationForm):
+    image = forms.ImageField(required=True, label='Imagen de perfil')
 
-class LoginUsersForm(AuthenticationForm):
-    username = forms.CharField(label="Usuario", max_length=100)
-    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2', 'image')
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        image = self.cleaned_data.get('image')
+        if image:
+            user.usuarios.image = image
+            if(commit):
+                user.save()
+        return user

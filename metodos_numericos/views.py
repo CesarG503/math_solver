@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.contrib.auth.views import LoginView
-from .forms import LoginUsersForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from .forms import FormCrearUsuario
 from .utils import interpolacion_hermite, integracion_compuesta
 
 def index(request):
@@ -83,7 +85,43 @@ def integracion_view(request):
     
     return render(request, 'metodos_numericos/integracion.html', context)
 
-class UsuarioLoginView(LoginView):
-    template_name = 'login.html'
-    authentication_form = LoginUsersForm
-    redirect_authenticated_user = True
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('metodos_numericos:index')
+    
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('metodos_numericos:index')
+            messages.error(request, 'Usuario o contraseña incorrectos')
+            return render(request, 'auth/login.html', {'form': form})
+        else:
+            return render(request, 'auth/login.html', {'form': form})
+    else:
+        form = AuthenticationForm()
+    return render(request, 'auth/login.html', {'form': form})
+
+def sing_up_view(request):
+    if request.user.is_authenticated:
+        return redirect('metodos_numericos:index')
+    
+    if( request.method == 'POST'):
+        form = FormCrearUsuario(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
+            return redirect('metodos_numericos:index')
+        else:
+            return render(request, 'auth/register.html', {'form': form})
+    else:
+        form = FormCrearUsuario()
+    return render(request, 'auth/register.html', {'form': form})
+
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect('metodos_numericos:index')
