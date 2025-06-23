@@ -116,6 +116,7 @@
         </div>
         
         <div class="card mt-3">
+        {% if user.is_authenticated %}
             <div class="card-header bg-warning-neon text-white">
                 <h4 class="">
                     <i class="fas fa-list-ol me-2"></i>Solución Paso a Paso
@@ -140,6 +141,15 @@
                     {% endfor %}
                 </div>
             </div>
+            {% else %}
+
+                <div class="card-body text-center text-muted py-5">
+                    <i class="fa-regular fa-user" style="font-size: 5rem;"></i>
+                    <h3>Para poder ver los resultados completos, primero debes iniciar sesión</h3>
+                    <a class='btn btn-success' href='{% url 'metodos_numericos:login' %}' >Iniciar Sesión</a>
+                </div>
+
+            {% endif %}
         </div>
         {% else %}
         <div class="card">
@@ -154,7 +164,7 @@
 </div>
 
 
-        {% if datos_grafica %}
+        {% if datos_grafica and user.is_authenticated %}
         <div class="container-fluid m-auto">
 
 
