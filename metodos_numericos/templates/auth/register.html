@@ -3,43 +3,79 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear un usuario</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/sketchy/bootstrap.css">
+    <link rel="stylesheet" href="{% static 'metodos_numericos/css/auth.css' %}">
 </head>
 <body>
-    <h2>Crear un usuario</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="username">Nombre de usuario:</label>
-        <input type="text" id="username" name="username" required>
-        {%for error in form.username.errors %}
-            <p style="color: red;">{{ error }}</p>
-        {% endfor %}
-        <br>
-        <label for="email">Correo electronico:</label>
-        <input type="email" id="email" name="email" required>
-        {%for error in form.email.errors %}
-            <p style="color: red;">{{ error }}</p>
-        {% endfor %}
-        <br>
-        <label for="password1">Contraseña</label>
-        <input type="password" id="password1" name="password1" required>
-        {%for error in form.password.errors %}
-            <p style="color: red;">{{ error }}</p>
-        {% endfor %}
-        <br>
-        <label for="password2">Contraseña</label>
-        <input type="password" id="password2" name="password2" required>
-        {%for error in form.password2.errors %}
-            <p style="color: red;">{{ error }}</p>
-        {% endfor %}
-        <br>
-        <label for="image">Imagen de perfil:</label>
-        <input type="file" id="image" name="image" accept="image/*">
-        {%for error in form.image.errors %}
-            <p style="color: red;">{{ error }}</p>
-        {% endfor %}
-        <br>
-        <button type="submit">Entrar</button>
-    </form>
+<!----------------------- Main Container -------------------------->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <!----------------------- Login Container -------------------------->
+        <div class="row border p-3 bg-white shadow box-area">
+            <!-------------------- ------ Right Box ---------------------------->
+            <div class="col right-box">
+                <form class="card row align-items-center" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-header header-text mb-4 bg-success text-center">
+                        <img src="{% static 'metodos_numericos/img/user.png'%}" alt="" width="70px">
+                        <h1><span class="badge bg-primary h1">Registro de Usuarios</span></h1>
+
+                        
+                        <p >Bienvenid@!!, estamos felices de tenerte de por aca.</p>
+                    </div>
+                     <label for="">Nombre</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" name="username" placeholder="Ingrese su nombre de usuario..." required>
+                    </div>
+
+                    <label for="">Correo Electronico</label>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control form-control-lg bg-light fs-6" id="email" name="email" placeholder="Ingrese su correo electronico..." required>
+                        {% for error in form.email.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- CONTRASEÑAS -->
+                    <label for="">Contraseña</label>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control form-control-lg bg-light fs-6" id="password1" name="password1" placeholder="Ingrese una contraseña..." required>
+                        {% for error in form.password.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <label for="">Confirme su contraseña</label>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control form-control-lg bg-light fs-6" d="password2" name="password2" placeholder="Ingrese de nuevo la contraseña..." required>
+                        {% for error in form.password2.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <label for="image">Imagen de perfil</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control form-control-lg bg-light fs-6" id="image" name="image" accept="image/*">
+                        {% for error in form.image.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <button type="submit" class="btn btn-lg btn-success w-100 fs-6">CREAR CUENTA</button>
+                    </div>
+
+                    <div class="row">
+                        <small>¿Ya tienes una cuenta? <a href="{% url 'metodos_numericos:login' %}">Inicia sesión aquí</a></small>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
 </body>
 </html>

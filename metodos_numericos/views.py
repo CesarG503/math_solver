@@ -89,7 +89,7 @@ def integracion_view(request):
         except Exception as e:
             messages.error(request, f'Error en el cálculo: {str(e)}')
     
-    return render(request, 'metodos_numericos/integracion.html', context)
+    return redirect(request, 'metodos_numericos/integracion.html', context)
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -107,7 +107,7 @@ def login_view(request):
             messages.error(request, 'Usuario o contraseña incorrectos')
             return render(request, 'auth/login.html', {'form': form})
         else:
-            return render(request, 'auth/login.html', {'form': form})
+            return render(request, 'auth/login.html', {'form': form,'error':'Credenciales Incorrectas'})
     else:
         form = AuthenticationForm()
     return render(request, 'auth/login.html', {'form': form})

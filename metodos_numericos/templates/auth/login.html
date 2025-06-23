@@ -3,37 +3,46 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://bootswatch.com/5/sketchy/bootstrap.css">
+    <link rel="stylesheet" href="{% static 'metodos_numericos/css/auth.css' %}">
     <title>Iniciar sesión</title>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-success">
-                        <h2 class="text-center">Iniciar sesión</h2>
+    <!----------------------- Main Container -------------------------->
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <!----------------------- Login Container -------------------------->
+        <div class="row border p-3 bg-white shadow box-area">
+            <!-------------------- ------ Right Box ---------------------------->
+            <div class="col right-box">
+                <form class="card row align-items-center" method="post">
+                    {% csrf_token %}
+                    <div class="card-header header-text mb-4 bg-success text-center">
+                        <h1><span class="badge bg-primary h1">Inicio de Seccion</span></h1>
+                        <p >Bienvenid@!!, estamos felices de tenerte de por aca.</p>
                     </div>
-                    <div class="card-body">
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Nombre de usuario:</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña:</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-outline-success">Entrar</button>
-                            </div>
-                        </form>
+                    <p class="text-danger">{{ error }}</p>
+                    <label for="">Nombre</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" name="username" placeholder="Ingrese su nombre de usuario..." required>
                     </div>
-                    <div class="card-footer text-center">
-                        <p class="mb-0">¿No tienes una cuenta? <a href="{% url 'metodos_numericos:register' %}">Regístrate aquí</a></p>
+                    <label for="">Contraseña</label>
+                    <div class="input-group mb-1">
+                        <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" name="password" placeholder="Ingrese su contraseña..." required>
                     </div>
-                </div>
+                    <div class="input-group mb-2 d-flex justify-content-between">
+                        <div class="forgot">
+                            <small><a href="#">¿Olvidaste tu contraseña?</a></small>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <button type="submit" class="btn btn-lg btn-success w-100 fs-6">Iniciar sesión</button>
+                    </div>
+                    <div class="row">
+                        <small>¿No tienes una cuenta? <a href="{% url 'metodos_numericos:register' %}">Regístrate</a></small>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
