@@ -382,6 +382,111 @@ def _simpson38_compuesto(f, a, b, n, h, pasos):
     
     return resultado
 
+def generar_datos_grafica_hermite(puntos, polinomio_str, x_eval):
+    """
+    Genera datos para la gráfica de interpolación de Hermite
+    """
+    import numpy as np
+    from sympy import symbols, sympify, lambdify
+    
+    try:
+        # Extraer coordenadas de los puntos
+        x_vals = [p[0] for p in puntos]
+        f_vals = [p[1] for p in puntos]
+        df_vals = [p[2] for p in puntos]
+        
+        # Determinar rango para la gráfica
+        x_min = min(x_vals) - 1
+        x_max = max(x_vals) + 1
+        
+        # Crear puntos para evaluar el polinomio (curva suave)
+        x_curve = np.linspace(x_min, x_max, 200)
+        
+        # Convertir polinomio a función evaluable
+        x = symbols('x')
+        polinomio_sym = sympify(polinomio_str)
+        f_poly = lambdify(x, polinomio_sym, 'numpy')
+        
+        # Evaluar polinomio
+        y_curve = f_poly(x_curve)
+        
+        # Punto de evaluación
+        y_eval = f_poly(x_eval)
+        
+        return {
+            'puntos_x': x_vals,
+            'puntos_y': f_vals,
+            'derivadas': df_vals,
+            'curva_x': x_curve.tolist(),
+            'curva_y': y_curve.tolist(),
+            'eval_x': x_eval,
+            'eval_y': float(y_eval),
+            'x_min': float(x_min),
+            'x_max': float(x_max),
+            'y_min': float(min(min(f_vals), min(y_curve)) - 1),
+            'y_max': float(max(max(f_vals), max(y_curve)) + 1)
+        }
+    except Exception as e:
+        return None
+
+def generar_datos_grafica_integracion(funcion_str, a, b, n, metodo, resultado):
+    """
+    Genera datos para la gráfica de integración numérica
+    """
+    import numpy as np
+    from sympy import symbols, sympify, lambdify
+    
+    try:
+        # Limpiar y parsear función
+        funcion_str = limpiar_funcion_mathlive(funcion_str)
+        x = symbols('x')
+        funcion_sym = sympify(funcion_str)
+        f = lambdify(x, funcion_sym, 'numpy')
+        
+        # Puntos para la curva suave de la función
+        x_curve = np.linspace(a - 0.5, b + 0.5, 300)
+        y_curve = f(x_curve)
+        
+        # Puntos para el área de integración
+        x_area = np.linspace(a, b, 100)
+        y_area = f(x_area)
+        
+        # Puntos de los subintervalos según el método
+        h = (b - a) / n
+        x_intervals = [a + i * h for i in range(n + 1)]
+        y_intervals = [f(x) for x in x_intervals]
+        
+        # Datos específicos del método
+        if metodo == 'trapecio':
+            # Líneas de los trapecios
+            trap_x = []
+            trap_y = []
+            for i in range(n):
+                trap_x.extend([x_intervals[i], x_intervals[i+1], x_intervals[i+1], x_intervals[i], x_intervals[i], None])
+                trap_y.extend([0, 0, y_intervals[i+1], y_intervals[i], 0, None])
+        else:
+            trap_x = []
+            trap_y = []
+        
+        return {
+            'curva_x': x_curve.tolist(),
+            'curva_y': y_curve.tolist(),
+            'area_x': x_area.tolist(),
+            'area_y': y_area.tolist(),
+            'intervalos_x': x_intervals,
+            'intervalos_y': y_intervals,
+            'trapecio_x': trap_x,
+            'trapecio_y': trap_y,
+            'a': a,
+            'b': b,
+            'resultado': resultado,
+            'metodo': metodo,
+            'n': n,
+            'h': h
+        }
+    except Exception as e:
+        return None
+
 def metodo_simplex(funcion_objetivo, restricciones, tipo_optimizacion):
     """
     Implementa el método Simplex para programación lineal

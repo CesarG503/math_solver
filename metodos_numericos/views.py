@@ -20,20 +20,40 @@ def hermite_view(request):
             # Obtener datos del formulario
             puntos_data = request.POST.get('puntos', '')
             x_eval = float(request.POST.get('x_eval', 0))
-            
+
             # Parsear puntos (formato: x1,f1,df1;x2,f2,df2;...)
             puntos = []
-            for punto_str in puntos_data.strip().split(';'):
-                if punto_str.strip():
-                    x, f, df = map(float, punto_str.split(','))
-                    puntos.append((x, f, df))
-            
+            if puntos_data.strip():
+                for punto_str in puntos_data.strip().split(';'):
+                    if punto_str.strip():
+                        try:
+                            x, f, df = map(float, punto_str.split(','))
+                            puntos.append((x, f, df))
+                        except ValueError:
+                            messages.error(request, f'Formato inválido en punto: {punto_str}')
+                            return render(request, 'metodos_numericos/hermite.html', context)
+
             if len(puntos) < 2:
                 messages.error(request, 'Se necesitan al menos 2 puntos para la interpolación.')
+                return render(request, 'metodos_numericos/hermite.html', context)
+
+            # Validar que no hay x duplicados
+            x_values = [p[0] for p in puntos]
+            if len(set(x_values)) != len(x_values):
+                messages.error(request, 'Los valores de x deben ser únicos.')
                 return render(request, 'metodos_numericos/hermite.html', context)
             
             # Calcular interpolación de Hermite
             resultado = interpolacion_hermite(puntos, x_eval)
+            
+            # Generar datos para gráfica
+            from .utils import generar_datos_grafica_hermite
+            datos_grafica = generar_datos_grafica_hermite(puntos, resultado['polinomio'], x_eval)
+            if datos_grafica:
+                context['datos_grafica'] = json.dumps(datos_grafica)
+
+            # Mantener los datos de entrada para repoblar el formulario
+            context['mantener_puntos'] = True
             context.update(resultado)
             context['puntos_input'] = puntos_data
             context['x_eval'] = x_eval
@@ -73,6 +93,13 @@ def integracion_view(request):
             
             # Calcular integración
             resultado = integracion_compuesta(funcion, a, b, n, metodo)
+
+            # Generar datos para gráfica
+            from .utils import generar_datos_grafica_integracion
+            datos_grafica = generar_datos_grafica_integracion(funcion, a, b, n, metodo, resultado['resultado'])
+            if datos_grafica:
+                context['datos_grafica'] = json.dumps(datos_grafica)
+
             h = (b - a) / n  # Calcular el ancho de subintervalo
             context.update(resultado)
             context.update({

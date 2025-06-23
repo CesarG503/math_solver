@@ -214,6 +214,21 @@
         {% endif %}
     </div>
 </div>
+{% if datos_grafica %}
+        <div class="container-fluid m-auto">
+        <div class="card mt-3">
+            <div class="card-header bg-info-neon text-white">
+                <h4 class="">
+                    <i class="fas fa-chart-area me-2"></i>Visualización de la Integración
+                </h4>
+            </div>
+            <div class="card-body">
+                <div id="integration-info"></div>
+                <div id="integration-graph" style="width: 100%;"></div>
+            </div>
+        </div>
+        </div>
+        {% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -228,4 +243,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 });
 </script>
+<script src="{% static 'metodos_numericos/js/integracion-graph.js' %}"></script>
+
+{% if datos_grafica %}
+<script>
+// Inicializar gráfica de integración
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    setTimeout(function() {
+        initializeIntegrationGraph({{ datos_grafica|safe }});
+        
+        // Re-renderizar MathJax
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise();
+        }
+    }, 500);
+   
+});
+</script>
+{% endif %}
+
 {% endblock %}
