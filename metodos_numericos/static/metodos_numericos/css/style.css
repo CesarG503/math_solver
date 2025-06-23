@@ -72,6 +72,15 @@ body {
   color: #6c757d !important;
 }
 
+#button-normal{
+  display: block;
+}
+
+#button-small{
+  display: none;
+}
+
+
 /* Estilos para código matemático */
 code {
   background-color: #f1f3f4;
@@ -109,6 +118,18 @@ code {
 
   .solution-steps {
     font-size: 0.8rem;
+  }
+
+  #button-small{
+    display: block;
+  }
+
+  #button-normal{
+    display: none;
+  }
+
+  .navbar-header{
+    justify-content: space-between;
   }
 }
 
