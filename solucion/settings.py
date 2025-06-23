@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from django.contrib import messages
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -26,6 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-y%f*nlnj&&2rfetv7$yt&4qn6&w-0yj@+@hj!8utrnrkr$0lnb'
+
+# PERSONALIZAR MESSAGES
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

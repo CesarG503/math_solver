@@ -116,7 +116,7 @@ def integracion_view(request):
         except Exception as e:
             messages.error(request, f'Error en el cálculo: {str(e)}')
     
-    return redirect(request, 'metodos_numericos/integracion.html', context)
+    return render(request, 'metodos_numericos/integracion.html', context)
 
 def login_view(request):
     if request.user.is_authenticated:

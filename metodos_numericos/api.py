@@ -12,10 +12,10 @@ def editar_usuario(request):
         form = FormEditarUsuario(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Perfil actualizado correctamente.', extra_tags='success')
+            messages.success(request, 'Perfil actualizado correctamente.')
             return redirect('metodos_numericos:index')
         else:
-            messages.error(request, 'Error al actualizar el perfil. Por favor, corrige los errores.', extra_tags='danger')
+            messages.error(request, 'Error al actualizar el perfil. Por favor, corrige los errores.')
     else:
-        messages.error(request,"No se ha enviado ningún dato para actualizar el perfil.", extra_tags='warning')
+        messages.error(request,"No se ha enviado ningún dato para actualizar el perfil.")
         return redirect(request, 'metodos_numericos:index')
