@@ -52,7 +52,7 @@ function initializeHermiteGraph(datosGrafica) {
         datosGrafica.derivadas.map((d) => d.toFixed(3)).join(", ") +
         "<extra></extra>",
       // Hacer los puntos arrastrables
-      dragmode: "select",
+      //dragmode: "select",
     },
     // Punto de evaluación
     {
@@ -120,7 +120,7 @@ function initializeHermiteGraph(datosGrafica) {
     displayModeBar: true,
     modeBarButtonsToAdd: [
       {
-        name: "Regenerar Polinomio",
+        name: "Editar puntos del problema",
         icon: {
           width: 857.1,
           height: 1000,
@@ -230,112 +230,171 @@ function regenerarPolinomio() {
 }
 
 function showRegenerateModal(nuevosPuntos) {
-  const modal = document.createElement("div")
-  modal.className = "modal fade"
-  modal.innerHTML = `
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Regenerar Polinomio</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>¿Deseas regenerar el polinomio con las nuevas posiciones de los puntos?</p>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Punto</th>
-                                    <th>x</th>
-                                    <th>f(x)</th>
-                                    <th>f'(x)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${nuevosPuntos
-                                  .map(
-                                    (p, i) => `
-                                    <tr>
-                                        <td>P${i + 1}</td>
-                                        <td>${p[0].toFixed(3)}</td>
-                                        <td>${p[1].toFixed(3)}</td>
-                                        <td>
-                                            <input type="number" class="form-control form-control-sm derivada-input" 
-                                                   value="${p[2]}" step="any" data-index="${i}">
-                                        </td>
-                                    </tr>
-                                `,
-                                  )
-                                  .join("")}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="confirmarRegeneracion()">Regenerar</button>
-                </div>
-            </div>
-        </div>
-    `
+  let html = `
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered table-striped" style="background: #f8f9fa; border-radius: 8px;">
+        <thead style="background: #007bff; color: #fff;">
+          <tr>
+            <th>Punto</th>
+            <th>x</th>
+            <th>f(x)</th>
+            <th>f'(x)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${nuevosPuntos
+            .map(
+              (p, i) => `
+                <tr>
+                  <td>P${i + 1}</td>
+                  <td><input type="number" class="form-control form-control-sm x-input" value="${p[0]}" step="any" data-index="${i}" style="background:#e3f2fd; border:1px solid #90caf9;"></td>
+                  <td><input type="number" class="form-control form-control-sm fx-input" value="${p[1]}" step="any" data-index="${i}" style="background:#e8f5e9; border:1px solid #a5d6a7;"></td>
+                  <td><input type="number" class="form-control form-control-sm derivada-input" value="${p[2]}" step="any" data-index="${i}" style="background:#fff3e0; border:1px solid #ffcc80;"></td>
+                </tr>
+              `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `
 
-  document.body.appendChild(modal)
-  const bootstrapModal = new bootstrap.Modal(modal)
-  bootstrapModal.show()
-
-  // Limpiar modal al cerrar
-  modal.addEventListener("hidden.bs.modal", () => {
-    document.body.removeChild(modal)
+  Swal.fire({
+    title: '<span style="color:#1565c0;font-weight:bold;">Regenerar Polinomio</span>',
+    icon: 'question',
+    html: `
+      <p style="color:#333;">¿Deseas regenerar el polinomio con las nuevas posiciones de los puntos?</p>
+      ${html}
+    `,
+    background: 'white',
+    customClass: {
+      confirmButton: 'swal2-confirm btn btn-success',
+      cancelButton: 'swal2-cancel btn btn-secondary',
+      popup: 'swal2-modal-custom',
+    },
+    showCancelButton: true,
+    confirmButtonText: '<i class="fas fa-sync-alt"></i> Regenerar',
+    cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+    reverseButtons: true,
+    didOpen: () => {
+      // Guardar referencia para la confirmación
+      window.nuevosPuntosModal = nuevosPuntos
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      confirmarRegeneracion()
+    }
   })
-
-  // Guardar referencia para la confirmación
-  window.modalActual = modal
+  // Guardar referencia para la confirmación (por si se usa fuera de didOpen)
   window.nuevosPuntosModal = nuevosPuntos
 }
 
 function confirmarRegeneracion() {
   if (!window.nuevosPuntosModal) return
 
-  // Obtener derivadas actualizadas
+  // Obtener valores actualizados de x, f(x) y derivada
+  const xInputs = document.querySelectorAll(".x-input")
+  const fxInputs = document.querySelectorAll(".fx-input")
   const derivadaInputs = document.querySelectorAll(".derivada-input")
+
+  let valid = true
+  let xs = []
+
+  xInputs.forEach((input, i) => {
+    const xVal = Number.parseFloat(input.value)
+    if (isNaN(xVal)) valid = false
+    xs.push(xVal)
+    window.nuevosPuntosModal[i][0] = xVal
+  })
+  fxInputs.forEach((input, i) => {
+    const fxVal = Number.parseFloat(input.value)
+    if (isNaN(fxVal)) valid = false
+    window.nuevosPuntosModal[i][1] = fxVal
+  })
   derivadaInputs.forEach((input, i) => {
-    window.nuevosPuntosModal[i][2] = Number.parseFloat(input.value) || 1
+    const dVal = Number.parseFloat(input.value)
+    if (isNaN(dVal)) valid = false
+    window.nuevosPuntosModal[i][2] = dVal
   })
 
-  // Crear formulario para enviar datos
-  const form = document.createElement("form")
-  form.method = "POST"
-  form.style.display = "none"
+  // Validar que no haya x repetidos
+  const xSet = new Set(xs)
+  if (xSet.size !== xs.length) valid = false
 
-  // CSRF token
-  const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value
-  const csrfInput = document.createElement("input")
-  csrfInput.type = "hidden"
-  csrfInput.name = "csrfmiddlewaretoken"
-  csrfInput.value = csrfToken
-  form.appendChild(csrfInput)
-
-  // Puntos
-  const puntosInput = document.createElement("input")
-  puntosInput.type = "hidden"
-  puntosInput.name = "puntos"
-  puntosInput.value = window.nuevosPuntosModal.map((p) => `${p[0]},${p[1]},${p[2]}`).join(";")
-  form.appendChild(puntosInput)
-
-  // Punto de evaluación (mantener el actual)
-  const xEvalInput = document.createElement("input")
-  xEvalInput.type = "hidden"
-  xEvalInput.name = "x_eval"
-  xEvalInput.value = document.getElementById("x_eval").value
-  form.appendChild(xEvalInput)
-
-  document.body.appendChild(form)
-  form.submit()
-
-  // Cerrar modal
-  if (window.modalActual) {
-    bootstrap.Modal.getInstance(window.modalActual).hide()
+  if (!valid) {
+    Swal.fire({
+      title: 'Error de validación',
+      text: 'Verifica que todos los valores sean numéricos y que no haya valores de x repetidos.',
+      icon: 'error',
+      background: '#ffebee',
+      confirmButtonColor: '#c62828',
+      customClass: { popup: 'swal2-modal-custom' }
+    })
+    return
   }
+
+  // Confirmar con SweetAlert2
+  Swal.fire({
+    title: '<span style="color:#1565c0;">¿Regenerar polinomio?</span>',
+    text: '¿Deseas recalcular el polinomio con los nuevos puntos y derivadas?',
+    icon: 'question',
+    background: '#e3f2fd',
+    showCancelButton: true,
+    confirmButtonText: '<i class="fas fa-sync-alt"></i> Sí, regenerar',
+    cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+    reverseButtons: true,
+    customClass: {
+      confirmButton: 'swal2-confirm btn btn-success',
+      cancelButton: 'swal2-cancel btn btn-secondary',
+      popup: 'swal2-modal-custom',
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Crear formulario para enviar datos
+      const form = document.createElement("form")
+      form.method = "POST"
+      form.style.display = "none"
+
+      // CSRF token
+      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value
+      const csrfInput = document.createElement("input")
+      csrfInput.type = "hidden"
+      csrfInput.name = "csrfmiddlewaretoken"
+      csrfInput.value = csrfToken
+      form.appendChild(csrfInput)
+
+      // Puntos
+      const puntosInput = document.createElement("input")
+      puntosInput.type = "hidden"
+      puntosInput.name = "puntos"
+      puntosInput.value = window.nuevosPuntosModal.map((p) => `${p[0]},${p[1]},${p[2]}`).join(";")
+      form.appendChild(puntosInput)
+
+      // Punto de evaluación (mantener el actual)
+      const xEvalInput = document.createElement("input")
+      xEvalInput.type = "hidden"
+      xEvalInput.name = "x_eval"
+      xEvalInput.value = document.getElementById("x_eval").value
+      form.appendChild(xEvalInput)
+
+      document.body.appendChild(form)
+      form.submit()
+
+      // Cerrar modal
+      if (window.modalActual) {
+        bootstrap.Modal.getInstance(window.modalActual).hide()
+      }
+    } else {
+      Swal.fire({
+        title: 'Cancelado',
+        text: 'No se regeneró el polinomio.',
+        icon: 'info',
+        background: '#e0e0e0',
+        confirmButtonColor: '#1976d2',
+        customClass: { popup: 'swal2-modal-custom' }
+      })
+    }
+  })
 }
 
 function showGraphInstructions() {
@@ -351,8 +410,28 @@ function showGraphInstructions() {
                     <li><strong>Regenerar:</strong> Usa el botón "Regenerar Polinomio" para recalcular con las nuevas posiciones</li>
                     <li><strong>Reset:</strong> Usa el botón de reset para volver a la vista original</li>
                 </ul>
+                <div class="mt-2 text-center">
+                  <button id="editar-puntos-btn" class="btn btn-success mt-4 p-1 " type="button">
+                    <i class="fas fa-edit"></i> Editar puntos del problema
+                  </button>
+                </div>
             </div>
         `
+    // Agregar event listener al botón
+    const btn = document.getElementById("editar-puntos-btn")
+    if (btn) {
+      btn.addEventListener("click", () => {
+        // Usar los puntos actuales de la gráfica
+        if (window.datosGraficaHermite) {
+          const puntos = window.datosGraficaHermite.puntos_x.map((x, i) => [
+            x,
+            window.datosGraficaHermite.puntos_y[i],
+            window.datosGraficaHermite.derivadas[i]
+          ])
+          showRegenerateModal(puntos)
+        }
+      })
+    }
   }
 }
 
