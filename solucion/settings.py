@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from curses.ascii import EM
 from django.contrib import messages
 from pathlib import Path
 from dotenv import load_dotenv
@@ -146,3 +147,11 @@ LOGIN_URL = '/login/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('GMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('GMAIL_PASSWORD')
+
