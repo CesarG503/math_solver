@@ -18,12 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function inicializarTablaPuntos() {
-  // Cargar puntos existentes si los hay (para cuando se recarga la página con errores)
-  const puntosInput = document.querySelector('input[name="puntos"]')
-  if (puntosInput && puntosInput.value) {
-    cargarPuntosDesdeString(puntosInput.value)
-  } else {
-    // Agregar 2 puntos por defecto
+  // No cargar puntos por defecto aquí, se hará desde el template si es necesario
+  // Solo agregar puntos por defecto si no hay datos existentes
+  if (!window.puntosExistentes && !document.querySelector('input[name="puntos"]')?.value) {
+    // Agregar 2 puntos por defecto solo si no hay datos
     agregarPunto(0, 1, 2)
     agregarPunto(1, 4, 5)
   }
@@ -262,27 +260,44 @@ function validarYActualizarPuntos() {
 }
 
 function cargarPuntosDesdeString(puntosString) {
-  if (!puntosString) return
+  if (!puntosString) return false
 
-  // Limpiar tabla
-  document.getElementById("puntos-tbody").innerHTML = ""
-  contadorPuntos = 0
+  try {
+    // Limpiar tabla
+    document.getElementById("puntos-tbody").innerHTML = ""
+    contadorPuntos = 0
 
-  // Cargar puntos
-  const puntos = puntosString.split(";")
-  puntos.forEach((puntoStr) => {
-    if (puntoStr.trim()) {
-      const [x, fx, dfx] = puntoStr.split(",").map((v) => Number.parseFloat(v.trim()))
-      if (!isNaN(x) && !isNaN(fx) && !isNaN(dfx)) {
-        agregarPunto(x, fx, dfx)
+    // Cargar puntos
+    const puntos = puntosString.split(";")
+    let puntosValidos = 0
+
+    puntos.forEach((puntoStr) => {
+      if (puntoStr.trim()) {
+        const valores = puntoStr.split(",").map((v) => v.trim())
+        if (valores.length >= 3) {
+          const [x, fx, dfx] = valores.map((v) => Number.parseFloat(v))
+          if (!isNaN(x) && !isNaN(fx) && !isNaN(dfx)) {
+            agregarPunto(x, fx, dfx)
+            puntosValidos++
+          }
+        }
       }
-    }
-  })
+    })
 
-  // Si no se cargó ningún punto, agregar los por defecto
-  if (contadorPuntos === 0) {
+    // Si no se cargó ningún punto válido, agregar los por defecto
+    if (puntosValidos === 0) {
+      agregarPunto(0, 1, 2)
+      agregarPunto(1, 4, 5)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error("Error cargando puntos desde string:", error)
+    // Agregar puntos por defecto en caso de error
     agregarPunto(0, 1, 2)
     agregarPunto(1, 4, 5)
+    return false
   }
 }
 
@@ -340,7 +355,56 @@ function mostrarAlerta(mensaje, tipo) {
   })
 }
 
+function cargarPuntosExistentes(puntos) {
+  if (!puntos || puntos.length === 0) return
+
+  // Si recibimos un string (como puntos_input), usar cargarPuntosDesdeString
+  if (typeof puntos === 'string') {
+    cargarPuntosDesdeString(puntos)
+    return
+  }
+
+  // Limpiar tabla existente
+  const tbody = document.getElementById("puntos-tbody")
+  tbody.innerHTML = ""
+  contadorPuntos = 0
+
+  // Si los puntos vienen como tuplas (x, f, df), convertir a array plano
+  const puntosArray = Array.isArray(puntos) ? puntos : []
+
+  puntosArray.forEach((punto) => {
+    // Soportar tanto tuplas como arrays y objetos
+    let x, fx, dfx
+    if (Array.isArray(punto) && punto.length >= 3) {
+      x = Number(punto[0])
+      fx = Number(punto[1])
+      dfx = Number(punto[2])
+    } else if (typeof punto === 'object' && punto !== null) {
+      x = Number(punto.x)
+      fx = Number(punto.f)
+      dfx = Number(punto.df)
+    }
+    if (!isNaN(x) && !isNaN(fx) && !isNaN(dfx)) {
+      agregarPunto(x, fx, dfx)
+    }
+  })
+
+  // Actualizar campo oculto con los puntos cargados
+  const filas = document.querySelectorAll("#puntos-tbody tr")
+  const puntosCargados = Array.from(filas).map(fila => {
+    const x = fila.querySelector('.x-input').value
+    const fx = fila.querySelector('.fx-input').value
+    const dfx = fila.querySelector('.derivada-input').value
+    return `${x},${fx},${dfx}`
+  })
+  const hidden = document.getElementById("puntos-hidden")
+  if (hidden) hidden.value = puntosCargados.join(";")
+
+  actualizarNumeracionPuntos()
+}
+
 // Exportar funciones para uso global
 window.agregarPunto = agregarPunto
 window.eliminarPunto = eliminarPunto
 window.cargarEjemplo = cargarEjemplo
+window.cargarPuntosExistentes = cargarPuntosExistentes

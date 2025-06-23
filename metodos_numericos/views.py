@@ -48,6 +48,8 @@ def hermite_view(request):
             if datos_grafica:
                 context['datos_grafica'] = json.dumps(datos_grafica)
 
+            # Mantener los datos de entrada para repoblar el formulario
+            context['mantener_puntos'] = True
             context.update(resultado)
             context['puntos_input'] = puntos_data
             context['x_eval'] = x_eval

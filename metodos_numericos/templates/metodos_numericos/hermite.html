@@ -180,21 +180,47 @@
 <script src="{% static 'metodos_numericos/js/hermite-puntos.js' %}"></script>
 <script src="{% static 'metodos_numericos/js/hermite-graph.js' %}"></script>
 
- {% if datos_grafica %}
+ {% if datos_grafica or puntos_input %}
 <script>
-// Inicializar gráfica cuando se carga la página
+// Inicializar cuando se carga la página con resultados
 document.addEventListener('DOMContentLoaded', function() {
+    {% if datos_grafica %}
     // Guardar datos globalmente para regeneración
     window.datosGraficaHermite = {{ datos_grafica|safe }};
-    // Inicializar gráfica
+    {% endif %}
+    
+    {% if puntos_input %}
+    // Cargar puntos ingresados por el usuario (string)
+    cargarPuntosExistentes(`{{ puntos_input }}`);
+    // Actualizar campo oculto con los puntos cargados para el submit
     setTimeout(function() {
+        const hidden = document.getElementById("puntos-hidden");
+        if (hidden) hidden.value = `{{ puntos_input }}`;
+    }, 100);
+    {% elif puntos_input %}
+    // Cargar puntos existentes (array)
+    cargarPuntosExistentes(window.puntosExistentes);
+    setTimeout(function() {
+        if (window.puntosExistentes) {
+            const puntosString = window.puntosExistentes.map(p => `${p[0]},${p[1]},${p[2]}`).join(";");
+            const hidden = document.getElementById("puntos-hidden");
+            if (hidden) hidden.value = puntosString;
+        }
+    }, 100);
+    {% endif %}
+    
+    // Inicializar después de un pequeño delay para asegurar que el DOM esté listo
+    setTimeout(function() {
+        {% if datos_grafica %}
+        // Inicializar gráfica
         initializeHermiteGraph(window.datosGraficaHermite);
+        {% endif %}
         
         // Re-renderizar MathJax
         if (typeof MathJax !== 'undefined') {
             MathJax.typesetPromise();
         }
-    }, 500);
+    }, 300);
 });
 </script>
 {% endif %}

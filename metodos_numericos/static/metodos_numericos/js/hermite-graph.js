@@ -290,111 +290,136 @@ function showRegenerateModal(nuevosPuntos) {
 }
 
 function confirmarRegeneracion() {
-  if (!window.nuevosPuntosModal) return
+  // Limitar la búsqueda de inputs SOLO al modal de SweetAlert2
+  const modalContainer = Swal.getHtmlContainer ? Swal.getHtmlContainer() : null;
+  if (!modalContainer) {
+    Swal.fire({
+      title: "Error",
+      text: "No se encontró el modal de edición. Intenta nuevamente.",
+      icon: "error",
+      confirmButtonColor: "#dc3545",
+      customClass: { popup: "swal2-modal-custom" },
+    });
+    return;
+  }
 
-  // Obtener valores actualizados de x, f(x) y derivada
-  const xInputs = document.querySelectorAll(".x-input")
-  const fxInputs = document.querySelectorAll(".fx-input")
-  const derivadaInputs = document.querySelectorAll(".derivada-input")
+  // Buscar inputs solo dentro del modal
+  const xInputs = modalContainer.querySelectorAll(".x-input");
+  const fxInputs = modalContainer.querySelectorAll(".fx-input");
+  const derivadaInputs = modalContainer.querySelectorAll(".derivada-input");
 
-  let valid = true
-  let xs = []
+  if (xInputs.length === 0 || fxInputs.length === 0 || derivadaInputs.length === 0) {
+    Swal.fire({
+      title: "Error",
+      text: "No se encontraron los campos de entrada. Intenta nuevamente.",
+      icon: "error",
+      confirmButtonColor: "#dc3545",
+      customClass: { popup: "swal2-modal-custom" },
+    });
+    return;
+  }
 
-  xInputs.forEach((input, i) => {
-    const xVal = Number.parseFloat(input.value)
-    if (isNaN(xVal)) valid = false
-    xs.push(xVal)
-    window.nuevosPuntosModal[i][0] = xVal
-  })
-  fxInputs.forEach((input, i) => {
-    const fxVal = Number.parseFloat(input.value)
-    if (isNaN(fxVal)) valid = false
-    window.nuevosPuntosModal[i][1] = fxVal
-  })
-  derivadaInputs.forEach((input, i) => {
-    const dVal = Number.parseFloat(input.value)
-    if (isNaN(dVal)) valid = false
-    window.nuevosPuntosModal[i][2] = dVal
-  })
+  let valid = true;
+  const xs = [];
+  const nuevosPuntos = [];
 
-  // Validar que no haya x repetidos
-  const xSet = new Set(xs)
-  if (xSet.size !== xs.length) valid = false
+  // Recopilar todos los valores SOLO del modal
+  for (let i = 0; i < xInputs.length; i++) {
+    const xVal = Number.parseFloat(xInputs[i].value);
+    const fxVal = Number.parseFloat(fxInputs[i].value);
+    const dVal = Number.parseFloat(derivadaInputs[i].value);
+
+    if (isNaN(xVal) || isNaN(fxVal) || isNaN(dVal)) {
+      valid = false;
+      break;
+    }
+
+    xs.push(xVal);
+    nuevosPuntos.push([xVal, fxVal, dVal]);
+  }
+
+  // Validar que no haya x repetidos SOLO en el modal
+  const xSet = new Set(xs);
+  if (xSet.size !== xs.length) {
+    valid = false;
+  }
 
   if (!valid) {
     Swal.fire({
-      title: 'Error de validación',
-      text: 'Verifica que todos los valores sean numéricos y que no haya valores de x repetidos.',
-      icon: 'error',
-      background: '#ffebee',
-      confirmButtonColor: '#c62828',
-      customClass: { popup: 'swal2-modal-custom' }
-    })
-    return
+      title: "Error de validación",
+      text: "Verifica que todos los valores sean numéricos y que no haya valores de x repetidos.",
+      icon: "error",
+      background: "#ffebee",
+      confirmButtonColor: "#c62828",
+      customClass: { popup: "swal2-modal-custom" },
+    });
+    return;
   }
 
   // Confirmar con SweetAlert2
   Swal.fire({
     title: '<span style="color:#1565c0;">¿Regenerar polinomio?</span>',
-    text: '¿Deseas recalcular el polinomio con los nuevos puntos y derivadas?',
-    icon: 'question',
-    background: '#e3f2fd',
+    text: "¿Deseas recalcular el polinomio con los nuevos puntos y derivadas?",
+    icon: "question",
+    background: "#e3f2fd",
     showCancelButton: true,
     confirmButtonText: '<i class="fas fa-sync-alt"></i> Sí, regenerar',
     cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
     reverseButtons: true,
     customClass: {
-      confirmButton: 'swal2-confirm btn btn-success',
-      cancelButton: 'swal2-cancel btn btn-secondary',
-      popup: 'swal2-modal-custom',
-    }
+      confirmButton: "swal2-confirm btn btn-success",
+      cancelButton: "swal2-cancel btn btn-secondary",
+      popup: "swal2-modal-custom",
+    },
   }).then((result) => {
     if (result.isConfirmed) {
       // Crear formulario para enviar datos
-      const form = document.createElement("form")
-      form.method = "POST"
-      form.style.display = "none"
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.style.display = "none";
 
       // CSRF token
-      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value
-      const csrfInput = document.createElement("input")
-      csrfInput.type = "hidden"
-      csrfInput.name = "csrfmiddlewaretoken"
-      csrfInput.value = csrfToken
-      form.appendChild(csrfInput)
+      const csrfTokenElement = document.querySelector("[name=csrfmiddlewaretoken]");
+      if (csrfTokenElement) {
+        const csrfInput = document.createElement("input");
+        csrfInput.type = "hidden";
+        csrfInput.name = "csrfmiddlewaretoken";
+        csrfInput.value = csrfTokenElement.value;
+        form.appendChild(csrfInput);
+      }
 
       // Puntos
-      const puntosInput = document.createElement("input")
-      puntosInput.type = "hidden"
-      puntosInput.name = "puntos"
-      puntosInput.value = window.nuevosPuntosModal.map((p) => `${p[0]},${p[1]},${p[2]}`).join(";")
-      form.appendChild(puntosInput)
+      const puntosInput = document.createElement("input");
+      puntosInput.type = "hidden";
+      puntosInput.name = "puntos";
+      puntosInput.value = nuevosPuntos.map((p) => `${p[0]},${p[1]},${p[2]}`).join(";");
+      form.appendChild(puntosInput);
 
       // Punto de evaluación (mantener el actual)
-      const xEvalInput = document.createElement("input")
-      xEvalInput.type = "hidden"
-      xEvalInput.name = "x_eval"
-      xEvalInput.value = document.getElementById("x_eval").value
-      form.appendChild(xEvalInput)
-
-      document.body.appendChild(form)
-      form.submit()
-
-      // Cerrar modal
-      if (window.modalActual) {
-        bootstrap.Modal.getInstance(window.modalActual).hide()
+      const xEvalElement = document.getElementById("x_eval");
+      if (xEvalElement) {
+        const xEvalInput = document.createElement("input");
+        xEvalInput.type = "hidden";
+        xEvalInput.name = "x_eval";
+        xEvalInput.value = xEvalElement.value;
+        form.appendChild(xEvalInput);
       }
+
+      document.body.appendChild(form);
+      form.submit();
     } else {
       Swal.fire({
-        title: 'Cancelado',
-        text: 'No se regeneró el polinomio.',
-        icon: 'info',
-        background: '#e0e0e0',
-        confirmButtonColor: '#1976d2',
-        customClass: { popup: 'swal2-modal-custom' }
-      })
+        title: "Cancelado",
+        text: "No se regeneró el polinomio.",
+        icon: "info",
+        background: "#e0e0e0",
+        confirmButtonColor: "#1976d2",
+        timer: 1500,
+        showConfirmButton: false,
+        customClass: { popup: "swal2-modal-custom" },
+      });
     }
-  })
+  });
 }
 
 function showGraphInstructions() {

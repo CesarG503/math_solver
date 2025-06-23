@@ -827,3 +827,53 @@ footer {
 .swal2-modal-custom .swal2-content {
   font-size: 1rem;
 }
+
+/* Animaciones para la tabla de puntos de Hermite */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para la tabla de puntos */
+#puntos-table {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#puntos-table thead th {
+  font-weight: 600;
+  text-align: center;
+  border: none;
+}
+
+#puntos-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+#puntos-table tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important;
+}
+
+/* Estilos para los inputs de la tabla */
+.x-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(144, 202, 249, 0.25);
+}
+
+.fx-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(165, 214, 167, 0.25);
+}
+
+.derivada-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 204, 128, 0.25);
+}
+
+/* Botón de eliminar punto */
+.btn-outline-danger:hover {
+  transform: scale(1.05);
+  transition: transform 0.1s ease;
+}
