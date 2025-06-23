@@ -30,6 +30,13 @@ def hermite_view(request):
             
             # Calcular interpolación de Hermite
             resultado = interpolacion_hermite(puntos, x_eval)
+            
+            # Generar datos para gráfica
+            from .utils import generar_datos_grafica_hermite
+            datos_grafica = generar_datos_grafica_hermite(puntos, resultado['polinomio'], x_eval)
+            if datos_grafica:
+                context['datos_grafica'] = json.dumps(datos_grafica)
+
             context.update(resultado)
             context['puntos_input'] = puntos_data
             context['x_eval'] = x_eval
@@ -69,6 +76,13 @@ def integracion_view(request):
             
             # Calcular integración
             resultado = integracion_compuesta(funcion, a, b, n, metodo)
+
+            # Generar datos para gráfica
+            from .utils import generar_datos_grafica_integracion
+            datos_grafica = generar_datos_grafica_integracion(funcion, a, b, n, metodo, resultado['resultado'])
+            if datos_grafica:
+                context['datos_grafica'] = json.dumps(datos_grafica)
+
             h = (b - a) / n  # Calcular el ancho de subintervalo
             context.update(resultado)
             context.update({
