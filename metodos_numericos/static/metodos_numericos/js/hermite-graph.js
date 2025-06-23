@@ -1,7 +1,5 @@
 // Configuración y funciones para gráficas de Hermite con Plotly
 let currentPlot = null
-let isDragging = false
-
 function initializeHermiteGraph(datosGrafica) {
   if (!datosGrafica) return
 
@@ -51,8 +49,6 @@ function initializeHermiteGraph(datosGrafica) {
         "Punto: (%{x}, %{y})<br>Derivada: " +
         datosGrafica.derivadas.map((d) => d.toFixed(3)).join(", ") +
         "<extra></extra>",
-      // Hacer los puntos arrastrables
-      //dragmode: "select",
     },
     // Punto de evaluación
     {
@@ -153,62 +149,8 @@ function initializeHermiteGraph(datosGrafica) {
     window.addEventListener('resize', () => Plotly.Plots.resize(graphDiv))
   }
 
-  // Agregar event listeners para arrastrar puntos
-  setupDragEvents(graphDiv, datosGrafica)
-
   // Mostrar instrucciones
   showGraphInstructions()
-}
-
-function setupDragEvents(graphDiv, datosGrafica) {
-  let dragPointIndex = -1
-
-  // Detectar inicio de arrastre
-  graphDiv.on("plotly_click", (data) => {
-    if (data.points && data.points.length > 0) {
-      const point = data.points[0]
-      // Solo permitir arrastrar los puntos de interpolación (trace 1)
-      if (point.curveNumber === 1) {
-        dragPointIndex = point.pointNumber
-        isDragging = true
-        graphDiv.style.cursor = "grabbing"
-      }
-    }
-  })
-
-  // Detectar movimiento durante arrastre
-  graphDiv.on("plotly_hover", (data) => {
-    if (isDragging && dragPointIndex >= 0 && data.points && data.points.length > 0) {
-      const newX = data.points[0].x
-      const newY = data.points[0].y
-
-      // Actualizar posición del punto
-      updatePointPosition(dragPointIndex, newX, newY)
-    }
-  })
-
-  // Finalizar arrastre
-  document.addEventListener("mouseup", () => {
-    if (isDragging) {
-      isDragging = false
-      dragPointIndex = -1
-      if (currentPlot) {
-        currentPlot.style.cursor = "default"
-      }
-    }
-  })
-}
-
-function updatePointPosition(pointIndex, newX, newY) {
-  if (!currentPlot) return
-
-  // Actualizar datos del punto
-  const update = {
-    x: [[newX]],
-    y: [[newY]],
-  }
-
-  Plotly.restyle(currentPlot, update, [1], [pointIndex])
 }
 
 function regenerarPolinomio() {
