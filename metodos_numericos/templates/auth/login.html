@@ -41,15 +41,16 @@
                     </div>
                     <div class="input-group mb-2 d-flex justify-content-between">
                     </div>
+                    <div class="row">
+                        <small>¿Olvidaste tu contraseña?<a href="{% url 'password_reset' %}"><i>Recuperar Contraseña</i></a> </small>
+                    </div>
                     <div class="input-group mb-3">
                         <button type="submit" class="btn btn-lg btn-success w-100 fs-6">Iniciar sesión</button>
                     </div>
                     <div class="row">
                         <small>¿No tienes una cuenta? <a href="{% url 'metodos_numericos:register' %}">Regístrate</a></small>
                     </div>
-                    <div class="row">
-                        <small>¿Olvidaste tu contraseña?<a href="{% url 'password_reset' %}"><i>Recuperar Contraseña</i></a> </small>
-                    </div>
+
 
                 </form>
             </div>
