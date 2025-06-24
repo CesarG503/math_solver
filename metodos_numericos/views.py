@@ -58,8 +58,8 @@ def hermite_view(request, id_ejercicio=None):
             context.update(resultado)
             context['puntos_input'] = puntos_data
             context['x_eval'] = x_eval
-            
-            guardar_ejercicio(request.user.id, 'hermite', "|".join([puntos_data, str(x_eval)]), resultado['polinomio_latex'])
+            if(request.user.is_authenticated):
+                guardar_ejercicio(request.user.id, 'hermite', "|".join([puntos_data, str(x_eval)]), resultado['polinomio_latex'])
         except ValueError as e:
             messages.error(request, f'Error en los datos de entrada: {str(e)}')
         except Exception as e:
@@ -91,7 +91,7 @@ def hermite_view(request, id_ejercicio=None):
 
     return render(request, 'metodos_numericos/hermite.html', context)
 
-def integracion_view(request):
+def integracion_view(request, id_ejercicio=None):
     """Vista para integración numérica compuesta"""
     context = {}
     
@@ -136,13 +136,38 @@ def integracion_view(request):
                 'metodo': metodo,
                 'h': h  
             })
-            
+            if(request.user.is_authenticated):
+                guardar_integracion(request.user.id, 'integracion', f"{funcion}!{a},{b},{n}!{metodo}", resultado['resultado'])
         except ValueError as e:
             messages.error(request, f'Error en los datos de entrada: {str(e)}')
         except Exception as e:
             messages.error(request, f'Error en el cálculo: {str(e)}')
+        return render(request, 'metodos_numericos/integracion.html', context)
     
+    if id_ejercicio:
+        try:
+            # Cargar ejercicio existente
+            from .models import Ejercicio
+            ejercicio = Ejercicio.objects.get(id=id_ejercicio, user=request.user)
+            context['ejercicio_db'] = ejercicio.ecuacion
+            
+            # Mantener los datos del ejercicio en el formulario
+            funcion_input = ejercicio.ecuacion.split("!")[0]
+            a_input, b_input, n_input = map(float, ejercicio.ecuacion.split("!")[1].split(","))
+            metodo_input = ejercicio.ecuacion.split("!")[2]
+            
+            context['funcion_input_db'] = funcion_input
+            context['a'] = a_input
+            context['b'] = b_input
+            context['n'] = n_input
+            context['metodo'] = metodo_input
+            
+        except Ejercicio.DoesNotExist:
+            messages.error(request, 'Ejercicio no encontrado o no autorizado.')
+            return redirect('metodos_numericos:integracion')
+
     return render(request, 'metodos_numericos/integracion.html', context)
+    
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -266,5 +291,13 @@ def guardar_ejercicio(uid, tipo, puntos, polinomio_solucion):
             # Si ya existe un ejercicio con esos parámetros, no lo guardamos de nuevo
             return False
         ejercicio = Ejercicio(user_id=uid, tipo=tipo, puntos=puntos, solucion=polinomio_solucion)
+        ejercicio.save()
+        return True
+    
+def guardar_integracion(uid, tipo, ecuacion, polinomio_solucion):
+    if(uid and tipo and ecuacion and polinomio_solucion):
+        if Ejercicio.objects.filter(user_id=uid, tipo=tipo, ecuacion=ecuacion).exists():
+            return False
+        ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, solucion=polinomio_solucion)
         ejercicio.save()
         return True

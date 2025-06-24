@@ -234,6 +234,11 @@
 
 {% block scripts %}
 <script src="{% static 'metodos_numericos/js/mathlive-config.js' %}"></script>
+{% if funcion_input_db %}
+<script>
+    console.log(`{{ funcion_input_db }}`);
+</script>
+{% endif %}
 <script>
 // Re-renderizar MathJax después de cargar la página
 // y cargar el ejemplo polynomial por defecto
