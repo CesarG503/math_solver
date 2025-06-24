@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from curses.ascii import EM
 from django.contrib import messages
 from pathlib import Path
 from dotenv import load_dotenv
