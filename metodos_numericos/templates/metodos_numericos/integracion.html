@@ -46,15 +46,6 @@
                             <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('polynomial')">
                                 x²+2x+1
                             </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('trigonometric')">
-                                sin(x)
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('exponential')">
-                                eˣ
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('logarithmic')">
-                                ln(x)
-                            </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('rational')">
                                 1/(1+x²)
                             </button>
@@ -235,8 +226,27 @@
 {% block scripts %}
 <script src="{% static 'metodos_numericos/js/mathlive-config.js' %}"></script>
 <script>
-// Re-renderizar MathJax después de cargar la página
-// y cargar el ejemplo polynomial por defecto
+// Limpia y convierte la función a notación Python/SymPy antes de enviar
+function limpiarFuncionInput(str) {
+    if (!str) return '';
+    return str
+        .replace(/\\sin/g, 'sin')
+        .replace(/\\cos/g, 'cos')
+        .replace(/\\tan/g, 'tan')
+        .replace(/\\ln/g, 'log')
+        .replace(/\\log/g, 'log')
+        .replace(/\\exp/g, 'exp')
+        .replace(/\\sqrt/g, 'sqrt')
+        .replace(/\^/g, '**')
+        .replace(/\*/g, '') // elimina asteriscos sueltos tipo sin*(x)
+        .replace(/\s+/g, '') // elimina espacios
+        .replace(/\{/g, '(')
+        .replace(/\}/g, ')')
+        .replace(/\[/g, '(')
+        .replace(/\]/g, ')')
+        .replace(/\\/g, '') // elimina barras invertidas sobrantes
+        ;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // Cargar el ejemplo polynomial automáticamente
@@ -246,6 +256,25 @@ document.addEventListener('DOMContentLoaded', function() {
             MathJax.typesetPromise();
         }
     }, 500);
+
+    // Interceptar submit para limpiar función
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Obtener valor del math-field
+            let mathField = document.getElementById('funcion');
+            let funcion = '';
+            if (mathField && mathField.value) {
+                funcion = mathField.value;
+            } else if (mathField && mathField.textContent) {
+                funcion = mathField.textContent;
+            }
+            funcion = limpiarFuncionInput(funcion);
+            // Actualizar el campo oculto
+            let hidden = document.getElementById('funcion-hidden');
+            if (hidden) hidden.value = funcion;
+        });
+    }
 });
 </script>
 <script src="{% static 'metodos_numericos/js/integracion-graph.js' %}"></script>
