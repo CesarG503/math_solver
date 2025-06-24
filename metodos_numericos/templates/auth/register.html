@@ -13,9 +13,14 @@
 <!----------------------- Main Container -------------------------->
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <!----------------------- Login Container -------------------------->
-        <div class="row border p-3 bg-white shadow box-area">
+        <div class="row border px-3 py-0 pb-3 bg-white shadow box-area">
             <!-------------------- ------ Right Box ---------------------------->
             <div class="col right-box">
+                <div class="row mb-3">
+                    <a href="{% url 'metodos_numericos:index' %}">
+                        <img class="img-thumbnail top-0 start-0 position object-fit-fill" src="{% static "metodos_numericos/img/logout.png" %}" alt="" width='60' >
+                    </a>
+                </div>
                 <form class="card row align-items-center" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-header header-text mb-4 bg-success text-center">
@@ -23,7 +28,7 @@
                         <h1><span class="badge bg-primary h1">Registro de Usuarios</span></h1>
 
                         
-                        <p >Bienvenid@!!, estamos felices de tenerte de por aca.</p>
+                        <p >Bienvenid@!!, estamos felices de que uses este web.</p>
                     </div>
                      <label for="">Nombre</label>
                     <div class="input-group mb-3">
