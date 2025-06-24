@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Usuarios
+from .models import Usuarios, Ejercicio
 
 class FormCrearUsuario(UserCreationForm):
     image = forms.ImageField(required=True, label='Imagen de perfil')
@@ -34,3 +34,20 @@ class FormEditarUsuario(UserChangeForm):
             if(commit):
                 user.save()
         return user
+
+class FormGuardarHistorial(forms.ModelForm):
+    class Meta:
+        model = Ejercicio
+        fields = ['tipo', 'ecuacion', 'puntos', 'solucion','user']
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        ejercicio = super().save(commit=commit)
+        if self.user:
+            ejercicio.user = self.user
+        if commit:
+            ejercicio.save()
+        return ejercicio

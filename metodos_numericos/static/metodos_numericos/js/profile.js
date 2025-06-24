@@ -114,7 +114,42 @@ function actualizarPerfil(){
     formulario.submit();
 }
 
+function editarEjercicio(){
+
+}
+
 function validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
 }
+
+function getListaEjercicios(){
+    fetch(`/ejercicios/`)
+      .then(response => response.json())
+      .then(data => {
+        const lista = document.querySelector('#historial-ejercicios > tbody');
+        lista.innerHTML = '';  // Limpia lista anterior
+        if (data.length === 0) {
+          lista.innerHTML = '<tr><td>No hay ejercicios</td></tr>';
+        } else {
+          data.forEach(ejercicio => {
+            const fila = document.createElement('tr');
+            fila.classList.add('text-center');
+            const tipo = document.createElement('td');
+            const respuesta = document.createElement('td');
+            const editar = document.createElement('td');
+
+            tipo.textContent = ejercicio.tipo;
+            respuesta.textContent = ejercicio.respuesta;
+            editar.innerHTML = `<button onclick="editarEjercicio(${ejercicio.id})" class="btn btn-white rounded-pill fs-6 text-nowrap m-0">Editar <i class="fa fa-pencil"></i></a>`;
+            
+            fila.appendChild(tipo);
+            fila.appendChild(respuesta);
+            fila.appendChild(editar);
+            lista.appendChild(fila);
+          });
+        }
+      });
+}
+
+getListaEjercicios();

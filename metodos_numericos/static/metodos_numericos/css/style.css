@@ -72,6 +72,33 @@ body {
   color: #6c757d !important;
 }
 
+/* Estilos para tablas */
+.table-bootstrap {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+}
+.table-bootstrap thead {
+  background-color: #202020;
+}
+.table-bootstrap th,
+.table-bootstrap td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-top: 1px solid #464646;
+}
+.table-bootstrap th {
+  font-weight: bold;
+  border-bottom: 2px solid #616161;
+}
+.table-bootstrap tbody tr:nth-of-type(odd) {
+  background-color: #555555;
+}
+.table-bootstrap tbody tr:hover {
+  background-color: #333333;
+}
+
+/* Estilos para botones de edicion */
 #button-normal{
   display: block;
 }

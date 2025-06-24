@@ -1,0 +1,78 @@
+
+    <div class="profile-panel bg-secondary-neon" id="profilePanel">
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-white rounded-pill px-3 py-2" onclick="toggleProfilePanel()" id="cerrarPerfil">
+                    <i class="fa fa-x"></i>
+                </button>
+            </div>
+            <div class="col align-self-end text-end">
+                <a class="btn btn-warning rounded-pill" href="{% url 'metodos_numericos:logout' %}" id="cerrarSesion">
+                    <i class="fa fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+        <form id="formulario-perfil" action="{% url 'metodos_numericos:change' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="profile-img-container">
+                <div class="d-flex justify-content-center">
+                    <img src="{{ request.user.usuarios.image.url }}" alt="" class="profile-img border border-4 border-warning border-neon hover-neon"
+                        id="imagenPerfil">
+                </div>
+                <div class="text-center" style="padding-top: 5px;">
+                    <input type="file" id="image" name="image" class="form-item px-4 py-2" style="display:none;">
+                    <label for="image" class="btn edit-button bg-light"><i class="fa fa-pencil me-2"></i>Editar foto</label>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <label>Username:</label>
+                <div class="d-flex align-items-center">
+                    <span id="username" name="username" class="editable-text text-white-neon me-2">{{ request.user.username }}</span>
+                    <button type="button" class="edit-button edit-inline-btn text-info-emphasis-neon" onclick="editable('username')">
+                        <i id="icon-username" class="fa fa-pencil"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-section mb-3">
+                <label>Email:</label>
+                <div class="d-flex align-items-center">
+                    <span id="email" name="email" class="editable-text text-white-neon me-2">{{ request.user.email }}</span>
+                    <button type="button" class="edit-button edit-inline-btn text-info-emphasis-neon" onclick="editable('email')">
+                        <i id="icon-email" class="fa fa-pencil"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-section mb-3">
+                <label>Cambiar contraseña:</label>
+                <div class="d-flex align-items-center">
+                    <span id="password" class="editable-text text-white-neon me-2">Contraseña...</span>
+                    <button type="button" class="edit-button edit-inline-btn text-info-emphasis-neon">
+                        <i id="icon-password" class="fa fa-pencil"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button type="button" class="btn edit-button px-4 py-2" onclick="actualizarPerfil()">
+                    <i class="fa fa-save me-2"></i>Guardar cambios
+                </button>
+            </div>
+        </form>
+
+        <div class="info-section mt-3">
+                <label>Historial de ejercicios:</label>
+            <table id="historial-ejercicios" class="table-bootstrap">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Respuesta</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>

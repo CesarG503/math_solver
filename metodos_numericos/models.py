@@ -3,6 +3,20 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db import models
 
+class Ejercicio(models.Model):
+    tipo = models.CharField(max_length=100)
+    ecuacion = models.TextField()
+    puntos = models.TextField()
+    solucion = models.TextField()
+    user = user = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.ecuacion}"
+    
+    class Meta:
+        db_table = 'tbl_ejercicios'
+
 class Usuarios(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image  = models.ImageField(upload_to='perfiles/', default='perfiles/default.png')
