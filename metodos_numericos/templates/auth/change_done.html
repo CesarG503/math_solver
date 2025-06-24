@@ -22,33 +22,17 @@
                             <img class="img-thumbnail top-0 start-0 position object-fit-fill" src="{% static "metodos_numericos/img/logout.png" %}" alt="" width='60' >
                         </a>
                 </div>
-                <form class="card row align-items-center" method="post">
+                <form class="card row align-items-center"  method="post">
                     {% csrf_token %}
 
                     <div class="card-header header-text mb-4 bg-success text-center ">
                         
-                        <h1><span class="badge bg-primary h1">Inicio de Seccion</span></h1>
-                        <p >Bienvenid@!!, estamos felices de tenerte de por aca.</p>
+                        <h1><span class="badge bg-primary h1">Cambio de contraseña exitoso</span></h1>
+
                     </div>
-                    <p class="text-danger">{{ error }}</p>
-                    <label for="">Nombre</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" id="username" name="username" placeholder="Ingrese su nombre de usuario..." required>
-                    </div>
-                    <label for="">Contraseña</label>
-                    <div class="input-group mb-1">
-                        <input type="password" class="form-control form-control-lg bg-light fs-6" id="password" name="password" placeholder="Ingrese su contraseña..." required>
-                    </div>
-                    <div class="input-group mb-2 d-flex justify-content-between">
-                    </div>
-                    <div class="input-group mb-3">
-                        <button type="submit" class="btn btn-lg btn-success w-100 fs-6">Iniciar sesión</button>
-                    </div>
+
                     <div class="row">
-                        <small>¿No tienes una cuenta? <a href="{% url 'metodos_numericos:register' %}">Regístrate</a></small>
-                    </div>
-                    <div class="row">
-                        <small>¿Olvidaste tu contraseña?<a href="{% url 'password_reset' %}"><i>Recuperar Contraseña</i></a> </small>
+                        <p>El cambio de contraseña a sido existo <a href="{% url 'metodos_numericos:login' %}">Inicia sesión aquí</a></p>
                     </div>
 
                 </form>

@@ -24,7 +24,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('metodos_numericos.urls')),
-        # Cambio de contraseña
+        # Recuperacion de contraseña
     path('reset_password/',
           auth_views.PasswordResetView.as_view(template_name="auth/password_reset.html"),
           name='password_reset'),
@@ -39,6 +39,12 @@ urlpatterns = [
     path('reset_password_complete/', 
         auth_views.PasswordResetCompleteView.as_view(template_name="auth/password_reset_complete.html"),
         name='password_reset_complete'),
+        #Cambio de contraseña
+    path('password_change/', 
+         auth_views.PasswordChangeView.as_view(template_name='auth/change_password.html'), 
+         name='password_change'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='auth/change_done.html'), name='password_change_done'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
