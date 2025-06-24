@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import FormCrearUsuario
+from .models import Ejercicio
 from .utils import interpolacion_hermite, integracion_compuesta, metodo_simplex
 import json
 
@@ -11,10 +12,10 @@ def index(request):
     """Vista principal con opciones de métodos numéricos"""
     return render(request, 'metodos_numericos/index.html')
 
-def hermite_view(request):
+def hermite_view(request, id_ejercicio=None):
     """Vista para interpolación de Hermite"""
     context = {}
-    
+
     if request.method == 'POST':
         try:
             # Obtener datos del formulario
@@ -58,11 +59,36 @@ def hermite_view(request):
             context['puntos_input'] = puntos_data
             context['x_eval'] = x_eval
             
+            guardar_ejercicio(request.user.id, 'hermite', "|".join([puntos_data, str(x_eval)]), resultado['polinomio_latex'])
         except ValueError as e:
             messages.error(request, f'Error en los datos de entrada: {str(e)}')
         except Exception as e:
             messages.error(request, f'Error en el cálculo: {str(e)}')
+
+        return render(request, 'metodos_numericos/hermite.html', context)
     
+    # Si se proporciona un id_ejercicio, intentar cargar el ejercicio existente
+    if id_ejercicio:
+        try:
+            # Cargar ejercicio existente
+            from .models import Ejercicio
+            ejercicio = Ejercicio.objects.get(id=id_ejercicio, user=request.user)
+            context['ejercicio_db'] = ejercicio
+            
+            # Mantener los datos del ejercicio en el formulario
+            x_eval_input = ejercicio.puntos.split("|")[1]
+            puntos_input = ejercicio.puntos.split("|")[0].split(";")
+            puntos_input_db = ""
+            for punto in puntos_input:
+                punto_s = punto.split(',')
+                puntos_input_db += f"{punto_s[0]},{punto_s[1]},{punto_s[2]};"
+
+            context['puntos_input_db'] = puntos_input_db
+            context['x_eval'] = x_eval_input
+        except Ejercicio.DoesNotExist:
+            messages.error(request, 'Ejercicio no encontrado o no autorizado.')
+            return redirect('metodos_numericos:hermite')
+
     return render(request, 'metodos_numericos/hermite.html', context)
 
 def integracion_view(request):
@@ -233,3 +259,12 @@ def simplex_view(request):
             messages.error(request, f'Error en el cálculo: {str(e)}')
     
     return render(request, 'metodos_numericos/simplex.html', context)
+
+def guardar_ejercicio(uid, tipo, puntos, polinomio_solucion):
+    if( uid and tipo and puntos and polinomio_solucion):
+        if Ejercicio.objects.filter(user_id=uid, tipo=tipo, puntos=puntos).exists():
+            # Si ya existe un ejercicio con esos parámetros, no lo guardamos de nuevo
+            return False
+        ejercicio = Ejercicio(user_id=uid, tipo=tipo, puntos=puntos, solucion=polinomio_solucion)
+        ejercicio.save()
+        return True

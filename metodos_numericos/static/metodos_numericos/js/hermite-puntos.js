@@ -20,11 +20,23 @@ document.addEventListener("DOMContentLoaded", () => {
 function inicializarTablaPuntos() {
   // No cargar puntos por defecto aquí, se hará desde el template si es necesario
   // Solo agregar puntos por defecto si no hay datos existentes
-  if (!window.puntosExistentes && !document.querySelector('input[name="puntos"]')?.value) {
+  if (!window.puntosExistentes && !document.querySelector('input[name="puntos"]')?.value && !window.puntosDB) {
     // Agregar 2 puntos por defecto solo si no hay datos
     agregarPunto(0, 1, 2)
     agregarPunto(1, 4, 5)
   }
+  else if(window.puntosDB){
+    ejecutarSolucionHermite();
+  }
+}
+
+function ejecutarSolucionHermite() {
+  if(!validarYActualizarPuntos()) {
+    mostrarAlerta("Por favor, corrige los errores antes de continuar.", "error")
+    return false
+  }
+  const form = document.getElementById("hermiteForm")
+  form.submit();
 }
 
 function agregarPunto(x = "", fx = "", dfx = "") {

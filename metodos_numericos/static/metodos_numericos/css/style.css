@@ -74,6 +74,7 @@ body {
 
 /* Estilos para tablas */
 .table-bootstrap {
+  table-layout: fixed;
   width: 100%;
   margin-bottom: 1rem;
   border-collapse: collapse;
@@ -96,6 +97,14 @@ body {
 }
 .table-bootstrap tbody tr:hover {
   background-color: #333333;
+}
+
+/* Estilos para ecuaciones de edición */
+.respuesta-ecuacion {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1rem;
+  text-align: left;
 }
 
 /* Estilos para botones de edicion */

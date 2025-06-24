@@ -189,6 +189,12 @@
 {% load static %}
 <script src="{% static 'metodos_numericos/js/hermite-puntos.js' %}"></script>
 <script src="{% static 'metodos_numericos/js/hermite-graph.js' %}"></script>
+{% if puntos_input_db %}
+<script>
+    cargarPuntosExistentes(`{{ puntos_input_db }}`);
+    window.puntosDB = true;
+</script>
+{% endif %}
 
  {% if datos_grafica or puntos_input %}
 <script>
@@ -233,6 +239,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 300);
 });
 </script>
+{% endif %}
+
+{% if puntos_input_db %}
 {% endif %}
 {% endblock %}
 

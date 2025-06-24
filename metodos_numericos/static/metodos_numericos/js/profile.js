@@ -114,10 +114,6 @@ function actualizarPerfil(){
     formulario.submit();
 }
 
-function editarEjercicio(){
-
-}
-
 function validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
@@ -140,13 +136,20 @@ function getListaEjercicios(){
             const editar = document.createElement('td');
 
             tipo.textContent = ejercicio.tipo;
-            respuesta.textContent = ejercicio.respuesta;
-            editar.innerHTML = `<button onclick="editarEjercicio(${ejercicio.id})" class="btn btn-white rounded-pill fs-6 text-nowrap m-0">Editar <i class="fa fa-pencil"></i></a>`;
-            
+            respuesta.classList.add('math-display','respuesta-ecuacion');
+            respuesta.textContent = `$$${ejercicio.respuesta}$$`;
+            if( ejercicio.tipo === "hermite"){
+                editar.innerHTML = `<a href="/hermite/${ejercicio.id}/" class="btn btn-white rounded-pill fs-6 text-nowrap m-0">Editar <i class="fa fa-pencil"></i></a>`;
+            }
+            else if(ejercicio.tipo === "integracion"){
+                editar.innerHTML = `<a href="/integracion/${ejercicio.id}/" class="btn btn-white rounded-pill fs-6 text-nowrap m-0">Editar <i class="fa fa-pencil"></i></a>`;
+            }
             fila.appendChild(tipo);
             fila.appendChild(respuesta);
             fila.appendChild(editar);
             lista.appendChild(fila);
+
+            MathJax.typeset();  // Renderiza las ecuaciones matemáticas
           });
         }
       });
