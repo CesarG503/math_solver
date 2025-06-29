@@ -16,7 +16,7 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-12 col-md-8 col-lg-4" id="entrada-datos">
         <div class="card">
             <div class="card-header bg-info-neon text-white">
                 <h4 class="">
@@ -50,16 +50,45 @@
                         </div>
                     </div>
                     
+                    <!-- Número de variables -->
+                    <div class="mb-3">
+                        <label for="num_variables" class="form-label">
+                            <i class="fas fa-hashtag me-1"></i>Número de Variables
+                        </label>
+                        <select class="form-select" id="num_variables" onchange="generarCamposVariables()">
+                            <option value="2" selected>2 variables</option>
+                            <option value="3">3 variables</option>
+                            <option value="4">4 variables</option>
+                            <option value="5">5 variables</option>
+                            <option value="6">6 variables</option>
+                            <option value="7">7 variables</option>
+                            <option value="8">8 variables</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Nombres de variables -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-tag me-1"></i>Nombres de Variables
+                        </label>
+                        <div id="nombres-variables-container" class="row">
+                            <!-- Se generan dinámicamente -->
+                        </div>
+                        <div class="form-text">
+                            Personaliza los nombres de tus variables (por defecto: x₁, x₂, x₃...)
+                        </div>
+                    </div>
+                    
                     <!-- Función objetivo -->
                     <div class="mb-3">
-                        <label for="funcion_objetivo" class="form-label">
-                            <i class="fas fa-function me-1"></i>Función Objetivo (coeficientes)
+                        <label class="form-label">
+                            <i class="fas fa-function me-1"></i>Función Objetivo
                         </label>
-                        <input type="text" class="form-control mt-2 mb-2" id="funcion_objetivo" 
-                               name="funcion_objetivo" placeholder="3,2,1" 
-                               value="{{ funcion_objetivo_input }}" required>
+                        <div id="funcion-objetivo-container" class="row">
+                            <!-- Se genera dinámicamente -->
+                        </div>
                         <div class="form-text">
-                            Coeficientes separados por comas (ej: 3,2,1 para 3x₁ + 2x₂ + x₃)
+                            Ingresa los coeficientes de cada variable en la función objetivo
                         </div>
                     </div>
                     
@@ -68,13 +97,19 @@
                         <label class="form-label">
                             <i class="fas fa-list me-1"></i>Restricciones
                         </label>
-                        <div id="restricciones-container" class="pt-4">
+                        <div id="restricciones-container" class="pt-2">
                             <!-- Las restricciones se añaden dinámicamente -->
                         </div>
-                        <button type="button" class="btn btn-outline-info btn-sm mt-2" 
-                                onclick="agregarRestriccion()">
-                            <i class="fas fa-plus me-1"></i>Añadir Restricción
-                        </button>
+                        <div class="d-flex gap-2 mt-2">
+                            <button type="button" class="btn btn-outline-info btn-sm" 
+                                    onclick="agregarRestriccion()">
+                                <i class="fas fa-plus me-1"></i>Añadir Restricción
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm" 
+                                    onclick="cargarEjemplo()">
+                                <i class="fas fa-lightbulb me-1"></i>Cargar Ejemplo
+                            </button>
+                        </div>
                     </div>
                     
                     <button type="submit" class="btn btn-info w-100">
@@ -84,23 +119,23 @@
                 
                 <div class="mt-4">
                     <h5><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplo</h5>
-                    <p class="small text-muted">
-                        <p><strong>Maximizar:</strong> <code>3x₁ + 2x₂ </code></p>
-                        <p><strong>Función objetivo:</strong> <code>3,2</code></p>
-                        <p><strong>Restricción 1:</strong> <code>x₁ + x₂ &le; 4</code></p>
-                        <p><strong>Restricción 1:</strong> <code>1,1 &le; 4</code></p>
+                    <div class="small text-muted">
+                        <p><strong>Problema:</strong> Maximizar 3x₁ + 2x₂</p>
+                        <p><strong>Sujeto a:</strong></p>
+                        <ul class="ps-3 mb-2">
+                            <li>x₁ + x₂ ≤ 4</li>
+                            <li>2x₁ + x₂ ≤ 6</li>
+                            <li>x₁, x₂ ≥ 0</li>
+                        </ul>
                         <p class="mt-2"><strong>¿Cómo introducir los datos?</strong></p>
-                        <ul class="small text-muted ps-3">
-                            <li>En <strong>Función objetivo</strong>: escribe los coeficientes separados por comas. Ejemplo: <code>3,2</code></li>
-                            <li>En <strong>Restricciones</strong>: 
-                                <ul>
-                                    <li>En <strong>Coeficientes</strong>: escribe los coeficientes separados por comas. Ejemplo: <code>1,1</code></li>
-                                    <li>Selecciona el tipo de restricción: <code>&le;</code>, <code>&ge;</code> o <code>=</code></li>
-                                    <li>En <strong>Valor</strong>: escribe el número del lado derecho. Ejemplo: <code>4</code></li>
-                                </ul>
-                            </li>
-                        </ul></ul>
-                    </p>
+                        <ol class="ps-3">
+                            <li>Selecciona el número de variables (2 en este caso)</li>
+                            <li>Puedes cambiar los nombres si quieres (x₁, x₂ o y₁, y₂, etc.)</li>
+                            <li>Ingresa los coeficientes de la función objetivo: 3 para x₁ y 2 para x₂</li>
+                            <li>Añade las restricciones una por una con sus coeficientes</li>
+                            <li>Haz clic en "Cargar Ejemplo" para ver este problema configurado</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,9 +152,15 @@
             <div class="card-body">
                 <div class="alert alert-success p-2 mt-1 mb-1">
                     <h5><i class="fas fa-bullseye me-2"></i>Variables:</h5>
-                    {% for valor in solucion %}
-                        <p class="mb-1"><strong>x{{ forloop.counter }} = {{ valor|floatformat:6 }}</strong></p>
-                    {% endfor %}
+                    {% if solucion_con_nombres %}
+                        {% for nombre, valor in solucion_con_nombres.items %}
+                            <p class="mb-1"><strong>{{ nombre }} = {{ valor|floatformat:6 }}</strong></p>
+                        {% endfor %}
+                    {% else %}
+                        {% for valor in solucion %}
+                            <p class="mb-1"><strong>x{{ forloop.counter }} = {{ valor|floatformat:6 }}</strong></p>
+                        {% endfor %}
+                    {% endif %}
                     <hr>
                     <h5 class="">Valor óptimo: Z = {{ valor_objetivo|floatformat:6 }}</h5>
                 </div>
@@ -299,5 +340,21 @@
 <script src="{% static 'metodos_numericos/js/simplex.js' %}"></script>
 
 <!-- Toggle de tema -->
+<style>
+  /* Responsive: Si hay muchas variables, permitir scroll horizontal en los campos */
+  #nombres-variables-container,
+  #funcion-objetivo-container,
+  #restricciones-container .row.align-items-end {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.5rem;
+  }
+  @media (max-width: 991.98px) {
+    #entrada-datos {
+      max-width: 100% !important;
+      flex: 0 0 100% !important;
+    }
+  }
+</style>
 
 {% endblock %}

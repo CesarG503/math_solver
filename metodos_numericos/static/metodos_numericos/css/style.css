@@ -934,3 +934,165 @@ footer {
   transform: scale(1.05);
   transition: transform 0.1s ease;
 }
+
+/* Estilos para el método Simplex mejorado */
+.simplex-variable-input {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.simplex-variable-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+}
+
+.input-group-text {
+    background-color: var(--bs-light);
+    border-color: var(--bs-border-color);
+    font-weight: 500;
+}
+
+[data-theme="dark"] .input-group-text {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border-color: var(--bs-border-color-translucent);
+}
+
+.restriccion-container {
+    background-color: rgba(0, 123, 255, 0.05);
+    border: 1px solid rgba(0, 123, 255, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.restriccion-container:hover {
+    background-color: rgba(0, 123, 255, 0.08);
+    border-color: rgba(0, 123, 255, 0.3);
+}
+
+[data-theme="dark"] .restriccion-container {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .restriccion-container:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Animaciones para campos dinámicos */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.campo-dinamico {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Mejoras para las tablas Simplex */
+.simplex-table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+}
+
+.simplex-table {
+    width: 100%;
+    margin-bottom: 0;
+    background-color: white;
+}
+
+[data-theme="dark"] .simplex-table {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+.simplex-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    border: 1px solid #0056b3;
+}
+
+.simplex-table td {
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.2s ease;
+}
+
+[data-theme="dark"] .simplex-table td {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.simplex-table .base-column {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+[data-theme="dark"] .simplex-table .base-column {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--bs-light);
+}
+
+.simplex-table .objective-row {
+    background-color: #e3f2fd;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .simplex-table .objective-row {
+    background-color: rgba(33, 150, 243, 0.2);
+}
+
+.simplex-table .pivot-cell {
+    background-color: #ff5722 !important;
+    color: white !important;
+    font-weight: bold;
+    box-shadow: inset 0 0 0 2px #d32f2f;
+}
+
+.simplex-table .entering-variable {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.simplex-table .leaving-variable {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
+
+.table-title {
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .simplex-table {
+        font-size: 0.8rem;
+    }
+    
+    .simplex-table th,
+    .simplex-table td {
+        padding: 0.25rem;
+    }
+    
+    .restriccion-container {
+        margin-bottom: 1rem;
+    }
+}
