@@ -21,7 +21,7 @@
         <div class="card shadow-sm">
             <div class="card-header bg-info text-white">
                 <h4 class="mb-0">
-                    <i class="fas fa-keyboard me-2"></i>Configuración del Problema
+                    <i class="fas fa-keyboard me-2"></i>Datos de entrada
                 </h4>
             </div>
             <div class="card-body">
@@ -29,7 +29,7 @@
                     {% csrf_token %}
                     
                     <!-- Configuración básica -->
-                    <div class="row mb-4">
+                    <div class="row mb-4 mt-2">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">
                                 <i class="fas fa-target me-1"></i>Optimización
@@ -144,22 +144,9 @@
                 </form>
                 
                 <!-- Problema actual -->
-                <div class="mt-4 p-3 bg-light rounded">
-                    <h6 class="text-primary mb-2">
-                        <i class="fas fa-lightbulb me-1"></i>Problema actual Ingresado
-                    </h6>
-                    <div class="small">
-                        <p class="mb-2"><strong>Problema:</strong> Maximizar 3x₁ + 2x₂</p>
-                        <p class="mb-2"><strong>Sujeto a:</strong></p>
-                        <ul class="mb-2 ps-3">
-                            <li>x₁ + x₂ ≤ 4</li>
-                            <li>2x₁ + x₂ ≤ 6</li>
-                            <li>x₁, x₂ ≥ 0</li>
-                        </ul>
-                        <button type="button" class="btn btn-outline-info btn-sm" onclick="cargarEjemplo()">
-                            <i class="fas fa-download me-1"></i>Cargar este ejemplo
-                        </button>
-                    </div>
+                <div class="mt-4 p-3 bg-light rounded" id="problema-actual">
+                  <!-- Se actualiza dinámicamente con JS -->
+                  <h5>Ingresa los valores de tu ejercicio para visualizarlo</h5>
                 </div>
 
             </div>
@@ -175,7 +162,7 @@
                 </h4>
             </div>
             <div class="card-body">
-                <div class="alert alert-success">
+                <div class="alert alert-success ps-2 pb-2 pt-1">
                     <h5 class="mb-3"><i class="fas fa-bullseye me-2"></i>Variables:</h5>
                     <div class="row">
                         {% if solucion_con_nombres %}
@@ -198,7 +185,7 @@
                     </h4>
                 </div>
                 
-                <div class="row text-center">
+                <div class="row text-center mt-3">
                     <div class="col-md-4">
                         <div class="bg-light p-3 rounded">
                             <small class="text-muted d-block">Tipo</small>
