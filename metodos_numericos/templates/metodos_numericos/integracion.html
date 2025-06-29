@@ -28,9 +28,9 @@
                         <label for="funcion" class="form-label">
                             <i class="fas fa-function me-1"></i>Función f(x)
                         </label>
-                        <math-field id="funcion" name="funcion" class="form-control mt-2 mb-2" 
+                        <math-field id="funcion" class="form-control mt-2 mb-2" 
                                     style="border: 1px solid #ced4da; border-radius: 0.375rem; padding: 0.375rem 0.75rem; min-height: 38px;"
-                                    virtual-keyboard-mode="manual">{{ funcion_input|default:"x^2 + 2x + 1" }}</math-field>
+                                    virtual-keyboard-mode="manual">{{ funcion_input|default:"x**2 + 2*x + 1" }}</math-field>
                         <input type="hidden" id="funcion-hidden" name="funcion" value="{{ funcion_input }}">
                         <div class="form-text">
                             Usa el teclado matemático o escribe directamente: x^2, sin(x), exp(x), etc.
@@ -40,20 +40,11 @@
                         </button>
                     </div>
                     
-                    <div class="mt-2">
+                    <div class="mt-2 mb-2">
                         <small class="text-muted d-block mb-2">Ejemplos rápidos:</small>
                         <div class="btn-group-sm" role="group">
                             <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('polynomial')">
                                 x²+2x+1
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('trigonometric')">
-                                sin(x)
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('exponential')">
-                                eˣ
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('logarithmic')">
-                                ln(x)
                             </button>
                             <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="loadExample('rational')">
                                 1/(1+x²)
@@ -111,20 +102,11 @@
                         </select>
                     </div>
                     
-                    <button type="submit" class="btn btn-success w-100">
+                    <button type="submit" class="btn btn-success w-100 mb-3">
                         <i class="fas fa-calculator me-2"></i>Calcular Integral
                     </button>
                 </form>
                 
-                <div class="mt-4">
-                    <h6><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplos</h6>
-                    <p class="small text-muted">
-                        <code>x**2</code> - Polinomio cuadrático<br>
-                        <code>sin(x)</code> - Función seno<br>
-                        <code>exp(x)</code> - Función exponencial<br>
-                        <code>1/(1+x**2)</code> - Función racional
-                    </p>
-                </div>
             </div>
         </div>
     </div>
@@ -174,6 +156,7 @@
         </div>
         
         <div class="card mt-3">
+            {% if user.is_authenticated %}
             <div class="card-header bg-info-neon text-white">
                 <h4 class="">
                     <i class="fas fa-list-ol me-2"></i>Solución Paso a Paso
@@ -202,6 +185,15 @@
                     {% endfor %}
                 </div>
             </div>
+            {% else %}
+
+                <div class="card-body text-center text-muted py-5">
+                    <i class="fa-regular fa-user" style="font-size: 5rem;"></i>
+                    <h3>Para poder ver los resultados completos, primero debes iniciar sesión</h3>
+                    <a class='btn btn-success' href='{% url 'metodos_numericos:login' %}' >Iniciar Sesión</a>
+                </div>
+
+            {% endif %}
         </div>
         {% else %}
         <div class="card">
@@ -214,7 +206,7 @@
         {% endif %}
     </div>
 </div>
-{% if datos_grafica %}
+{% if datos_grafica and user.is_authenticated %}
         <div class="container-fluid m-auto">
         <div class="card mt-3">
             <div class="card-header bg-info-neon text-white">
@@ -233,14 +225,61 @@
 
 {% block scripts %}
 <script src="{% static 'metodos_numericos/js/mathlive-config.js' %}"></script>
+{% if funcion_input_db %}
 <script>
-// Re-renderizar MathJax después de cargar la página
+    console.log(`{{ funcion_input_db }}`);
+</script>
+{% endif %}
+<script>
+// Limpia y convierte la función a notación Python/SymPy antes de enviar
+function limpiarFuncionInput(str) {
+    if (!str) return '';
+    return str
+        .replace(/\\sin/g, 'sin')
+        .replace(/\\cos/g, 'cos')
+        .replace(/\\tan/g, 'tan')
+        .replace(/\\ln/g, 'log')
+        .replace(/\\log/g, 'log')
+        .replace(/\\exp/g, 'exp')
+        .replace(/\\sqrt/g, 'sqrt')
+        .replace(/\^/g, '**')
+        .replace(/\*/g, '') // elimina asteriscos sueltos tipo sin*(x)
+        .replace(/\s+/g, '') // elimina espacios
+        .replace(/\{/g, '(')
+        .replace(/\}/g, ')')
+        .replace(/\[/g, '(')
+        .replace(/\]/g, ')')
+        .replace(/\\/g, '') // elimina barras invertidas sobrantes
+        ;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Cargar el ejemplo polynomial automáticamente
+    loadExample('polynomial');
     setTimeout(function() {
         if (typeof MathJax !== 'undefined') {
             MathJax.typesetPromise();
         }
     }, 500);
+
+    // Interceptar submit para limpiar función
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Obtener valor del math-field
+            let mathField = document.getElementById('funcion');
+            let funcion = '';
+            if (mathField && mathField.value) {
+                funcion = mathField.value;
+            } else if (mathField && mathField.textContent) {
+                funcion = mathField.textContent;
+            }
+            funcion = limpiarFuncionInput(funcion);
+            // Actualizar el campo oculto
+            let hidden = document.getElementById('funcion-hidden');
+            if (hidden) hidden.value = funcion;
+        });
+    }
 });
 </script>
 <script src="{% static 'metodos_numericos/js/integracion-graph.js' %}"></script>
@@ -250,18 +289,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // Inicializar gráfica de integración
 
 document.addEventListener('DOMContentLoaded', function() {
-    
     setTimeout(function() {
         initializeIntegrationGraph({{ datos_grafica|safe }});
-        
         // Re-renderizar MathJax
         if (typeof MathJax !== 'undefined') {
             MathJax.typesetPromise();
         }
     }, 500);
-   
 });
 </script>
 {% endif %}
-
 {% endblock %}

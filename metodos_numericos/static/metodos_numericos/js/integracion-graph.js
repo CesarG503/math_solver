@@ -1,18 +1,39 @@
 // Configuración y funciones para gráficas de integración numérica con Plotly
 let integrationPlot = null
 
+function filterNumericPairs(xs, ys) {
+  // Devuelve solo los pares donde ambos son números finitos
+  const result = []
+  for (let i = 0; i < xs.length; i++) {
+    const x = xs[i]
+    const y = ys[i]
+    if (
+      typeof x === 'number' && typeof y === 'number' &&
+      isFinite(x) && isFinite(y)
+    ) {
+      result.push([x, y])
+    }
+  }
+  return result
+}
+
 function initializeIntegrationGraph(datosGrafica) {
   if (!datosGrafica) return
 
   const graphDiv = document.getElementById("integration-graph")
   if (!graphDiv) return
 
+  // Filtrar datos no numéricos para cada traza
+  const curvaPairs = filterNumericPairs(datosGrafica.curva_x, datosGrafica.curva_y)
+  const areaPairs = filterNumericPairs(datosGrafica.area_x, datosGrafica.area_y)
+  const intervalosPairs = filterNumericPairs(datosGrafica.intervalos_x, datosGrafica.intervalos_y)
+
   // Configurar trazas
   const traces = [
     // Función original
     {
-      x: datosGrafica.curva_x,
-      y: datosGrafica.curva_y,
+      x: curvaPairs.map(p => p[0]),
+      y: curvaPairs.map(p => p[1]),
       type: "scatter",
       mode: "lines",
       name: "f(x)",
@@ -24,8 +45,8 @@ function initializeIntegrationGraph(datosGrafica) {
     },
     // Área bajo la curva
     {
-      x: datosGrafica.area_x,
-      y: datosGrafica.area_y,
+      x: areaPairs.map(p => p[0]),
+      y: areaPairs.map(p => p[1]),
       type: "scatter",
       mode: "lines",
       fill: "tozeroy",
@@ -37,8 +58,8 @@ function initializeIntegrationGraph(datosGrafica) {
     },
     // Puntos de los intervalos
     {
-      x: datosGrafica.intervalos_x,
-      y: datosGrafica.intervalos_y,
+      x: intervalosPairs.map(p => p[0]),
+      y: intervalosPairs.map(p => p[1]),
       type: "scatter",
       mode: "markers",
       name: "Puntos de evaluación",
@@ -56,10 +77,11 @@ function initializeIntegrationGraph(datosGrafica) {
   ]
 
   // Agregar aproximación según el método
-  if (datosGrafica.metodo === "trapecio" && datosGrafica.trapecio_x.length > 0) {
+  if (datosGrafica.metodo === "trapecio" && Array.isArray(datosGrafica.trapecio_x) && datosGrafica.trapecio_x.length > 0) {
+    const trapecioPairs = filterNumericPairs(datosGrafica.trapecio_x, datosGrafica.trapecio_y)
     traces.push({
-      x: datosGrafica.trapecio_x,
-      y: datosGrafica.trapecio_y,
+      x: trapecioPairs.map(p => p[0]),
+      y: trapecioPairs.map(p => p[1]),
       type: "scatter",
       mode: "lines",
       fill: "toself",
@@ -74,7 +96,11 @@ function initializeIntegrationGraph(datosGrafica) {
   }
 
   // Líneas verticales para los límites de integración
-  const yRange = [Math.min(...datosGrafica.curva_y) - 1, Math.max(...datosGrafica.curva_y) + 1]
+  const curvaY = curvaPairs.map(p => p[1])
+  const yRange = [
+    Math.min(...curvaY, 0) - 1,
+    Math.max(...curvaY, 0) + 1
+  ]
 
   traces.push(
     // Línea en x = a

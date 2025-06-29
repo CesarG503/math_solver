@@ -44,14 +44,14 @@
                     </button>
                 </div>
             </div>
-
+            
             <div class="info-section mb-3">
                 <label>Cambiar contraseña:</label>
                 <div class="d-flex align-items-center">
-                    <span id="password" class="editable-text text-white-neon me-2">Contraseña...</span>
-                    <button type="button" class="edit-button edit-inline-btn text-info-emphasis-neon">
+                    <a href="{% url 'password_change' %}" class="btn btn-warning rounded-pill">
+                        Cambiar contraseña
                         <i id="icon-password" class="fa fa-pencil"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="text-center mt-4">
@@ -78,17 +78,21 @@
         </div>
 
         <div class="info-section mt-3">
+        <div class="position-absolute" style="max-height: 200px; overflow-y: auto; width: 100%;">
+            <div class="info-section mt-3">
                 <label>Historial de ejercicios:</label>
-            <table id="historial-ejercicios" class="table-bootstrap table-fixed">
-                <thead>
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Respuesta</th>
-                        <th>Editar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+                <table id="historial-ejercicios" class="table-bootstrap table-fixed">
+                    <thead>
+                        <tr>
+                            <th width="10%">Tipo</th>
+                            <th>Respuesta</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
