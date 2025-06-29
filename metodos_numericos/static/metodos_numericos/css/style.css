@@ -108,14 +108,13 @@ body {
 }
 
 /* Estilos para botones de edicion */
-#button-normal{
+#button-normal {
   display: block;
 }
 
-#button-small{
+#button-small {
   display: none;
 }
-
 
 /* Estilos para código matemático */
 code {
@@ -156,15 +155,15 @@ code {
     font-size: 0.8rem;
   }
 
-  #button-small{
+  #button-small {
     display: block;
   }
 
-  #button-normal{
+  #button-normal {
     display: none;
   }
 
-  .navbar-header{
+  .navbar-header {
     justify-content: space-between;
   }
 }
@@ -937,162 +936,566 @@ footer {
 
 /* Estilos para el método Simplex mejorado */
 .simplex-variable-input {
-    border-radius: 8px;
-    transition: all 0.3s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .simplex-variable-input:focus {
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #007bff;
 }
 
 .input-group-text {
-    background-color: var(--bs-light);
-    border-color: var(--bs-border-color);
-    font-weight: 500;
+  background-color: var(--bs-light);
+  border-color: var(--bs-border-color);
+  font-weight: 500;
 }
 
 [data-theme="dark"] .input-group-text {
-    background-color: var(--bs-dark);
-    color: var(--bs-light);
-    border-color: var(--bs-border-color-translucent);
+  background-color: var(--bs-dark);
+  color: var(--bs-light);
+  border-color: var(--bs-border-color-translucent);
 }
 
 .restriccion-container {
-    background-color: rgba(0, 123, 255, 0.05);
-    border: 1px solid rgba(0, 123, 255, 0.2);
-    border-radius: 10px;
-    transition: all 0.3s ease;
+  background-color: rgba(0, 123, 255, 0.05);
+  border: 1px solid rgba(0, 123, 255, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
 .restriccion-container:hover {
-    background-color: rgba(0, 123, 255, 0.08);
-    border-color: rgba(0, 123, 255, 0.3);
+  background-color: rgba(0, 123, 255, 0.08);
+  border-color: rgba(0, 123, 255, 0.3);
 }
 
 [data-theme="dark"] .restriccion-container {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 [data-theme="dark"] .restriccion-container:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Animaciones para campos dinámicos */
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .campo-dinamico {
-    animation: slideIn 0.3s ease-out;
+  animation: slideIn 0.3s ease-out;
 }
 
 /* Mejoras para las tablas Simplex */
 .simplex-table-container {
-    overflow-x: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 1rem 0;
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
 }
 
 .simplex-table {
-    width: 100%;
-    margin-bottom: 0;
-    background-color: white;
+  width: 100%;
+  margin-bottom: 0;
+  background-color: white;
 }
 
 [data-theme="dark"] .simplex-table {
-    background-color: var(--bs-dark);
-    color: var(--bs-light);
+  background-color: var(--bs-dark);
+  color: var(--bs-light);
 }
 
 .simplex-table th {
-    background-color: #007bff;
-    color: white;
-    font-weight: 600;
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-    border: 1px solid #0056b3;
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid #0056b3;
 }
 
 .simplex-table td {
-    text-align: center;
-    padding: 0.5rem;
-    border: 1px solid #dee2e6;
-    transition: background-color 0.2s ease;
+  text-align: center;
+  padding: 0.5rem;
+  border: 1px solid #dee2e6;
+  transition: background-color 0.2s ease;
 }
 
 [data-theme="dark"] .simplex-table td {
-    border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .simplex-table .base-column {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: #495057;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
 }
 
 [data-theme="dark"] .simplex-table .base-column {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--bs-light);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--bs-light);
 }
 
 .simplex-table .objective-row {
-    background-color: #e3f2fd;
-    font-weight: 600;
+  background-color: #e3f2fd;
+  font-weight: 600;
 }
 
 [data-theme="dark"] .simplex-table .objective-row {
-    background-color: rgba(33, 150, 243, 0.2);
+  background-color: rgba(33, 150, 243, 0.2);
 }
 
 .simplex-table .pivot-cell {
-    background-color: #ff5722 !important;
-    color: white !important;
-    font-weight: bold;
-    box-shadow: inset 0 0 0 2px #d32f2f;
+  background-color: #ff5722 !important;
+  color: white !important;
+  font-weight: bold;
+  box-shadow: inset 0 0 0 2px #d32f2f;
 }
 
 .simplex-table .entering-variable {
-    background-color: #4caf50 !important;
-    color: white !important;
+  background-color: #4caf50 !important;
+  color: white !important;
 }
 
 .simplex-table .leaving-variable {
-    background-color: #ff9800 !important;
-    color: white !important;
+  background-color: #ff9800 !important;
+  color: white !important;
 }
 
 .table-title {
-    background-color: #007bff;
-    color: white;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    text-align: center;
-    margin: 0;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .simplex-table {
-        font-size: 0.8rem;
-    }
-    
-    .simplex-table th,
-    .simplex-table td {
-        padding: 0.25rem;
-    }
-    
-    .restriccion-container {
-        margin-bottom: 1rem;
-    }
+  .simplex-table {
+    font-size: 0.8rem;
+  }
+
+  .simplex-table th,
+  .simplex-table td {
+    padding: 0.25rem;
+  }
+
+  .restriccion-container {
+    margin-bottom: 1rem;
+  }
+}
+
+/* ===== ESTILOS MEJORADOS PARA SIMPLEX ===== */
+
+/* Variables CSS para temas mejoradas */
+:root {
+  --simplex-bg-primary: #ffffff;
+  --simplex-bg-secondary: #f8f9fa;
+  --simplex-bg-table: #ffffff;
+  --simplex-text-primary: #212529;
+  --simplex-text-secondary: #6c757d;
+  --simplex-border-color: #dee2e6;
+  --simplex-input-bg: #ffffff;
+  --simplex-input-border: #ced4da;
+  --simplex-table-header-bg: #e3f2fd;
+  --simplex-table-hover: rgba(0, 123, 255, 0.05);
+}
+
+[data-theme="dark"] {
+  --simplex-bg-primary: #1a1a1a;
+  --simplex-bg-secondary: #2d2d2d;
+  --simplex-bg-table: #2d2d2d;
+  --simplex-text-primary: #ffffff;
+  --simplex-text-secondary: #adb5bd;
+  --simplex-border-color: #495057;
+  --simplex-input-bg: #2d2d2d;
+  --simplex-input-border: #495057;
+  --simplex-table-header-bg: #1e3a5f;
+  --simplex-table-hover: rgba(255, 255, 255, 0.05);
+}
+
+/* Estilos para las tablas de entrada de datos */
+#variables-table,
+#objetivo-table,
+#restricciones-table {
+  background-color: var(--simplex-bg-table);
+  border: 1px solid var(--simplex-border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0;
+}
+
+[data-theme="dark"] #variables-table,
+[data-theme="dark"] #objetivo-table,
+[data-theme="dark"] #restricciones-table {
+  background-color: var(--simplex-bg-table);
+  border-color: var(--simplex-border-color);
+}
+
+/* Headers de las tablas */
+#variables-table thead th,
+#objetivo-table thead th,
+#restricciones-table thead th {
+  background-color: var(--simplex-table-header-bg);
+  color: var(--simplex-text-primary);
+  font-weight: 600;
+  text-align: center;
+  padding: 0.75rem 0.5rem;
+  border: none;
+  font-size: 0.9rem;
+}
+
+[data-theme="dark"] #variables-table thead th,
+[data-theme="dark"] #objetivo-table thead th,
+[data-theme="dark"] #restricciones-table thead th {
+  background-color: var(--simplex-table-header-bg);
+  color: var(--simplex-text-primary);
+}
+
+/* Celdas de las tablas */
+#variables-table td,
+#objetivo-table td,
+#restricciones-table td {
+  padding: 0.5rem;
+  border: 1px solid var(--simplex-border-color);
+  background-color: var(--simplex-bg-table);
+  vertical-align: middle;
+}
+
+[data-theme="dark"] #variables-table td,
+[data-theme="dark"] #objetivo-table td,
+[data-theme="dark"] #restricciones-table td {
+  border-color: var(--simplex-border-color);
+  background-color: var(--simplex-bg-table);
+}
+
+/* Inputs dentro de las tablas */
+.variable-name-input,
+.objetivo-input,
+.restriccion-input,
+.restriccion-valor {
+  background-color: var(--simplex-input-bg);
+  border: 1px solid var(--simplex-input-border);
+  color: var(--simplex-text-primary);
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.variable-name-input:focus,
+.objetivo-input:focus,
+.restriccion-input:focus,
+.restriccion-valor:focus {
+  background-color: var(--simplex-input-bg);
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .variable-name-input,
+[data-theme="dark"] .objetivo-input,
+[data-theme="dark"] .restriccion-input,
+[data-theme="dark"] .restriccion-valor {
+  background-color: var(--simplex-input-bg);
+  border-color: var(--simplex-input-border);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .variable-name-input:focus,
+[data-theme="dark"] .objetivo-input:focus,
+[data-theme="dark"] .restriccion-input:focus,
+[data-theme="dark"] .restriccion-valor:focus {
+  background-color: var(--simplex-input-bg);
+  border-color: #4dabf7;
+  color: var(--simplex-text-primary);
+}
+
+/* Selects dentro de las tablas */
+#restricciones-table select {
+  background-color: var(--simplex-input-bg);
+  border: 1px solid var(--simplex-input-border);
+  color: var(--simplex-text-primary);
+  font-size: 0.9rem;
+}
+
+[data-theme="dark"] #restricciones-table select {
+  background-color: var(--simplex-input-bg);
+  border-color: var(--simplex-input-border);
+  color: var(--simplex-text-primary);
+}
+
+/* Hover effects para filas de restricciones */
+.restriccion-row:hover {
+  background-color: var(--simplex-table-hover);
+}
+
+.restriccion-row:hover td {
+  background-color: var(--simplex-table-hover);
+}
+
+/* Estilos para el scroll mejorado */
+.table-responsive {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: var(--simplex-bg-secondary);
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #0056b3;
+}
+
+[data-theme="dark"] .table-responsive::-webkit-scrollbar-track {
+  background: var(--simplex-bg-secondary);
+}
+
+[data-theme="dark"] .table-responsive::-webkit-scrollbar-thumb {
+  background: #4dabf7;
+}
+
+[data-theme="dark"] .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #339af0;
+}
+
+/* Sticky header para tabla de restricciones */
+#restricciones-table thead th.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animaciones mejoradas */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.restriccion-row {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Validación visual mejorada */
+.is-valid {
+  border-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.is-invalid {
+  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+[data-theme="dark"] .is-valid {
+  border-color: #51cf66;
+  background-color: rgba(81, 207, 102, 0.1);
+}
+
+[data-theme="dark"] .is-invalid {
+  border-color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+/* Botones mejorados */
+.btn-outline-danger:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Cards con mejor contraste en modo oscuro */
+[data-theme="dark"] .card {
+  background-color: var(--simplex-bg-primary);
+  border-color: var(--simplex-border-color);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .card-body {
+  background-color: var(--simplex-bg-primary);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .bg-light {
+  background-color: var(--simplex-bg-secondary) !important;
+  color: var(--simplex-text-primary) !important;
+}
+
+/* Alertas en modo oscuro */
+[data-theme="dark"] .alert-success {
+  background-color: rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.3);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .alert-danger {
+  background-color: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.3);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .alert-warning {
+  background-color: rgba(255, 193, 7, 0.2);
+  border-color: rgba(255, 193, 7, 0.3);
+  color: var(--simplex-text-primary);
+}
+
+[data-theme="dark"] .alert-info {
+  background-color: rgba(0, 123, 255, 0.2);
+  border-color: rgba(0, 123, 255, 0.3);
+  color: var(--simplex-text-primary);
+}
+
+/* Responsive mejorado */
+@media (max-width: 768px) {
+  #variables-table,
+  #objetivo-table,
+  #restricciones-table {
+    font-size: 0.8rem;
+  }
+
+  .variable-name-input,
+  .objetivo-input,
+  .restriccion-input,
+  .restriccion-valor {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  #variables-table th,
+  #objetivo-table th,
+  #restricciones-table th {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  #variables-table td,
+  #objetivo-table td,
+  #restricciones-table td {
+    padding: 0.25rem;
+  }
+
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    top: 85px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  #variables-table,
+  #objetivo-table,
+  #restricciones-table {
+    font-size: 0.75rem;
+  }
+
+  .variable-name-input,
+  .objetivo-input,
+  .restriccion-input,
+  .restriccion-valor {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* Mejoras para notificaciones */
+.alert.position-fixed {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Estilos para el ejemplo explicativo */
+[data-theme="dark"] .bg-light.rounded {
+  background-color: var(--simplex-bg-secondary) !important;
+  border: 1px solid var(--simplex-border-color);
+}
+
+/* Mejoras para la tabla de restricciones con muchas variables */
+#restricciones-table {
+  min-width: 100%;
+  table-layout: auto;
+}
+
+#restricciones-table th,
+#restricciones-table td {
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+#restricciones-table th:first-child,
+#restricciones-table td:first-child {
+  min-width: 50px;
+}
+
+#restricciones-table th:nth-last-child(-n + 3),
+#restricciones-table td:nth-last-child(-n + 3) {
+  min-width: 90px;
+}
+
+/* Indicador visual para scroll horizontal */
+.table-responsive::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.table-responsive:hover::after {
+  opacity: 1;
+}
+
+[data-theme="dark"] .table-responsive::after {
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.1), transparent);
 }

@@ -1,7 +1,7 @@
 // Variables globales
 let contadorRestricciones = 0
-let numVariables = 3
-let nombresVariables = ["x₁", "x₂", "x₃"]
+let numVariables = 2
+let nombresVariables = ["x", "x"]
 
 // Función para alternar tema
 function toggleTheme() {
@@ -17,20 +17,23 @@ function updateThemeButton(theme) {
   const icon = document.getElementById("theme-icon")
   const boton = document.querySelector(".theme-toggle")
   const body = document.body
+
   if (theme === "dark") {
     if (icon) icon.className = "fas fa-sun"
     if (boton) {
       boton.classList.remove("bg-secondary-neon")
       boton.classList.add("bg-warning-neon")
     }
-    body.classList.add("bg-secondary-neon")
+    body.classList.add("bg-dark")
+    body.classList.add("text-light")
   } else {
     if (icon) icon.className = "fas fa-moon"
     if (boton) {
       boton.classList.remove("bg-warning-neon")
       boton.classList.add("bg-secondary-neon")
     }
-    body.classList.remove("bg-secondary-neon")
+    body.classList.remove("bg-dark")
+    body.classList.remove("text-light")
   }
 }
 
@@ -55,145 +58,256 @@ function generarCamposVariables() {
     nombresVariables.push(`x${i}`)
   }
 
-  generarCamposNombres()
-  generarCamposFuncionObjetivo()
+  generarTablaVariables()
+  generarTablaObjetivo()
+  generarHeaderRestricciones()
   limpiarRestricciones()
 }
 
-function generarCamposNombres() {
-  const container = document.getElementById("nombres-variables-container")
-  container.innerHTML = ""
-  container.className = `row row-cols-${Math.min(numVariables, 6)} flex-nowrap` // Responsive y scroll
+function generarTablaVariables() {
+  const header = document.getElementById("variables-header")
+  const names = document.getElementById("variables-names")
+
+  header.innerHTML = ""
+  names.innerHTML = ""
 
   for (let i = 0; i < numVariables; i++) {
-    const div = document.createElement("div")
-    div.className = `col mb-2`
-    div.innerHTML = `
-            <input type="text" class="form-control form-control-sm text-center" 
+    // Header
+    const th = document.createElement("th")
+    th.className = "text-center"
+    th.style.minWidth = "120px"
+    th.innerHTML = `Variable ${i + 1}`
+    header.appendChild(th)
+
+    // Input
+    const td = document.createElement("td")
+    td.innerHTML = `
+            <input type="text" class="form-control form-control-sm text-center variable-name-input" 
                    id="nombre_var_${i}" value="${nombresVariables[i]}" 
                    onchange="actualizarNombreVariable(${i}, this.value)"
-                   placeholder="x₁${i + 1}">
-            <small class="text-muted">Var ${i + 1}</small>
+                   placeholder="x${i + 1}">
         `
-    container.appendChild(div)
+    names.appendChild(td)
   }
 }
 
-function generarCamposFuncionObjetivo() {
-  const container = document.getElementById("funcion-objetivo-container")
-  container.innerHTML = ""
-  container.className = `row row-cols-${Math.min(numVariables, 6)} flex-nowrap` // Responsive y scroll
+function generarTablaObjetivo() {
+  const header = document.getElementById("objetivo-header")
+  const coefs = document.getElementById("objetivo-coeficientes")
+
+  header.innerHTML = ""
+  coefs.innerHTML = ""
 
   for (let i = 0; i < numVariables; i++) {
-    const div = document.createElement("div")
-    div.className = `col mb-2`
-    div.innerHTML = `
-            <div class="input-group input-group-sm">
-                <input type="number" class="form-control" 
-                       name="coef_obj_${i}" step="any" placeholder="0"
-                       id="coef_obj_${i}">
-                <span class="input-group-text" id="label_var_${i}">${nombresVariables[i]}</span>
-            </div>
+    // Header
+    const th = document.createElement("th")
+    th.className = "text-center"
+    th.style.minWidth = "120px"
+    th.innerHTML = `<span id="obj_label_${i}">${nombresVariables[i]}</span>`
+    header.appendChild(th)
+
+    // Input
+    const td = document.createElement("td")
+    td.innerHTML = `
+            <input type="number" class="form-control form-control-sm text-center objetivo-input" 
+                   name="coef_obj_${i}" step="any" placeholder="0"
+                   id="coef_obj_${i}">
         `
-    container.appendChild(div)
+    coefs.appendChild(td)
+  }
+}
+
+function generarHeaderRestricciones() {
+  const header = document.getElementById("restricciones-header")
+
+  // Limpiar header existente excepto las columnas fijas
+  while (header.children.length > 1) {
+    header.removeChild(header.children[1])
+  }
+
+  // Agregar columnas de variables
+  for (let i = 0; i < numVariables; i++) {
+    const th = document.createElement("th")
+    th.className = "text-center"
+    th.style.minWidth = "100px"
+    th.innerHTML = `<span id="rest_label_${i}">${nombresVariables[i]}</span>`
+    header.insertBefore(th, header.children[header.children.length - 3])
   }
 }
 
 function actualizarNombreVariable(indice, nuevoNombre) {
   if (nuevoNombre.trim() === "") {
-    nuevoNombre = `x₁${indice + 1}`
+    nuevoNombre = `x${indice + 1}`
     document.getElementById(`nombre_var_${indice}`).value = nuevoNombre
   }
 
   nombresVariables[indice] = nuevoNombre
 
   // Actualizar etiquetas en función objetivo
-  const label = document.getElementById(`label_var_${indice}`)
-  if (label) {
-    label.textContent = nuevoNombre
+  const objLabel = document.getElementById(`obj_label_${indice}`)
+  if (objLabel) {
+    objLabel.textContent = nuevoNombre
   }
 
-  // Actualizar etiquetas en restricciones existentes
-  actualizarEtiquetasRestricciones()
-}
-
-function actualizarEtiquetasRestricciones() {
-  const restricciones = document.querySelectorAll('[id^="restriccion_"]')
-  restricciones.forEach((restriccion) => {
-    const labels = restriccion.querySelectorAll(".input-group-text")
-    labels.forEach((label, index) => {
-      if (index < nombresVariables.length) {
-        label.textContent = nombresVariables[index]
-      }
-    })
-  })
+  // Actualizar etiquetas en restricciones
+  const restLabel = document.getElementById(`rest_label_${indice}`)
+  if (restLabel) {
+    restLabel.textContent = nuevoNombre
+  }
 }
 
 function limpiarRestricciones() {
-  const container = document.getElementById("restricciones-container")
-  container.innerHTML = ""
+  const tbody = document.getElementById("restricciones-tbody")
+  tbody.innerHTML = ""
   contadorRestricciones = 0
 }
 
 function agregarRestriccion() {
-  const container = document.getElementById("restricciones-container")
-  const div = document.createElement("div")
-  div.className = "mb-3 p-3 border rounded"
-  div.id = `restriccion_${contadorRestricciones}`
+  const tbody = document.getElementById("restricciones-tbody")
+  const tr = document.createElement("tr")
+  tr.id = `restriccion_${contadorRestricciones}`
+  tr.className = "restriccion-row"
 
-  let coeficientesHTML = ""
+  // Número de restricción
+  let html = `<td class="text-center fw-bold">${contadorRestricciones + 1}</td>`
+
+  // Coeficientes de variables
   for (let i = 0; i < numVariables; i++) {
-    coeficientesHTML += `
-            <div class="col mb-2">
-                <div class="input-group input-group-sm p-0">
-                    <input type="number" class="form-control" 
-                           name="restriccion_${contadorRestricciones}_coef_${i}" 
-                           step="any" placeholder="0">
-                    <span class="input-group-text p-0 p-1">${nombresVariables[i]}</span>
-                </div>
-            </div>
+    html += `
+            <td>
+                <input type="number" class="form-control form-control-sm text-center restriccion-input" 
+                       name="restriccion_${contadorRestricciones}_coef_${i}" 
+                       step="any" placeholder="0">
+            </td>
         `
   }
 
-  div.innerHTML = `
-        <div class="row row-cols-${Math.min(numVariables + 2, 8)} align-items-end flex-nowrap">
-            ${coeficientesHTML}
-            <div class="col mb-2">
-                <select class="form-select form-select-sm" 
-                        name="restriccion_${contadorRestricciones}_tipo">
-                    <option value="<=" >&le;</option>
-                    <option value=">=" >&ge;</option>
-                    <option value="=" >=</option>
-                </select>
-            </div>
-            <div class="col mb-2">
-                <input type="number" class="form-control form-control-sm" 
-                       name="restriccion_${contadorRestricciones}_valor" 
-                       placeholder="0" step="any" required>
-            </div>
-            <div class="col-12 col-md-auto mb-2">
-                <button type="button" class="btn btn-outline-danger btn-sm w-100" 
-                        onclick="eliminarRestriccion(${contadorRestricciones})">
-                    <i class="fas fa-trash me-1"></i>Eliminar
-                </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <small class="text-muted">Restricción ${contadorRestricciones + 1}</small>
-            </div>
-        </div>
+  // Tipo de restricción
+  html += `
+        <td>
+            <select class="form-select form-select-sm" 
+                    name="restriccion_${contadorRestricciones}_tipo">
+                <option value="<=">&le;</option>
+                <option value=">=">&ge;</option>
+                <option value="=">=</option>
+            </select>
+        </td>
     `
 
-  container.appendChild(div)
+  // Valor
+  html += `
+        <td>
+            <input type="number" class="form-control form-control-sm text-center restriccion-valor" 
+                   name="restriccion_${contadorRestricciones}_valor" 
+                   placeholder="0" step="any" required>
+        </td>
+    `
+
+  // Botón eliminar
+  html += `
+        <td class="text-center">
+            <button type="button" class="btn btn-outline-danger btn-sm" 
+                    onclick="eliminarRestriccion(${contadorRestricciones})"
+                    title="Eliminar restricción">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    `
+
+  tr.innerHTML = html
+  tbody.appendChild(tr)
+
+  // Animación de entrada
+  tr.style.opacity = "0"
+  tr.style.transform = "translateY(-10px)"
+  setTimeout(() => {
+    tr.style.transition = "all 0.3s ease"
+    tr.style.opacity = "1"
+    tr.style.transform = "translateY(0)"
+  }, 10)
+
   contadorRestricciones++
 }
 
 function eliminarRestriccion(id) {
   const restriccion = document.getElementById(`restriccion_${id}`)
   if (restriccion) {
-    restriccion.remove()
+    restriccion.style.transition = "all 0.3s ease"
+    restriccion.style.opacity = "0"
+    restriccion.style.transform = "translateY(-10px)"
+    setTimeout(() => {
+      restriccion.remove()
+      actualizarNumeracionRestricciones()
+    }, 300)
   }
+}
+
+function actualizarNumeracionRestricciones() {
+  const filas = document.querySelectorAll(".restriccion-row")
+  filas.forEach((fila, index) => {
+    const numeroCell = fila.querySelector("td:first-child")
+    if (numeroCell) {
+      numeroCell.textContent = index + 1
+    }
+  })
+}
+
+function cargarEjemplo() {
+  // Configurar 2 variables
+  document.getElementById("num_variables").value = "2"
+  document.getElementById("maximizar").checked = true
+
+  generarCamposVariables()
+
+  // Configurar función objetivo: 3x₁ + 2x₂
+  document.getElementById("coef_obj_0").value = "3"
+  document.getElementById("coef_obj_1").value = "2"
+
+  // Limpiar restricciones existentes
+  limpiarRestricciones()
+
+  // Añadir primera restricción: x₁ + x₂ ≤ 4
+  agregarRestriccion()
+  const rest1 = document.querySelector('[name="restriccion_0_coef_0"]')
+  const rest1_2 = document.querySelector('[name="restriccion_0_coef_1"]')
+  const rest1_tipo = document.querySelector('[name="restriccion_0_tipo"]')
+  const rest1_valor = document.querySelector('[name="restriccion_0_valor"]')
+
+  if (rest1) rest1.value = "1"
+  if (rest1_2) rest1_2.value = "1"
+  if (rest1_tipo) rest1_tipo.value = "<="
+  if (rest1_valor) rest1_valor.value = "4"
+
+  // Añadir segunda restricción: 2x₁ + x₂ ≤ 6
+  agregarRestriccion()
+  const rest2 = document.querySelector('[name="restriccion_1_coef_0"]')
+  const rest2_2 = document.querySelector('[name="restriccion_1_coef_1"]')
+  const rest2_tipo = document.querySelector('[name="restriccion_1_tipo"]')
+  const rest2_valor = document.querySelector('[name="restriccion_1_valor"]')
+
+  if (rest2) rest2.value = "2"
+  if (rest2_2) rest2_2.value = "1"
+  if (rest2_tipo) rest2_tipo.value = "<="
+  if (rest2_valor) rest2_valor.value = "6"
+
+  // Mostrar mensaje de confirmación
+  showNotification("Ejemplo cargado correctamente", "success")
+}
+
+function showNotification(message, type = "info") {
+  const notification = document.createElement("div")
+  notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`
+  notification.style.cssText = "top: 20px; right: 20px; z-index: 9999; min-width: 300px;"
+  notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `
+
+  document.body.appendChild(notification)
+
+  setTimeout(() => {
+    notification.remove()
+  }, 3000)
 }
 
 // Interceptar el envío del formulario para procesar los datos
@@ -227,7 +341,7 @@ function procesarFormulario(e) {
   e.target.appendChild(inputNombres)
 
   // Procesar restricciones
-  const restricciones = document.querySelectorAll('[id^="restriccion_"]')
+  const restricciones = document.querySelectorAll(".restriccion-row")
   restricciones.forEach((restriccion, index) => {
     const coeficientes = []
     for (let i = 0; i < numVariables; i++) {
@@ -353,7 +467,6 @@ function addHoverEffects(table) {
       const rows = table.querySelectorAll("tr")
       rows.forEach((r) => {
         if (r.children[cellIndex]) {
-          // Usar un color más oscuro en modo claro
           if (document.documentElement.getAttribute("data-theme") === "dark") {
             r.children[cellIndex].style.backgroundColor = "rgba(0, 123, 255, 0.1)"
           } else {
@@ -399,6 +512,7 @@ function validateNumber(input) {
     showTooltip(input, "Debe ser un número válido")
   } else {
     input.classList.remove("is-invalid")
+    input.classList.add("is-valid")
     hideTooltip(input)
   }
 }
@@ -410,3 +524,18 @@ function showTooltip(element, message) {
 function hideTooltip(element) {
   element.title = ""
 }
+
+// Mejorar la experiencia de usuario con animaciones
+document.addEventListener("DOMContentLoaded", () => {
+  // Animación de entrada para las tarjetas
+  const cards = document.querySelectorAll(".card")
+  cards.forEach((card, index) => {
+    card.style.opacity = "0"
+    card.style.transform = "translateY(20px)"
+    setTimeout(() => {
+      card.style.transition = "all 0.5s ease"
+      card.style.opacity = "1"
+      card.style.transform = "translateY(0)"
+    }, index * 100)
+  })
+})

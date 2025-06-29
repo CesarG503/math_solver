@@ -6,6 +6,7 @@
 <button class="theme-toggle bg-secondary-neon" onclick="toggleTheme()" title="Cambiar tema">
     <i class="fas fa-moon" id="theme-icon"></i>
 </button>
+
 <div class="row justify-content-end">
     <div class="col-12">
         <h2 class="mb-4 text-info">
@@ -16,171 +17,202 @@
 </div>
 
 <div class="row">
-    <div class="col-12 col-md-8 col-lg-4" id="entrada-datos">
-        <div class="card">
-            <div class="card-header bg-info-neon text-white">
-                <h4 class="">
-                    <i class="fas fa-keyboard me-2"></i>Datos de Entrada
+    <div class="col-12 col-lg-5" id="entrada-datos">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-keyboard me-2"></i>Configuración del Problema
                 </h4>
             </div>
-            <div class="card-body text-dark">
+            <div class="card-body">
                 <form method="post" id="simplexForm">
                     {% csrf_token %}
                     
-                    <!-- Tipo de optimización -->
-                    <div class="mb-3 mt-3">
-                        <label class="form-label">
-                            <i class="fas fa-target me-1"></i>Tipo de Optimización
-                        </label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="tipo_optimizacion" 
-                                   id="maximizar" value="maximizar" 
-                                   {% if tipo_optimizacion == 'maximizar' or not tipo_optimizacion %}checked{% endif %}>
-                            <label class="form-check-label" for="maximizar">
-                                Maximizar
+                    <!-- Configuración básica -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-target me-1"></i>Optimización
                             </label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_optimizacion" 
+                                       id="maximizar" value="maximizar" 
+                                       {% if tipo_optimizacion == 'maximizar' or not tipo_optimizacion %}checked{% endif %}>
+                                <label class="form-check-label" for="maximizar">Maximizar</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_optimizacion" 
+                                       id="minimizar" value="minimizar"
+                                       {% if tipo_optimizacion == 'minimizar' %}checked{% endif %}>
+                                <label class="form-check-label" for="minimizar">Minimizar</label>
+                            </div>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="tipo_optimizacion" 
-                                   id="minimizar" value="minimizar"
-                                   {% if tipo_optimizacion == 'minimizar' %}checked{% endif %}>
-                            <label class="form-check-label" for="minimizar">
-                                Minimizar
+                        <div class="col-md-6">
+                            <label for="num_variables" class="form-label fw-bold">
+                                <i class="fas fa-hashtag me-1"></i>Variables
                             </label>
+                            <select class="form-select" id="num_variables" onchange="generarCamposVariables()">
+                                <option value="2" selected>2 variables</option>
+                                <option value="3">3 variables</option>
+                                <option value="4">4 variables</option>
+                                <option value="5">5 variables</option>
+                                <option value="6">6 variables</option>
+                                <option value="7">7 variables</option>
+                                <option value="8">8 variables</option>
+                            </select>
                         </div>
                     </div>
-                    
-                    <!-- Número de variables -->
-                    <div class="mb-3">
-                        <label for="num_variables" class="form-label">
-                            <i class="fas fa-hashtag me-1"></i>Número de Variables
-                        </label>
-                        <select class="form-select" id="num_variables" onchange="generarCamposVariables()">
-                            <option value="2" selected>2 variables</option>
-                            <option value="3">3 variables</option>
-                            <option value="4">4 variables</option>
-                            <option value="5">5 variables</option>
-                            <option value="6">6 variables</option>
-                            <option value="7">7 variables</option>
-                            <option value="8">8 variables</option>
-                        </select>
-                    </div>
-                    
+
                     <!-- Nombres de variables -->
-                    <div class="mb-3">
-                        <label class="form-label">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
                             <i class="fas fa-tag me-1"></i>Nombres de Variables
                         </label>
-                        <div id="nombres-variables-container" class="row">
-                            <!-- Se generan dinámicamente -->
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered" id="variables-table">
+                                <thead class="table-primary">
+                                    <tr id="variables-header">
+                                        <!-- Se genera dinámicamente -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="variables-names">
+                                        <!-- Se genera dinámicamente -->
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="form-text">
-                            Personaliza los nombres de tus variables (por defecto: x₁, x₂, x₃...)
-                        </div>
+                        <small class="text-muted">Personaliza los nombres de tus variables</small>
                     </div>
                     
                     <!-- Función objetivo -->
-                    <div class="mb-3">
-                        <label class="form-label">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
                             <i class="fas fa-function me-1"></i>Función Objetivo
                         </label>
-                        <div id="funcion-objetivo-container" class="row">
-                            <!-- Se genera dinámicamente -->
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered" id="objetivo-table">
+                                <thead class="table-success">
+                                    <tr id="objetivo-header">
+                                        <!-- Se genera dinámicamente -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="objetivo-coeficientes">
+                                        <!-- Se genera dinámicamente -->
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="form-text">
-                            Ingresa los coeficientes de cada variable en la función objetivo
-                        </div>
+                        <small class="text-muted">Coeficientes de cada variable en la función objetivo</small>
                     </div>
                     
                     <!-- Restricciones -->
-                    <div class="mb-3">
-                        <label class="form-label">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
                             <i class="fas fa-list me-1"></i>Restricciones
                         </label>
-                        <div id="restricciones-container" class="pt-2">
-                            <!-- Las restricciones se añaden dinámicamente -->
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-sm table-bordered" id="restricciones-table">
+                                <thead class="table-warning sticky-top">
+                                    <tr id="restricciones-header">
+                                        <th class="text-center" style="min-width: 60px;">#</th>
+                                        <!-- Variables se generan dinámicamente -->
+                                        <th class="text-center" style="min-width: 80px;">Tipo</th>
+                                        <th class="text-center" style="min-width: 100px;">Valor</th>
+                                        <th class="text-center" style="min-width: 80px;">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="restricciones-tbody">
+                                    <!-- Las restricciones se añaden dinámicamente -->
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="d-flex gap-2 mt-2">
-                            <button type="button" class="btn btn-outline-info btn-sm" 
-                                    onclick="agregarRestriccion()">
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="agregarRestriccion()">
                                 <i class="fas fa-plus me-1"></i>Añadir Restricción
                             </button>
-                            <button type="button" class="btn btn-outline-success btn-sm" 
-                                    onclick="cargarEjemplo()">
+                            <button type="button" class="btn btn-outline-success btn-sm" onclick="cargarEjemplo()">
                                 <i class="fas fa-lightbulb me-1"></i>Cargar Ejemplo
                             </button>
                         </div>
                     </div>
                     
-                    <button type="submit" class="btn btn-info w-100">
+                    <button type="submit" class="btn btn-info w-100 btn-lg">
                         <i class="fas fa-calculator me-2"></i>Resolver con Simplex
                     </button>
                 </form>
                 
-                <div class="mt-4">
-                    <h5><i class="fas fa-lightbulb text-warning me-2"></i>Ejemplo</h5>
-                    <div class="small text-muted">
-                        <p><strong>Problema:</strong> Maximizar 3x₁ + 2x₂</p>
-                        <p><strong>Sujeto a:</strong></p>
-                        <ul class="ps-3 mb-2">
+                <!-- Ejemplo explicativo -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-primary mb-2">
+                        <i class="fas fa-lightbulb me-1"></i>Ejemplo de Uso
+                    </h6>
+                    <div class="small">
+                        <p class="mb-2"><strong>Problema:</strong> Maximizar 3x₁ + 2x₂</p>
+                        <p class="mb-2"><strong>Sujeto a:</strong></p>
+                        <ul class="mb-2 ps-3">
                             <li>x₁ + x₂ ≤ 4</li>
                             <li>2x₁ + x₂ ≤ 6</li>
                             <li>x₁, x₂ ≥ 0</li>
                         </ul>
-                        <p class="mt-2"><strong>¿Cómo introducir los datos?</strong></p>
-                        <ol class="ps-3">
-                            <li>Selecciona el número de variables (2 en este caso)</li>
-                            <li>Puedes cambiar los nombres si quieres (x₁, x₂ o y₁, y₂, etc.)</li>
-                            <li>Ingresa los coeficientes de la función objetivo: 3 para x₁ y 2 para x₂</li>
-                            <li>Añade las restricciones una por una con sus coeficientes</li>
-                            <li>Haz clic en "Cargar Ejemplo" para ver este problema configurado</li>
-                        </ol>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="cargarEjemplo()">
+                            <i class="fas fa-download me-1"></i>Cargar este ejemplo
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="col-lg-8">
+    <div class="col-12 col-lg-7">
         {% if solucion is not None %}
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header bg-success text-white">
-                <h4 class="">
+                <h4 class="mb-0">
                     <i class="fas fa-check-circle me-2"></i>Solución Óptima
                 </h4>
             </div>
             <div class="card-body">
-                <div class="alert alert-success p-2 mt-1 mb-1">
-                    <h5><i class="fas fa-bullseye me-2"></i>Variables:</h5>
-                    {% if solucion_con_nombres %}
-                        {% for nombre, valor in solucion_con_nombres.items %}
-                            <p class="mb-1"><strong>{{ nombre }} = {{ valor|floatformat:6 }}</strong></p>
-                        {% endfor %}
-                    {% else %}
-                        {% for valor in solucion %}
-                            <p class="mb-1"><strong>x{{ forloop.counter }} = {{ valor|floatformat:6 }}</strong></p>
-                        {% endfor %}
-                    {% endif %}
+                <div class="alert alert-success">
+                    <h5 class="mb-3"><i class="fas fa-bullseye me-2"></i>Variables:</h5>
+                    <div class="row">
+                        {% if solucion_con_nombres %}
+                            {% for nombre, valor in solucion_con_nombres.items %}
+                                <div class="col-md-6 mb-2">
+                                    <strong>{{ nombre }} = {{ valor|floatformat:6 }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            {% for valor in solucion %}
+                                <div class="col-md-6 mb-2">
+                                    <strong>x{{ forloop.counter }} = {{ valor|floatformat:6 }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                     <hr>
-                    <h5 class="">Valor óptimo: Z = {{ valor_objetivo|floatformat:6 }}</h5>
+                    <h4 class="text-center mb-0">
+                        <i class="fas fa-trophy me-2"></i>Valor óptimo: Z = {{ valor_objetivo|floatformat:6 }}
+                    </h4>
                 </div>
                 
-                <div class="row text-center mt-3 mb-3">
+                <div class="row text-center">
                     <div class="col-md-4">
-                        <div class="bg-light p-2 rounded">
-                            <small class="text-muted">Tipo</small>
+                        <div class="bg-light p-3 rounded">
+                            <small class="text-muted d-block">Tipo</small>
                             <strong>{{ tipo_optimizacion|title }}</strong>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="bg-light p-2 rounded">
-                            <small class="text-muted">Variables</small>
+                        <div class="bg-light p-3 rounded">
+                            <small class="text-muted d-block">Variables</small>
                             <strong>{{ solucion|length }}</strong>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="bg-light p-2 rounded">
-                            <small class="bold">Restricciones</small>
+                        <div class="bg-light p-3 rounded">
+                            <small class="text-muted d-block">Restricciones</small>
                             <strong>{{ num_restricciones }}</strong>
                         </div>
                     </div>
@@ -188,13 +220,13 @@
             </div>
         </div>
         
-        <div class="card mt-3">
-            <div class="card-header bg-info-neon text-white">
-                <h4 class="">
+        <div class="card mt-3 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
                     <i class="fas fa-table me-2"></i>Proceso Simplex Paso a Paso
                 </h4>
             </div>
-            <div class="card-body text-dark">
+            <div class="card-body">
                 <div class="solution-steps">
                     {% for paso in pasos %}
                         {% if "===" in paso %}
@@ -212,17 +244,17 @@
                         {% elif "<div class=\"simplex-table-container\">" in paso %}
                             {{ paso|safe }}
                         {% elif "🔵 VARIABLE ENTRANTE:" in paso %}
-                            <div class="alert alert-info py-2 mb-2 ps-2">
+                            <div class="alert alert-info py-2 mb-2">
                                 <i class="fas fa-arrow-right me-2"></i>
                                 <strong>{{ paso|slice:"2:" }}</strong>
                             </div>
                         {% elif "🔴 VARIABLE SALIENTE:" in paso %}
-                            <div class="alert alert-danger py-2 mb-2 ps-2">
+                            <div class="alert alert-danger py-2 mb-2">
                                 <i class="fas fa-arrow-left me-2"></i>
                                 <strong>{{ paso|slice:"2:" }}</strong>
                             </div>
                         {% elif "⚡ ELEMENTO PIVOTE:" in paso %}
-                            <div class="alert alert-warning py-2 mb-2 ps-2">
+                            <div class="alert alert-warning py-2 mb-2">
                                 <i class="fas fa-crosshairs me-2"></i>
                                 <strong>{{ paso|slice:"2:" }}</strong>
                             </div>
@@ -237,15 +269,15 @@
                         {% elif "1️⃣" in paso or "2️⃣" in paso or "3️⃣" in paso %}
                             <h5 class="text-info mt-2">{{ paso }}</h5>
                         {% elif "✓" in paso %}
-                            <div class="alert alert-success py-2 ps-2">
+                            <div class="alert alert-success py-2">
                                 <i class="fas fa-check-circle me-2"></i>{{ paso|slice:"2:" }}
                             </div>
                         {% elif "❌" in paso %}
-                            <div class="alert alert-danger py-2 ps-2">
+                            <div class="alert alert-danger py-2">
                                 <i class="fas fa-exclamation-triangle me-2"></i>{{ paso|slice:"2:" }}
                             </div>
                         {% elif "🎯" in paso %}
-                            <div class="alert alert-success py-2 ps-2">
+                            <div class="alert alert-success py-2">
                                 <i class="fas fa-bullseye me-2"></i>
                                 <strong>{{ paso|slice:"2:" }}</strong>
                             </div>
@@ -264,14 +296,14 @@
         </div>
         
         {% elif error %}
-        <div class="card">
+        <div class="card shadow-sm">
             <div class="card-header bg-danger text-white">
-                <h4 class="">
+                <h4 class="mb-0">
                     <i class="fas fa-exclamation-triangle me-2"></i>Error en la Solución
                 </h4>
             </div>
             <div class="card-body">
-                <div class="alert  ps-2">
+                <div class="alert alert-danger">
                     <h5><i class="fas fa-times-circle me-2"></i>{{ error }}</h5>
                     {% if interpretacion %}
                         <hr>
@@ -297,11 +329,11 @@
                                 {% elif "<div class=\"simplex-table-container\">" in paso %}
                                     {{ paso|safe }}
                                 {% elif "🔵 VARIABLE ENTRANTE:" in paso %}
-                                    <div class="alert alert-info py-2 mb-2 ps-2">
+                                    <div class="alert alert-info py-2 mb-2">
                                         <strong>{{ paso|slice:"2:" }}</strong>
                                     </div>
                                 {% elif "❌" in paso %}
-                                    <div class="alert alert-danger py-2 ps-2">
+                                    <div class="alert alert-danger py-2">
                                         {{ paso|slice:"2:" }}
                                     </div>
                                 {% elif paso != "" %}
@@ -316,19 +348,22 @@
         </div>
         
         {% else %}
-        <div class="card">
-            <div class="card-body text-center text-muted">
-                <i class="fas fa-arrow-left fa-3x mb-3"></i>
-                <h5>Configura tu problema de programación lineal</h5>
-                <p>Completa el formulario de la izquierda para resolver usando el método Simplex.</p>
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-arrow-left fa-4x text-muted mb-4"></i>
+                <h4 class="text-muted">Configura tu problema de programación lineal</h4>
+                <p class="text-muted">Completa la configuración de la izquierda para resolver usando el método Simplex.</p>
                 
                 <div class="mt-4">
-                    <h5>Formato de entrada:</h5>
-                    <ul class="text-start">
-                        <li><strong>Función objetivo:</strong> Coeficientes separados por comas</li>
-                        <li><strong>Restricciones:</strong> Coeficientes, tipo (≤, ≥, =) y valor</li>
-                        <li><strong>Variables:</strong> Automáticamente no negativas (xi ≥ 0)</li>
-                    </ul>
+                    <h6 class="text-info">Pasos para resolver:</h6>
+                    <ol class="text-start text-muted">
+                        <li>Selecciona el tipo de optimización (maximizar/minimizar)</li>
+                        <li>Define el número de variables de decisión</li>
+                        <li>Personaliza los nombres de las variables (opcional)</li>
+                        <li>Ingresa los coeficientes de la función objetivo</li>
+                        <li>Añade las restricciones del problema</li>
+                        <li>Haz clic en "Resolver con Simplex"</li>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -338,23 +373,5 @@
 
 {% load static %}
 <script src="{% static 'metodos_numericos/js/simplex.js' %}"></script>
-
-<!-- Toggle de tema -->
-<style>
-  /* Responsive: Si hay muchas variables, permitir scroll horizontal en los campos */
-  #nombres-variables-container,
-  #funcion-objetivo-container,
-  #restricciones-container .row.align-items-end {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 0.5rem;
-  }
-  @media (max-width: 991.98px) {
-    #entrada-datos {
-      max-width: 100% !important;
-      flex: 0 0 100% !important;
-    }
-  }
-</style>
 
 {% endblock %}
