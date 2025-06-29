@@ -15,5 +15,5 @@ urlpatterns = [
     path('signup/', views.sing_up_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
     #Ejercicios URLs
-    path('ejercicios/', api.ejercicios, name='ejercicios')
+    path('ejercicios/', api.ejercicios, name='ejercicios'),
 ]

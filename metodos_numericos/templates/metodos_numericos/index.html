@@ -1,6 +1,6 @@
 {% extends 'metodos_numericos/base.html' %}
-
-{% block title %}Inicio - Métodos Numéricos{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Inicio" %} - {% trans "AppTitle" %}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -8,11 +8,10 @@
         <div class="bg-secondary-neon text-white rounded p-5 mb-4">
             <h1>
                 <i class="fas fa-calculator me-3"></i>
-                Métodos Numéricos
+                {% trans "AppTitle" %}
             </h1>
             <p>
-                Aplicación web para resolver problemas de interpolación e integración numérica
-                con soluciones paso a paso detalladas.
+                {% trans "Descripcion" %}
             </p>
         </div>
     </div>
@@ -25,19 +24,18 @@
                 <div class="mb-3">
                     <i class="fas fa-chart-line fa-3x text-warning mt-2"></i>
                 </div>
-                <h5 class="card-title text-warning">Interpolación de Hermite</h5>
+                <h5 class="card-title text-warning">{% trans "Interpolacion Hermite" %}</h5>
                 <p class="card-text text-dark">
-                    Encuentra el polinomio interpolante que pasa por puntos dados
-                    considerando tanto los valores de la función como sus derivadas.
+                    {% trans "Descripcion Hermite" %}
                 </p>
                 <ul class="text-start text-dark">
-                    <li><i class="fas fa-check text-success me-2"></i>Entrada: Puntos (x, f(x), f'(x))</li>
-                    <li><i class="fas fa-check text-success me-2"></i>Tabla de diferencias divididas</li>
-                    <li><i class="fas fa-check text-success me-2"></i>Polinomio resultante</li>
-                    <li><i class="fas fa-check text-success me-2"></i>Evaluación en punto específico</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "EntradaPuntos"%}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "TablaDD"%}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "PolResultante"%}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "EvalPEspecifico"%}</li>
                 </ul>
                 <a href="{% url 'metodos_numericos:hermite' %}" class="btn btn-warning">
-                    <i class="fas fa-arrow-right me-2"></i>Comenzar
+                    <i class="fas fa-arrow-right me-2"></i>{%trans "Comenzar"%}
                 </a>
             </div>
         </div>
@@ -49,19 +47,18 @@
                 <div class="mb-3">
                     <i class="fas fa-wave-square fa-3x text-success mt-2"></i>
                 </div>
-                <h5 class="card-title text-success">Integración Numérica</h5>
+                <h5 class="card-title text-success">{%trans "Integracion Numerica"%}</h5>
                 <p class="card-text text-dark">
-                    Calcula aproximaciones de integrales definidas usando métodos
-                    compuestos con explicación detallada de cada paso.
+                    {% trans "Descripcion Integracion" %}
                 </p>
                 <ul class="text-dark text-start">
-                    <li><i class="fas fa-check text-success me-2"></i>Regla del Trapecio</li>
-                    <li><i class="fas fa-check text-success me-2"></i>Simpson 1/3</li>
-                    <li><i class="fas fa-check text-success me-2"></i>Simpson 3/8</li>
-                    <li><i class="fas fa-check text-success me-2"></i>Cálculos paso a paso</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "Trapecio"%}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "Simpson1/3"%}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "Simpson3/8"%}</li>
+                    <li><i class="fas fa-check text-success me-2"></i>{%trans "CalculoPAP"%}</li>
                 </ul>
                 <a href="{% url 'metodos_numericos:integracion' %}" class="btn btn-success">
-                    <i class="fas fa-arrow-right me-2"></i>Comenzar
+                    <i class="fas fa-arrow-right me-2"></i>{%trans "Comenzar"%}
                 </a>
             </div>
         </div>
@@ -74,7 +71,7 @@
             <div class="card-header bg-info-neon text-white">
                 <h5 class="">
                     <i class="fas fa-info-circle me-2 fs-4"></i>
-                    Instrucciones de Uso
+                    {%trans "InstruccionesUso"%}
                 </h5>
             </div>
             <div class="card-body">

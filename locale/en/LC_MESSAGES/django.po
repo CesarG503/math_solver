@@ -1,0 +1,90 @@
+#: .\metodos_numericos\templates\metodos_numericos\base.html:42
+msgid "Materia"
+msgstr "Optimization Methods"
+
+#: .\metodos_numericos\templates\metodos_numericos\base.html:52
+#: .\metodos_numericos\templates\metodos_numericos\index.html:3
+msgid "Inicio"
+msgstr "Home"
+
+#: .\metodos_numericos\templates\metodos_numericos\base.html:53
+msgid "Hermite"
+msgstr "Hermite"
+
+#: .\metodos_numericos\templates\metodos_numericos\base.html:54
+msgid "Integracion"
+msgstr "Integration"
+
+#: .\metodos_numericos\templates\metodos_numericos\base.html:59
+msgid "Login"
+msgstr "Login"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:3
+#: .\metodos_numericos\templates\metodos_numericos\index.html:11
+msgid "AppTitle"
+msgstr "Numerical Methods"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:14
+msgid "Descripcion"
+msgstr "Web application to solve interpolation and numerical integration problems with detailed step-by-step solutions."
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:27
+msgid "Interpolacion Hermite"
+msgstr "Hermite Interpolation"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:29
+msgid "Descripcion Hermite"
+msgstr "Find the interpolating polynomial that passes through given points considering both the function values and their derivatives."
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:32
+msgid "EntradaPuntos"
+msgstr "Input: Points (x, f(x), f'(x))"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:33
+msgid "TablaDD"
+msgstr "Divided differences table"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:34
+msgid "PolResultante"
+msgstr "Resulting Polynomial"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:35
+msgid "EvalPEspecifico"
+msgstr "Evaluation at a specific point"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:38
+#: .\metodos_numericos\templates\metodos_numericos\index.html:61
+msgid "Comenzar"
+msgstr "Start"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:50
+msgid "Integracion Numerica"
+msgstr "Numeric Integration"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:52
+msgid "Descripcion Integracion"
+msgstr "Calculate approximations of definite integrals using composite methods with detailed explanation of each step."
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:55
+msgid "Trapecio"
+msgstr "Trapezoidal Rule"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:56
+msgid "Simpson1/3"
+msgstr "Simpson 1/3"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:57
+msgid "Simpson3/8"
+msgstr "Simpson 3/8"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:58
+msgid "CalculoPAP"
+msgstr "Step-by-step Calculation"
+
+#: .\metodos_numericos\templates\metodos_numericos\index.html:74
+msgid "InstruccionesUso"
+msgstr "Instructions for Use"
+
+#: .\metodos_numericos\templates\metodos_numericos\perfil.html:76
+msgid "Cambiar idioma"
+msgstr "Change language"
