@@ -184,7 +184,7 @@ function agregarRestriccion() {
 
   // Tipo de restricción
   html += `
-        <td>
+        <td style="min-width:80px">
             <select class="form-select form-select-sm" 
                     name="restriccion_${contadorRestricciones}_tipo">
                 <option value="<=">&le;</option>
@@ -196,7 +196,7 @@ function agregarRestriccion() {
 
   // Valor
   html += `
-        <td>
+        <td style="min-width:70px">
             <input type="number" class="form-control form-control-sm text-center restriccion-valor" 
                    name="restriccion_${contadorRestricciones}_valor" 
                    placeholder="0" step="any" required>
