@@ -120,19 +120,45 @@ function generarTablaObjetivo() {
 function generarHeaderRestricciones() {
   const header = document.getElementById("restricciones-header")
 
-  // Limpiar header existente excepto las columnas fijas
-  while (header.children.length > 1) {
-    header.removeChild(header.children[1])
-  }
+  // Limpiar header completamente
+  header.innerHTML = ""
 
-  // Agregar columnas de variables
+  // # columna
+  const thNum = document.createElement("th")
+  thNum.className = "text-center"
+  thNum.style.minWidth = "60px"
+  thNum.textContent = "#"
+  header.appendChild(thNum)
+
+  // Variables de restricción en orden
   for (let i = 0; i < numVariables; i++) {
     const th = document.createElement("th")
     th.className = "text-center"
     th.style.minWidth = "100px"
     th.innerHTML = `<span id="rest_label_${i}">${nombresVariables[i]}</span>`
-    header.insertBefore(th, header.children[header.children.length - 3])
+    header.appendChild(th)
   }
+
+  // Tipo
+  const thTipo = document.createElement("th")
+  thTipo.className = "text-center"
+  thTipo.style.minWidth = "80px"
+  thTipo.textContent = "Tipo"
+  header.appendChild(thTipo)
+
+  // Valor
+  const thValor = document.createElement("th")
+  thValor.className = "text-center"
+  thValor.style.minWidth = "100px"
+  thValor.textContent = "Valor"
+  header.appendChild(thValor)
+
+  // Acción
+  const thAccion = document.createElement("th")
+  thAccion.className = "text-center"
+  thAccion.style.minWidth = "80px"
+  thAccion.textContent = "Acción"
+  header.appendChild(thAccion)
 }
 
 function actualizarNombreVariable(indice, nuevoNombre) {
