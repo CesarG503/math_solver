@@ -8,6 +8,9 @@ from .models import Ejercicio
 from .utils import interpolacion_hermite, integracion_compuesta, metodo_simplex
 import json
 
+def docs(request):
+    return render(request, 'metodos_numericos/docs.html')
+
 def index(request):
     """Vista principal con opciones de métodos numéricos"""
     return render(request, 'metodos_numericos/index.html')

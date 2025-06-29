@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% comment %} agregando icono {% endcomment %}
+    <link rel="icon" href="{% static 'metodos_numericos/img/char.svg' %}" type="image/png">
+
+    <title>{% block title %}Métodos Numéricos{% endblock %}</title>
+
+    <!-- LINK DE BOOTSTRAP -->
+    {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous"> {% endcomment %}
+
+    <!-- CDN animete.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Link de font awesome-->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!--LINK DE nuestra libreria SASS-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/css/sci-fi.css">
+ 
+
+    <link rel="stylesheet" href="{% static 'metodos_numericos/css/docs.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+<nav class="navbar bg-secondary estilo-brillo border rounded border-secondary hover-neon position-sticky top-0 p-1 px-5">
+  <div class="navbar-header justify-content-between ">
+      <div class="navbar-brand fst-italic fs-sm-3"> <i class="fa-solid fa-chart-simple fst-italic text-primary "></i> SimpleX</div>
+      <button class="navbar-toggle">
+          <div class="img-menu-white"></div>
+      </button>
+  </div>
+  <div class="navbar-nav">
+    <a class="nav-item rounded-pill" href="../../index.html">Inicio</a>
+      <a class="nav-item rounded-pill" href="#">Documentacion</a>
+      <a class="nav-item rounded-pill" href="https://github.com/Mixgyt/RetroSci-Fi_library" target="_blank">Github</a>
+      <a class="nav-item rounded-pill" href="https://www.npmjs.com/package/retrosci-fi_library" target="_blank">NPM</a>
+        {% if request.user.is_authenticated %}
+        </div>
+                <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
+        {% else %}
+                <a class="nav-item rounded-pill text-nowrap bg-primary" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
+        </div>
+        {% endif %}
+  </div>
+</nav>
+    
+
+    <div class="container mx-auto">
+        <div class="row align-items-center min-vh-100" style="min-height: 85vh;">
+            <div class="col-lg-6 mx-auto">
+                <div class="container-fluid mx-auto" >
+                    <!-- Imagen SVG de las barras-->
+                    <svg id="miSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="min-height: 200px;">
+                        <defs>
+                            <filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+                            <feMerge>
+                                <feMergeNode in="blur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                            </filter>
+                        </defs>
+                        <g transform="translate(-59.725822 -53.499885)">
+                            <rect id="rojo" width="90.21" height="50" rx="6.96" ry="6.96" transform="matrix(0 1 -1 0 156.48 240.8)" fill="#bb3a2d" filter="url(#ledGlow)"/>
+                            <rect id="amarillo" width="132.66" height="50" rx="6.96" ry="6.96" transform="matrix(0 1 -1 0 228.4 198.33)" fill="#fbc359" filter="url(#ledGlow)"/>
+                            <rect id="verde" width="174.92" height="50" rx="6.96" ry="6.96" transform="matrix(0 1 -1 0 300.33 156.08)" fill="#4e6851" filter="url(#ledGlow)"/>
+                            
+                            <g id="lineaFlecha" style='animate__bounceIn animate__infinite'>
+                            <line x1="109.02" y1="198.34" x2="278.76" y2="101.97" stroke="#4b848a" stroke-width="15" stroke-linecap="round" filter="url(#ledGlow)"/>
+                            <path  d="M307.39,79.4L254.67,76c-2.2-.13-4.3.96-5.46,2.84s-1.19,4.25-.08,6.16l30.09,51.13c1.13,1.9,3.21,3.02,5.42,2.92s4.18-1.4,5.14-3.39l22.63-47.74c.83-1.79.73-3.88-.27-5.58s-2.78-2.8-4.75-2.94Z" fill="#4b848a" filter="url(#ledGlow)"/>
+                            </g>
+                        </g>
+                    </svg>
+                    <!-- Fin de la imagen SVG -->
+                </div>
+            </div>
+            <div class="col-lg-6 mb-5">
+                <div class="callout">
+                    <h1 class="text-white animate__animated animate__bounce">Metodo Simplex</h1>
+                    <h3 class='text-warning-neon animate__animated animate__bounce'>Documentación</h3>
+
+                    <p class="descripcion-hero">
+                    El método Simplex es detallado y propenso a errores si se falla en un cálculo.
+                    Por eso, es clave entender cada paso del proceso.
+                    </p>
+                    <div class="botones-hero">
+                        <a class="btn bg-success btn-lg animate__bounceIn me-3" href="{% url "metodos_numericos:simplex"%}"><i class="fa-solid fa-forward"></i> Comenzar</a>
+                        <a class="btn bg-warning btn-lg animate__bounceIn" href="https://github.com/CesarG503/math_solver"><i class="fa-brands fa-github"></i> Proyecto</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+        <header class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo">
+                <h2><i class="fa-solid fa-circle-question"></i> Que es el metodo Simplex</h2>
+                <p>
+                    El método simplex es un procedimiento iterativo para resolver
+                    problemas de programación lineal, donde se busca obtener la 
+                    solución óptima de la función objetivo que logre cumplir 
+                    el conjunto de restricciones.
+                </p>
+        </header>
+
+        <!-- QUE ES EL METODO SIMPLEX-->
+        <div class="container mt-5 mx-auto">
+            <section id="inicio" class="seccion-hero">
+                <div class="container">
+                    <div class="row align-items-center min-vh-100">
+                        <div class="col">
+                            <h3 class='text-white'>Que es el metodo simplex</h3>
+                            <div class="row align-items-center min-vh-100 row-equal">
+                                <div class="col-lg-6 mx-auto">
+                                    <div class="card bg-success mb-3">
+                                        <div class="card-header text-white card-equal" >
+                                            <h4 class='card-title'><i class="fa-solid fa-circle-info"></i> Conceptos Básicos</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text text-primary ">
+                                                Para comprender de mejor manera el método simplex vamos a revisar algunas definiciones.
+                                                El método parte de dos afirmaciones importantes
+                                            </p>
+                                            <p class="text-white">
+                                                <i class="fa-solid fa-1 text-danger badge"></i> -                                                El conjunto de posibles soluciones o conjunto factible de cualquier
+                                                problema de programación lineal puede representarse mediante un poliedro
+                                                convexo.
+                                            </p>
+                                            <p class="text-white">
+                                                <i class="fa-solid fa-2 text-danger badge"></i> - 
+                                                    Si un problema de programación lineal tiene una solución óptima y finita, 
+                                                    ésta estará en un vértice del poliedro convexo que representa al problema.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="card bg-danger mb-3 card-equal" >
+                                        <div class="card-header text-white">
+                                            <h4 class='card-title'><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Pasos del Método Simplex</h4>
+                                        </div>
+                                        <div class="card-body">
+                                        <p class="text-white">
+                                                <i class="fa-solid fa-1 text-danger badge"></i> - 
+                                                Definir el problema en la forma estándar y generar nuestra matriz.
+                                            </p>
+                                        <p class="text-white">
+                                                <i class="fa-solid fa-2 text-danger badge"></i> - 
+                                                Determinar la solución básica inicial.
+                                            </p>
+                                        <p class="text-white">
+                                                <i class="fa-solid fa-3 text-danger badge"></i> - 
+                                                Seleccionar la variable de entrada utilizando la condición de optimalidad. Si no se puede seleccionar una variable de entrada, quiere decir que estamos en la condición óptima y finalizan las iteraciones. De otro modo se continúa con el siguiente paso.
+                                            </p>
+                                        <p class="text-white">
+                                                <i class="fa-solid fa-4 text-danger badge"></i> - 
+                                                Seleccionar la variable de salida utilizando la condición de factibilidad.
+                                            </p>
+                                        <p class="text-white">
+                                                <i class="fa-solid fa-5 text-danger badge"></i> - 
+                                                Actualizar nuestra matriz realizando las operaciones de Gauss-Jordan. Volver al paso número 3.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+   
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="{% static "metodos_numericos/js/docs.js" %}"></script>
+
+
+</body>
+</html>
