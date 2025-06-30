@@ -798,66 +798,6 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos, nombres_v
     
     tabla_html += '</tbody></table>'
     
-    # Agregar estilos CSS
-    tabla_html += '''
-    <style>
-    .simplex-table-container {
-        margin: 15px 0;
-        overflow-x: auto;
-    }
-    .table-title {
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #0d6efd;
-        font-size: 1.1em;
-    }
-    .simplex-table {
-        font-size: 0.9em;
-        margin-bottom: 0;
-    }
-    .simplex-table th {
-        background-color: #0d6efd !important;
-        color: white !important;
-        font-weight: bold;
-        text-align: center;
-        vertical-align: middle;
-        padding: 8px;
-    }
-    .simplex-table td {
-        padding: 6px 8px;
-        vertical-align: middle;
-    }
-    .base-column {
-        background-color: #f8f9fa;
-        font-weight: bold;
-    }
-    .objective-row {
-        background-color: #d1ecf1 !important;
-    }
-    .objective-row td {
-        font-weight: bold;
-    }
-    .rhs-cell, .objective-value {
-        background-color: #fff3cd;
-    }
-    .pivot-cell {
-        background-color: #dc3545 !important;
-        color: white !important;
-        font-weight: bold;
-        border: 2px solid #721c24 !important;
-    }
-    .entering-variable {
-        background-color: #cce5ff !important;
-    }
-    .leaving-variable {
-        background-color: #ffe6e6 !important;
-    }
-    .pivot-row {
-        border-left: 3px solid #dc3545;
-    }
-    </style>
-    '''
-    
     tabla_html += '</div>'
     
     pasos.append(tabla_html)
