@@ -12,8 +12,93 @@
   flex-direction: column;
 }
 
+.formula{
+    font-weight: bold;
+    text-align: center;
+    margin: 1rem 0;
+    overflow: auto;
+}
+
+.padding{
+    padding: 0.25rem 3.5rem;
+}
+
 #miSVG {
     animation: float 4s ease-in-out infinite;
+}
+
+.image{
+    width: 100%;
+    height: auto;
+    max-width: 1024px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Contenedor del acordeón */
+details {
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #444;
+  overflow: hidden; /* Para que el contenido no se salga al animar */
+}
+
+/* Título visible (pregunta) */
+summary {
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none; /* Oculta el marcador de flecha por defecto */
+}
+
+/* Oculta el marcador en Webkit (Chrome, Safari) */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Icono personalizado (un '+') */
+summary::after {
+  content: '+';
+  font-size: 1.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Contenido (respuesta) */
+details > p {
+  padding: 0 1rem 1rem 1rem;
+  margin: 0;
+}
+
+/* Estilo cuando el acordeón está abierto */
+details[open] {
+  border-color: #007bff;
+}
+
+details[open] summary {
+  background-color: #333;
+}
+
+/* Gira el icono a 'x' cuando está abierto */
+details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+mjx-container {
+    color: white !important;
+}
+
+.content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+
 }
 
 @keyframes float {
@@ -54,5 +139,12 @@
 
   .navbar-header{
     justify-content: space-between;
+  }
+
+  .padding{
+    padding-inline: 0.25rem;
+  }
+  .content, .container{
+    padding: 0.5rem;
   }
 }
