@@ -1116,9 +1116,6 @@ footer {
   }
 }
 
-/* ===== ESTILOS MEJORADOS PARA SIMPLEX ===== */
-
-/* Variables CSS para temas mejoradas */
 :root {
   --simplex-bg-primary: #ffffff;
   --simplex-bg-secondary: #f8f9fa;
@@ -1241,7 +1238,6 @@ footer {
   color: var(--simplex-text-primary);
 }
 
-/* Selects dentro de las tablas */
 #restricciones-table select {
   background-color: var(--simplex-input-bg);
   border: 1px solid var(--simplex-input-border);
@@ -1325,18 +1321,15 @@ footer {
   background: #5bb0d6;
 }
 
-/* Scrollbar para Firefox */
 .table-container {
   scrollbar-color: #6ec1e4 #f1f1f1;
   scrollbar-width: thin;
 }
 
-/* Indicador sutil de scroll: sombra a la derecha si hay overflow */
 .table-container {
   box-shadow: inset -18px 0 18px -18px rgba(0, 0, 0, 0.08);
 }
 
-/* Scrollbar horizontal modo oscuro para .table-container */
 [data-theme="dark"] .table-container::-webkit-scrollbar {
   height: 10px;
   background: #23272b;
@@ -1426,7 +1419,6 @@ footer {
   border: 1px solid #dc3545;
 }
 
-/*NUEVO*/
 /* Animaciones para campos dinámicos */
 @keyframes slideIn {
   from {
@@ -1557,7 +1549,6 @@ footer {
 
 }
 
-/* Indicadores visuales mejorados */
 .variable-indicator {
   display: inline-block;
   padding: 0.25rem 0.5rem;
@@ -1585,7 +1576,6 @@ footer {
   border: 1px solid #ffc107;
 }
 
-/* Responsive para tablas mejorado */
 @media (max-width: 768px) {
   .simplex-table {
     font-size: 0.7rem;
@@ -1617,7 +1607,6 @@ footer {
   }
 }
 
-/* Estilos para alertas de variables */
 .alert-info {
   border-left: 4px solid #007bff;
 }
@@ -1711,7 +1700,6 @@ footer {
   }
 }
 
-/* Animaciones para cambio de tema */
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

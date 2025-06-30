@@ -10,9 +10,23 @@ function toggleTheme() {
   document.documentElement.setAttribute("data-theme", newTheme)
   localStorage.setItem("theme", newTheme)
   updateThemeButton(newTheme)
+  updateValorOptimoTheme(newTheme)
 }
 
-// Actualiza el icono y las clases del botón según el tema
+// Cambia la clase del texto de valor óptimo según el tema
+function updateValorOptimoTheme(theme) {
+  const valorOptimo = document.getElementById("valor-optimo")
+  if (valorOptimo) {
+    valorOptimo.classList.remove("text-warning", "text-warning-neon")
+    if (theme === "dark") {
+      valorOptimo.classList.add("text-warning-neon")
+    } else {
+      valorOptimo.classList.add("text-warning")
+    }
+  }
+}
+
+// Modificar updateThemeButton para actualizar el valor óptimo
 function updateThemeButton(theme) {
   const icon = document.getElementById("theme-icon")
   const boton = document.querySelector(".theme-toggle")
@@ -35,6 +49,7 @@ function updateThemeButton(theme) {
     body.classList.remove("bg-dark")
     body.classList.remove("text-light")
   }
+  updateValorOptimoTheme(theme)
 }
 
 // Cargar tema guardado
@@ -43,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.documentElement.setAttribute("data-theme", savedTheme)
   updateThemeButton(savedTheme)
   enhanceSimplexTables()
+  updateValorOptimoTheme(savedTheme)
 
   // Inicializar campos
   generarCamposVariables()
@@ -292,7 +308,6 @@ function cargarEjemplo() {
   // Limpiar restricciones existentes
   limpiarRestricciones()
 
-  // Añadir primera restricción: x₁ + x₂ ≤ 4
   agregarRestriccion()
   const rest1 = document.querySelector('[name="restriccion_0_coef_0"]')
   const rest1_2 = document.querySelector('[name="restriccion_0_coef_1"]')
@@ -304,7 +319,6 @@ function cargarEjemplo() {
   if (rest1_tipo) rest1_tipo.value = "<="
   if (rest1_valor) rest1_valor.value = "4"
 
-  // Añadir segunda restricción: 2x₁ + x₂ ≤ 6
   agregarRestriccion()
   const rest2 = document.querySelector('[name="restriccion_1_coef_0"]')
   const rest2_2 = document.querySelector('[name="restriccion_1_coef_1"]')
@@ -316,26 +330,32 @@ function cargarEjemplo() {
   if (rest2_tipo) rest2_tipo.value = "<="
   if (rest2_valor) rest2_valor.value = "6"
 
-  // Mostrar mensaje de confirmación
+
   showNotification("Ejemplo cargado correctamente", "success")
   // Actualizar la sección de problema actual
   setTimeout(actualizarProblemaActual, 20)
 }
-
 function showNotification(message, type = "info") {
-  const notification = document.createElement("div")
-  notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`
-  notification.style.cssText = "top: 20px; right: 20px; z-index: 9999; min-width: 300px;"
-  notification.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `
+  let icon = type
+  if (type === "danger") icon = "error"
+  if (type === "primary") icon = "info"
+  if (type === "secondary") icon = "info"
+  if (type === "warning") icon = "warning"
+  if (type === "success") icon = "success"
+  if (type === "info") icon = "info"
 
-  document.body.appendChild(notification)
-
-  setTimeout(() => {
-    notification.remove()
-  }, 3000)
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: icon,
+    title: message,
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    customClass: {
+      popup: 'swal2-shadow'
+    }
+  })
 }
 
 // Interceptar el envío del formulario para procesar los datos
@@ -361,7 +381,7 @@ function procesarFormulario(e) {
   inputCoefObj.value = coeficientesObj.join(",")
   e.target.appendChild(inputCoefObj)
 
-  // Crear campo oculto con los nombres de variables
+  //campo oculto con los nombres de variables
   const inputNombres = document.createElement("input")
   inputNombres.type = "hidden"
   inputNombres.name = "nombres_variables"
@@ -623,7 +643,6 @@ function hideTooltip(element) {
   element.title = ""
 }
 
-// Mejorar la experiencia de usuario con animaciones
 document.addEventListener("DOMContentLoaded", () => {
   // Animación de entrada para las tarjetas
   const cards = document.querySelectorAll(".card")
