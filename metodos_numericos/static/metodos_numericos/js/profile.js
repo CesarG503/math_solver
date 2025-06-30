@@ -119,6 +119,7 @@ function validarEmail(email) {
     return regex.test(email);
 }
 
+/*
 function getListaEjercicios(){
     fetch(`/ejercicios/`)
       .then(response => response.json())
@@ -161,4 +162,4 @@ function getListaEjercicios(){
       });
 }
 
-getListaEjercicios();
+getListaEjercicios();*/

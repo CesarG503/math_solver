@@ -167,7 +167,21 @@ def integracion_view(request, id_ejercicio=None):
             return redirect('metodos_numericos:integracion')
 
     return render(request, 'metodos_numericos/integracion.html', context)
+
+@login_required
+def history_view(request):
+    """Vista para mostrar el historial de ejercicios del usuario"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Debes iniciar sesión para ver tu historial.')
+        return redirect('metodos_numericos:login')
     
+    ejercicios = Ejercicio.objects.filter(user=request.user).order_by('-fecha_creacion')
+    
+    context = {
+        'ejercicios': ejercicios
+    }
+    
+    return render(request, 'metodos_numericos/history.html', context)  
 
 def login_view(request):
     if request.user.is_authenticated:

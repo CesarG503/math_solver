@@ -1,0 +1,46 @@
+{% extends 'metodos_numericos/base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Historial" %} - {% trans "AppTitle" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mt-2">
+        <div class="bg-secondary-neon text-white rounded p-5 mb-4">
+            <h1>
+                <i class="fas fa-history me-3"></i> {%trans "Historial"%}
+            </h1>
+            <p>
+                {%trans "Descripcion Historial"%}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-12">
+        <table class="">
+            <thead class="bg-secondary-neon text-white">
+                <tr>
+                    <th>{%trans "Fecha"%}</th>
+                    <th>{%trans "Ejercicio"%}</th>
+                    <th>{%trans "Resultado"%}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ejercicio in ejercicios %}
+                <tr>
+                    <td>{{ ejercicio.fecha }}</td>
+                    <td>{{ ejercicio.nombre }}</td>
+                    <td>{{ ejercicio.resultado }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">{%trans "No hay ejercicios en el historial"%}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+{% endblock %}
