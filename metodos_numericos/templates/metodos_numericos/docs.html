@@ -30,7 +30,7 @@
 <body>
 
     <!-- Navbar -->
-<nav class="padding navbar bg-secondary-neon border rounded border-secondary hover-neon position-sticky top-0">
+ <nav class="navbar padding bg-secondary estilo-brillo border border-primary hover-neon rounded-1 position-sticky top-0">
   <div class="navbar-header justify-content-between ">
       <div class="navbar-brand fst-italic fs-sm-3"> <i class="fa-solid fa-chart-simple fst-italic text-primary "></i> SimpleX</div>
       <button class="navbar-toggle">
@@ -38,19 +38,45 @@
       </button>
   </div>
   <div class="navbar-nav">
-        <a class="nav-item rounded-pill bg-secondary border-0" href="../../index.html">Inicio</a>
-        <a class="nav-item rounded-pill" href="#">Documentacion</a>
-        <a class="nav-item rounded-pill" href="https://github.com/Mixgyt/RetroSci-Fi_library" target="_blank">Github</a>
-        <a class="nav-item rounded-pill" href="https://www.npmjs.com/package/retrosci-fi_library" target="_blank">NPM</a>
-            {% if request.user.is_authenticated %}
-            </div>
-                    <button id="button-normal" class=" border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
-            {% else %}
-                    <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
-            </div>
-            {% endif %}
+        <a class="nav-item rounded-pill" id="section1Btn">Inicio</a>
+        <a class="nav-item rounded-pill" id="section2Btn">Teoria</a>
+        <a class="nav-item rounded-pill" id="section3Btn">Manual</a>
+        <a class="nav-item rounded-pill" id="section4Btn">Nosotros</a>
   </div>
-</nav>
+    {% if request.user.is_authenticated %}
+    
+            <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
+    {% else %}
+            <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
+    
+    {% endif %}
+
+           
+</nav> 
+
+{% comment %} <nav class="navbar padding bg-secondary estilo-brillo border border-secondary hover-neon position-sticky top-0 p-1">
+        <div class="navbar-header">
+            <div class="navbar-brand">Metodos de optimización
+            </div>
+            <button class="navbar-toggle">
+                <div class="img-menu-white"></div>
+            </button>
+            
+            <button id="button-small" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="/media/perfiles/retro.jpg" alt="perfil"></button>
+            
+        </div>
+        <div class="navbar-nav">
+            <a class="nav-item rounded-pill" href="/">Inicio</a>
+            <a class="nav-item rounded-pill" href="/hermite/"> Hermite</a>
+            <a class="nav-item rounded-pill" href="/integracion/">Integracion</a>
+            <a class="nav-item rounded-pill" href="/simplex/">Simplex</a>
+        
+        </div>
+                <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="/media/perfiles/retro.jpg" alt="perfil"></button>
+        
+
+
+    </nav> {% endcomment %}
 
     {% if request.user.is_authenticated %}
      <!-- Panel deslizante de perfil -->
@@ -59,7 +85,8 @@
     
 
     <div class="container mx-auto">
-        <div class="row align-items-center justify-content-center min-vh-100" style="min-height: 85vh;">
+
+        <div class="row align-items-center justify-content-center min-vh-100" style="min-height: 85vh;" id="section1">
             <div class="col-lg-6 mx-auto">
                 <div class="container-fluid mx-auto" >
                     <!-- Imagen SVG de las barras-->
@@ -89,7 +116,7 @@
             </div>
             <div class="col-lg-6 mb-5">
                 <div class="callout">
-                    <h1 class="text-white animate__animated animate__bounce">Metodo Simplex</h1>
+                    <h1 class="text-white animate__animated animate__bounce fw-bold">Metodo Simplex</h1>
                     <h3 class='text-warning-neon animate__animated animate__bounce'>Documentación</h3>
 
                     <p class="descripcion-hero">
@@ -104,16 +131,16 @@
             </div>
         </div>
 
-        <br>
-        <header class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo">
-                <h2><i class="fa-solid fa-circle-question"></i> Que es el metodo Simplex</h2>
-                <p>
-                    El método simplex es un procedimiento iterativo para resolver
-                    problemas de programación lineal, donde se busca obtener la 
-                    solución óptima de la función objetivo que logre cumplir 
-                    el conjunto de restricciones.
-                </p>
-        </header>
+
+        <section class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo" id="section2">
+            <h2><i class="fa-solid fa-circle-question"></i> Que es el metodo Simplex</h2>
+            <p>
+                El método simplex es un procedimiento iterativo para resolver
+                problemas de programación lineal, donde se busca obtener la 
+                solución óptima de la función objetivo que logre cumplir 
+                el conjunto de restricciones.
+            </p>
+        </section>
 
         <!-- QUE ES EL METODO SIMPLEX-->
          {% comment %} CARD VERDE Y ROJO {% endcomment %}
@@ -288,7 +315,7 @@
                     </span>
                     Es el vector que contiene los coeficientes de todas las variables de la función objetivo. En la parte inferior del vector se indican las variables en orden.
                 </p>
-            <p>
+                <p>
                     <span class="text-white">
                         <i class="fa-solid fa-2 text-white"></i> - 
                         Vector Solución:
@@ -586,9 +613,89 @@
                 <br>
             </div>
         </details>
+        <div class="alert alert-warning text-warning ps-3 pt-2 pb-2 mb-2 rounded-pill" role="alert">
+            Esta teoria ha sido extraida de la siguiente fuente: <a href="https://www.plandemejora.com/calculadora-metodo-simplex-online/">Plan de Mejora</a>
+        </div>
+
+    <section class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo" id='section3'>
+        <h2><i class="fa-regular fa-file-code"></i> Manual de Usuario</h2>
+        <p>
+            Aquí encontrarás instrucciones paso a paso para ingresar datos, interpretar
+            resultados y sacar el máximo provecho de la herramienta.
+        </p>
+    </section>
+
+    <div class="container ">
+        <div class="card content border border-info border-neon">
+            <h3 class='text-white-neon h2'>Explicacion paso a paso de como poder resolver un ejercicio</h3>
+            <h3 class='text-white'><i class="fa-solid fa-1 "></i> - Introducir los valores a la calculadora</h3>
+            <div class="container-md  mx-auto">
+                <img class='image' src="{% static "metodos_numericos/img/manual/manual_1.png"%}" alt="">
+            </div>
+            <ol class='container-md mi-lista'>
+                <li>
+                    Se puede elegir el tipo de problema que se desea resolver, ya sea de \(\text{Maximización}\) o \(\text{Minimización}\).
+                    Puedes elegir la cantidad de variables que deseas utilizar, desde 2 hasta \(X\) variables.
+                </li>
+                <li>
+                    Puedes declarar nomnre a las variables, por defecto viene \(x_1\) y \(x_2 ... x_n\)
+                </li>
+                <li>
+                    Apartado para subir los valores de la \(\text{Funcion Objetivo}\), cada uno siguindo el orden de las variables.
+                </li>
+            </ol>
+            <div class="container-md  mx-auto">
+                <img class='image' src="{% static "metodos_numericos/img/manual/manual_2.png"%}" alt="">
+            </div>
+            <ol class='container-md mi-lista' start='4'>
+                <li>
+                    <span class='text-danger'>Boton de eliminar</span> sirve para poder eliminar una restricción que ya no se necesite o si has agregado restricciones de más.
+                </li>
+                <li>
+                    El cuadro completo es el lugar donde se ingresan las restricciones del problema, cada restricción debe seguir el orden de las variables.
+                </li>
+                <li>
+                    <p>
+                        <span class='text-white'>Boton de agregar</span> sirve para agregar una restricción más, si es que se desea agregar más restricciones al problema.
+                    </p>
+                    <p>
+                        <span class="text-white">Boton de carga Ejemplo</span> la app trae un ejemplo de un problema de programación lineal, para que puedas ver como funciona la app.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <span class='text-white'>Boton de resolver</span> sirve para resolver el problema que se ha ingresado, una vez que se ha ingresado todos los valores necesarios.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <span class='text-white'>Cuadro de previsualización</span> sirve para ver como se verá el problema que se ha ingresado, antes de resolverlo.
+                </li>
+                
+            </ol>
+            <h3 class='text-white'><i class="fa-solid fa-2 "></i> - Muestra de Resultados</h3>
+            <div class="container-md  mx-auto">
+                <img class='image' src="{% static "metodos_numericos/img/manual/manual_3.png"%}" alt="">
+            </div>
+            <ol class='container-md mi-lista'>
+                <li>
+                    <span class="text-white">Cuadro Respuesta Rapida</span> para los que no quieren ver todo el proceso, este cuadro muestra la respuesta rápida del problema que se ha ingresado.
+                </li>
+            </ol>
+            <div class="container-md  mx-auto">
+                <img class='image' src="{% static "metodos_numericos/img/manual/manual_4.png"%}" alt="">
+            </div>
+            <ol class='container-md mi-lista' start='2'>
+                <li>
+                    <span class="text-white">Cuadro de paso a paso</span> se encuentra el paso a paso de como se ha resuelto el problema, cada paso se explica detalladamente.
+                </li>
+            </ol>
+        </div>
+    </div>
+
 
     {% comment %} NOSOTROS {% endcomment %}
-    <h2 class='text-white-neon text-center my-5 pt-5' ><i class="fa-solid fa-people-group"></i> EQUIPO DE DESARROLLO</h2>
+    <h2 class='text-white-neon text-center my-5 pt-5' id='section4'><i class="fa-solid fa-people-group"></i> EQUIPO DE DESARROLLO</h2>
     <div class="row justify-content-between mx-auto container-xl ">
         <div class="col-lg-4 my-5">
             <a class="card-ui" href="https://github.com/Mixgyt">
@@ -627,24 +734,61 @@
                         <i class="fa-brands fa-github"></i> JuanSPcode
                     </p>
                 </div>  
-            </div>
+            </a>
         </div>
     </div>
+</div>
 
-    <footer>
-        <div class="container text-center py-4">
-            <p class="text-white">© 2025 Math Solver. Todos los derechos reservados.</p>
+<footer class="mt-5 bg-secondary-neon mx-auto">
+        <div class="container py-4 mx-auto">
+            <div class="row justify-content-between mx-auto">
+                <!-- Columna 1: Información del proyecto -->
+                <div class="col-md-5 mb-2 text-center">
+                    <h4 class="text-primary-neon"><i class="fa-solid fa-chart-simple"></i> SimpleX</h4>
+                    <p class="text-white">Una herramienta avanzada para resolver problemas de programación lineal utilizando el método Simplex</p>
+                </div>
+                
+                
+                <!-- Columna 3: Información adicional -->
+                <div class="col-md-5 mb-2 text-center">
+                    <h4 class="text-primary-neon">Información del Proyecto</h4>
+                    <p class="text-white">Proyecto desarrollado como parte de la materio Metodo de optimización.</p>
+                    <div class="botones-hero">
+                        <a class="btn mx-auto bg-success btn-lg animate__animated animate__bounceIn animate__delay-1s me-3" href="{% url "metodos_numericos:simplex"%}"><i class="fa-solid fa-forward"></i> Comenzar</a>
+                        <a class="btn mx-auto bg-warning btn-lg animate__animated animate__bounceIn animate__delay-1s" href="https://github.com/CesarG503/math_solver"><i class="fa-brands fa-github"></i> Proyecto</a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-primary">
+            <!-- Derechos de autor -->
+            <p class="row justify-content-center align-items-center">
+                <img src="{% static "metodos_numericos/img/manual/Minerva.png"%}" alt="Minerva" height="50" > <a href="https://www.ues.edu.sv"> UNIVERSIDAD NACIONAL DE EL SALVADOR</a>
+            </p>
+            <div class="row ">
+                <div class="col-12 text-center">
+
+                    <p class="text-white">© {% now "Y" %} Math Solver. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
     </footer>
+
+
+    
 
 
    
 
-
+{% comment %} CDN BOOTSTRAP {% endcomment %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+{% comment %} CDN DE GSAP {% endcomment %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+{% comment %} CDN DE LIBRERIA SASS {% endcomment %}
 <script src="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/js/retrosci-fi.js"></script>
+
 <script src="{% static "metodos_numericos/js/docs.js" %}"></script>
-    <script src="{% static 'metodos_numericos/js/profile.js' %}"></script>
+<script src="{% static 'metodos_numericos/js/profile.js' %}"></script>
 
 <!-- MathJax para poner las formulas mas bonitas -->
  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>

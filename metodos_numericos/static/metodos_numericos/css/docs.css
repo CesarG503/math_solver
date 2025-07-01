@@ -102,7 +102,7 @@ mjx-container {
 
 /* Añadir margen superior al contenedor principal */
 .container {
-  padding-top: 80px;
+  padding-top: 20px;
 }
 
 /* From Uiverse.io by gharsh11032000 */ 
@@ -192,6 +192,21 @@ a{
   height: 100%;
 }
 
+li {
+  margin: 0.5rem 0;
+
+} 
+
+ol.mi-lista li::marker {
+  color: #f3f3f3 !important;
+  margin-right: 0.5rem;
+}
+
+.nav-item.active {
+  background-color: white;
+  color: black !important;
+  box-shadow: 0 0 10px #fff;
+}
 
 @keyframes float {
   0% {
