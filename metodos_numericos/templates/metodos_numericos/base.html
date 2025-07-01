@@ -30,7 +30,7 @@
     <script defer src="https://unpkg.com/mathlive"></script>
     <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive-static.css">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/css/sci-fi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library@latest/dist/css/sci-fi.css">
     
     {% load static %}
     <link rel="stylesheet" href="{% static 'metodos_numericos/css/style.css' %}">
@@ -52,6 +52,7 @@
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:index' %}">{% trans "Inicio" %}</a>
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:hermite' %}">{%trans "Hermite"%}</a>
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:integracion' %}">{%trans "Integracion"%}</a>
+            <div class="nav-item rounded-pill" id="google_translate_element"></div>
         {% if request.user.is_authenticated %}
         </div>
                 <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
