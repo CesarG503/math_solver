@@ -181,7 +181,7 @@ def history_view(request):
         'ejercicios': ejercicios
     }
     
-    return render(request, 'metodos_numericos/history.html', context)  
+    return render(request, 'metodos_numericos/history.html', context)
 
 def login_view(request):
     if request.user.is_authenticated:

@@ -18,24 +18,31 @@
 
 <div class="row g-4">
     <div class="col-md-12">
-        <table class="table table-success">
-            <thead class="bg-secondary-neon text-white">
+        <table class="table table-success table-striped table-hover">
+            <thead>
                 <tr>
-                    <th>{%trans "Fecha"%}</th>
-                    <th>{%trans "Ejercicio"%}</th>
+                    <th><i class="fa fa-calendar"></i> {%trans "Fecha"%}</th>
+                    <th>{%trans "Ecuacion"%}</th>
                     <th>{%trans "Resultado"%}</th>
+                    <th>{%trans "Editar"%}</th>
+                    <th>{%trans "Eliminar"%}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for ejercicio in ejercicios %}
                 <tr>
-                    <td>{{ ejercicio.fecha }}</td>
-                    <td>{{ ejercicio.nombre }}</td>
-                    <td>{{ ejercicio.resultado }}</td>
+                    <td>{{ ejercicio.fecha_creacion }}</td>
+                    <td>{{ ejercicio.ecuacion }}</td>
+                    <td>{{ ejercicio.solucion }}</td>
+                    <td><button class="btn btn-white"><i class="fa fa-pencil"></i> Editar</button></td>
+                    <td><button class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</button></td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" class="text-center">{%trans "No hay ejercicios en el historial"%}</td>
+                    <td colspan="5" class="text-center"><i class="fa fa-clock"></i> {%trans "No hay ejercicios en el historial"%}</td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-center"><button class="btn btn-white"><i class="fa fa-clock"></i> Realizar metodo simplex</button></td>
                 </tr>
                 {% endfor %}
             </tbody>

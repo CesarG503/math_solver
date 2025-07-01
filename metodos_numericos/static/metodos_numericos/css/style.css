@@ -72,39 +72,6 @@ body {
   color: #6c757d !important;
 }
 
-/* Estilos para tablas */
-.table-bootstrap {
-  position: relative;
-  table-layout: fixed;
-  width: 100%;
-  margin-bottom: 1rem;
-  border-collapse: collapse;
-}
-
-.table-bootstrap thead {
-  background-color: #202020;
-}
-
-.table-bootstrap th,
-.table-bootstrap td {
-  padding: 0.25rem;
-  vertical-align: middle;
-  border-top: 1px solid #464646;
-}
-
-.table-bootstrap th {
-  font-weight: bold;
-  border-bottom: 2px solid #616161;
-}
-
-.table-bootstrap tbody tr:nth-of-type(odd) {
-  background-color: #555555;
-}
-
-.table-bootstrap tbody tr:hover {
-  background-color: #333333;
-}
-
 /* Estilos para ecuaciones de edición */
 .respuesta-ecuacion {
   overflow: hidden;
@@ -174,25 +141,6 @@ code {
     justify-content: space-between;
   }
 }
-
-/* Estilos para tablas de resultados */
-.table-responsive {
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.table th {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  font-weight: 600;
-}
-
-.table td {
-  border-color: #dee2e6;
-  vertical-align: middle;
-}
-
 /* Estilos para iconos */
 .fa-3x {
   font-size: 3rem;
@@ -398,24 +346,6 @@ code {
   transition: all 0.3s ease;
 }
 
-/* Responsive para tablas */
-@media (max-width: 768px) {
-  .simplex-table {
-    font-size: 0.7rem;
-  }
-
-  .simplex-table th,
-  .simplex-table td {
-    padding: 0.25rem;
-  }
-
-  .theme-toggle {
-    width: 40px;
-    height: 40px;
-    top: 95px;
-    right: 10px;
-  }
-}
 /* Toggle de tema */
 .theme-toggle {
   position: sticky;
