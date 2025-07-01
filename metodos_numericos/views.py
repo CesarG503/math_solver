@@ -293,13 +293,17 @@ def simplex_view(request):
                     context['datos_grafica'] = json.dumps(datos_grafica)
 
             context.update(resultado)
+            # Mantener los datos de entrada para repoblar el formulario
+            context['mantener_datos'] = True
             context.update({
                 'funcion_objetivo_input': funcion_objetivo_str,
                 'tipo_optimizacion': tipo_optimizacion,
                 'num_restricciones': len(restricciones),
                 'restricciones_data': restricciones,
                 'nombres_variables': nombres_variables,
-                'num_variables': len(funcion_objetivo)
+                'num_variables': len(funcion_objetivo),
+                'funcion_objetivo_valores': funcion_objetivo,  # Valores numéricos para repoblar
+                'nombres_variables_str': nombres_variables_str  # String original
             })
             
         except ValueError as e:

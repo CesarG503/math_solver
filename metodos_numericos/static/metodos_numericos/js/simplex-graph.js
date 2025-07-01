@@ -162,7 +162,7 @@ function initializeSimplexGraph(datosGrafica) {
     },
     plot_bgcolor: "#fafafa",
     paper_bgcolor: "#ffffff",
-    showlegend: true,
+    showlegend: false,
     legend: {
       x: 1.02,
       y: 1,
@@ -220,21 +220,18 @@ function initializeSimplexGraph(datosGrafica) {
     }
   }, 100)
 
+  // Forzar resize tras renderizado inicial
+  setTimeout(() => { Plotly.Plots.resize(graphDiv) }, 100);
+
   // Ajuste automático con ResizeObserver
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => {
-      if (graphDiv && Plotly) {
-        Plotly.Plots.resize(graphDiv)
-      }
+      Plotly.Plots.resize(graphDiv)
     })
     ro.observe(graphDiv)
   } else {
     // Fallback: ajustar al redimensionar ventana
-    window.addEventListener("resize", () => {
-      if (graphDiv && Plotly) {
-        Plotly.Plots.resize(graphDiv)
-      }
-    })
+    window.addEventListener('resize', () => Plotly.Plots.resize(graphDiv))
   }
 
   // Mostrar instrucciones
@@ -242,33 +239,45 @@ function initializeSimplexGraph(datosGrafica) {
 }
 
 function showSimplexInfo(datosGrafica) {
-  const restrictionsHtml = datosGrafica.restricciones
+  // Validar que Swal esté disponible
+  if (typeof Swal === "undefined" || !Swal || typeof Swal.fire !== "function") {
+    alert("No se pudo mostrar la información: SweetAlert2 no está disponible.")
+    return
+  }
+  if (!datosGrafica) {
+    Swal.fire({
+      icon: "error",
+      title: "Sin datos",
+      text: "No hay información para mostrar."
+    })
+    return
+  }
+  const restrictionsHtml = (datosGrafica.restricciones || [])
     .map((r, i) => `<li><strong>Restricción ${i + 1}:</strong> ${r.nombre}</li>`)
     .join("")
 
-  const verticesHtml = datosGrafica.vertices_factibles
-    .map((v, i) => `<li><strong>V${i + 1}:</strong> (${v[0].toFixed(3)}, ${v[1].toFixed(3)})</li>`)
+  const verticesHtml = (datosGrafica.vertices_factibles || [])
+    .map((v, i) => `<li><strong>V${i + 1}:</strong> (${v[0]?.toFixed(3) ?? "-"}, ${v[1]?.toFixed(3) ?? "-"})</li>`)
     .join("")
 
   Swal.fire({
     title: '<span style="color:#1565c0;font-weight:bold;">Información del Problema</span>',
     html: `
-            <div class="text-start">
-                <h6 class="text-primary">Función Objetivo:</h6>
-                <p><strong>${datosGrafica.tipo_optimizacion}:</strong> Z = ${datosGrafica.funcion_objetivo.ecuacion}</p>
-                
-                <h6 class="text-primary">Restricciones:</h6>
-                <ul class="small">${restrictionsHtml}</ul>
-                
-                <h6 class="text-primary">Vértices de la Región Factible:</h6>
-                <ul class="small">${verticesHtml}</ul>
-                
-                <h6 class="text-primary">Punto Óptimo:</h6>
-                <p><strong>${datosGrafica.nombres_variables[0]} = ${datosGrafica.punto_optimo.x.toFixed(6)}</strong></p>
-                <p><strong>${datosGrafica.nombres_variables[1]} = ${datosGrafica.punto_optimo.y.toFixed(6)}</strong></p>
-                <p><strong>Valor Óptimo: Z = ${datosGrafica.punto_optimo.z.toFixed(6)}</strong></p>
-            </div>
-        `,
+      <div class="text-start" style="max-width: 100vw; overflow-x: auto;">
+        <div class="groups" style="background:rgba(255,255,255,0.97); box-shadow:0 2px 12px rgba(0,0,0,0.08); border-radius:10px; padding:10px 18px; margin-bottom:0; min-width:320px; max-width:540px;">
+          <h6 class="text-primary">Función Objetivo:</h6>
+          <p><strong>${datosGrafica.tipo_optimizacion || ""}:</strong> Z = ${(datosGrafica.funcion_objetivo?.ecuacion) || "-"}</p>
+          <h6 class="text-primary">Restricciones:</h6>
+          <ul style="font-size:0.97em;">${restrictionsHtml}</ul>
+          <h6 class="text-primary">Vértices de la Región Factible:</h6>
+          <ul style="font-size:0.97em;">${verticesHtml}</ul>
+          <h6 class="text-primary">Punto Óptimo:</h6>
+          <p><strong>${(datosGrafica.nombres_variables?.[0] || "x₁")} = ${(datosGrafica.punto_optimo?.x !== undefined ? datosGrafica.punto_optimo.x.toFixed(6) : "-")}</strong></p>
+          <p><strong>${(datosGrafica.nombres_variables?.[1] || "x₂")} = ${(datosGrafica.punto_optimo?.y !== undefined ? datosGrafica.punto_optimo.y.toFixed(6) : "-")}</strong></p>
+          <p><strong>Valor Óptimo: Z = ${(datosGrafica.punto_optimo?.z !== undefined ? datosGrafica.punto_optimo.z.toFixed(6) : "-")}</strong></p>
+        </div>
+      </div>
+    `,
     icon: "info",
     confirmButtonText: "Cerrar",
     customClass: {
@@ -276,6 +285,13 @@ function showSimplexInfo(datosGrafica) {
       confirmButton: "btn btn-primary",
     },
     width: "600px",
+    didOpen: () => {
+      // Forzar z-index alto para el modal y el fondo
+      const swalPopup = document.querySelector('.swal2-container')
+      if (swalPopup) {
+        swalPopup.style.zIndex = '3000'
+      }
+    }
   })
 }
 
@@ -283,7 +299,7 @@ function showSimplexGraphInstructions() {
   const instructions = document.getElementById("simplex-graph-instructions")
   if (instructions) {
     instructions.innerHTML = `
-            <div class="alert alert-info ps-3 pt-2 pb-2 mb-2 text-dark">
+            <div class="alert text-dark bg-light alert-info ps-3 pt-2 pb-2 mb-2">
                 <h6><i class="fas fa-info-circle me-2"></i>Interpretación de la gráfica:</h6>
                 <ul class="mb-2 small">
                     <li><strong>Área Verde:</strong> Región factible donde se cumplen todas las restricciones</li>

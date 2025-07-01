@@ -335,8 +335,55 @@ function cargarEjemplo() {
   if (rest2_tipo) rest2_tipo.value = "<="
   if (rest2_valor) rest2_valor.value = "6"
 
-  showNotification("Ejemplo cargado correctamente", "success")
+  showNotification("Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones", "success")
   // Actualizar la sección de problema actual
+  setTimeout(actualizarProblemaActual, 20)
+}
+
+function limpiarFormulario() {
+  // Confirmar antes de limpiar
+  if (window.Swal) {
+    window.Swal.fire({
+      title: "¿Limpiar formulario?",
+      text: "Se perderán todos los datos ingresados",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, limpiar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        ejecutarLimpiezaFormulario()
+        showNotification("Formulario limpiado correctamente", "info")
+      }
+    })
+  } else {
+    if (confirm("¿Está seguro de que desea limpiar todo el formulario?")) {
+      ejecutarLimpiezaFormulario()
+    }
+  }
+}
+
+function ejecutarLimpiezaFormulario() {
+  // Resetear a valores por defecto
+  document.getElementById("num_variables").value = "2"
+  document.getElementById("maximizar").checked = true
+
+  // Regenerar campos
+  generarCamposVariables()
+
+  // Limpiar función objetivo
+  for (let i = 0; i < numVariables; i++) {
+    const input = document.getElementById(`coef_obj_${i}`)
+    if (input) input.value = ""
+  }
+
+  // Limpiar restricciones
+  limpiarRestricciones()
+  agregarRestriccion() // Agregar una restricción vacía
+
+  // Actualizar problema actual
   setTimeout(actualizarProblemaActual, 20)
 }
 
@@ -663,4 +710,76 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.transform = "translateY(0)"
     }, index * 100)
   })
+})
+
+// Función para repoblar campos después de resolver
+function repoblarCampos() {
+  // Esta función se ejecuta cuando hay datos previos que mantener
+  const mantenerDatos = document.querySelector("[data-mantener-datos]")
+  if (!mantenerDatos) return
+
+  // Obtener datos del template
+  const datosTemplate = window.datosSimplexTemplate || {}
+
+  if (datosTemplate.num_variables) {
+    document.getElementById("num_variables").value = datosTemplate.num_variables
+    generarCamposVariables()
+  }
+
+  if (datosTemplate.tipo_optimizacion) {
+    const radioBtn = document.getElementById(datosTemplate.tipo_optimizacion)
+    if (radioBtn) radioBtn.checked = true
+  }
+
+  // Repoblar nombres de variables
+  if (datosTemplate.nombres_variables) {
+    datosTemplate.nombres_variables.forEach((nombre, index) => {
+      const input = document.getElementById(`nombre_var_${index}`)
+      if (input) {
+        input.value = nombre
+        actualizarNombreVariable(index, nombre)
+      }
+    })
+  }
+
+  // Repoblar función objetivo
+  if (datosTemplate.funcion_objetivo_valores) {
+    datosTemplate.funcion_objetivo_valores.forEach((valor, index) => {
+      const input = document.getElementById(`coef_obj_${index}`)
+      if (input) input.value = valor
+    })
+  }
+
+  // Limpiar restricciones existentes
+  limpiarRestricciones()
+
+  // Repoblar restricciones
+  if (datosTemplate.restricciones_data) {
+    datosTemplate.restricciones_data.forEach((restriccion, index) => {
+      agregarRestriccion()
+
+      // Llenar coeficientes
+      restriccion.coeficientes.forEach((coef, coefIndex) => {
+        const input = document.querySelector(`[name="restriccion_${index}_coef_${coefIndex}"]`)
+        if (input) input.value = coef
+      })
+
+      // Llenar tipo
+      const selectTipo = document.querySelector(`[name="restriccion_${index}_tipo"]`)
+      if (selectTipo) selectTipo.value = restriccion.tipo
+
+      // Llenar valor
+      const inputValor = document.querySelector(`[name="restriccion_${index}_valor"]`)
+      if (inputValor) inputValor.value = restriccion.valor
+    })
+  }
+
+  // Actualizar problema actual
+  setTimeout(actualizarProblemaActual, 100)
+}
+
+// Ejecutar repoblado cuando se carga la página
+document.addEventListener("DOMContentLoaded", () => {
+  // Delay para asegurar que todos los elementos estén listos
+  setTimeout(repoblarCampos, 200)
 })
