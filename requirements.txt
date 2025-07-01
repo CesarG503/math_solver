@@ -3,3 +3,4 @@ numpy==2.3.0
 sympy==1.12.1
 python-dotenv==1.0.1
 mysqlclient==2.2.7
+pillow==11.2.1

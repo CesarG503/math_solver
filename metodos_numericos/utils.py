@@ -216,9 +216,6 @@ def limpiar_funcion_mathlive(funcion_str):
     return funcion_str
 
 def integracion_compuesta(funcion_str, a, b, n, metodo):
-    """
-    Implementa integración numérica compuesta
-    """
     # Limpiar función de entrada
     funcion_str = limpiar_funcion_mathlive(funcion_str)
     

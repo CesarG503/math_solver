@@ -10,6 +10,7 @@ urlpatterns = [
     path('hermite/<int:id_ejercicio>/', views.hermite_view, name='hermite_id'),
     path('integracion/', views.integracion_view, name='integracion'),
     path('simplex/', views.simplex_view, name='simplex'),
+    path('history/', views.history_view, name='history'),
     #Authentication URLs
     path('login/', views.login_view, name='login'),
     path('change/', api.editar_usuario, name='change'),
