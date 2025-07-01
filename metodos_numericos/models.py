@@ -7,9 +7,10 @@ class Ejercicio(models.Model):
     tipo = models.CharField(max_length=100)
     ecuacion = models.TextField()
     puntos = models.TextField()
+    restricciones = models.JSONField()
     solucion = models.TextField()
     user = user = models.ForeignKey(User, on_delete=models.CASCADE)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_creacion = models.DateTimeField()
 
     def __str__(self):
         return f"{self.tipo} - {self.ecuacion}"

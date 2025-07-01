@@ -115,3 +115,24 @@ msgstr "Instrucciones de Uso"
 #: .\metodos_numericos\templates\metodos_numericos\perfil.html:76
 msgid "Cambiar idioma"
 msgstr "Cambiar idioma"
+
+msgid "Descripcion Historial"
+msgstr "El historial de ejercicios que has realizado en el solucionador"
+
+msgid "Ecuacion"
+msgstr "Ecuacion"
+
+msgid "Resultado"
+msgstr "Resultado"
+
+msgid "Fecha"
+msgstr "Fecha"
+
+msgid "No hay ejercicios"
+msgstr "No hay ejercicios en el historial"
+
+msgid "Editar"
+msgstr "Editar"
+
+msgid "Eliminar"
+msgstr "Eliminar"

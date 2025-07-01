@@ -7,6 +7,7 @@ from .forms import FormCrearUsuario
 from .models import Ejercicio
 from .utils import interpolacion_hermite, integracion_compuesta, metodo_simplex
 import json
+import datetime
 
 def index(request):
     """Vista principal con opciones de métodos numéricos"""
@@ -175,7 +176,22 @@ def history_view(request):
         messages.error(request, 'Debes iniciar sesión para ver tu historial.')
         return redirect('metodos_numericos:login')
     
-    ejercicios = Ejercicio.objects.filter(user=request.user).order_by('-fecha_creacion')
+    ejercicios_db = Ejercicio.objects.filter(user=request.user).order_by('-fecha_creacion')
+    ejercicios = []
+    for ejercicio in ejercicios_db:
+        ejercicio_base = {}
+        ejercicio_base['id'] = ejercicio.id
+        ejercicio_base['tipo'] = ejercicio.tipo
+
+        tipo_simplex = ejercicio.ecuacion.split("!")[1] == 'maximizar' and 'MAX' or 'MIN'
+        variables = ejercicio.ecuacion.split("!")[2].split(',')
+        terminos_funcion = ejercicio.ecuacion.split("!")[0].split(',')
+        resultados = ejercicio.solucion.split(',')
+        ejercicio_base['solucion'] = ", ".join([f"{variables[i]}={resultados[i]}" for i in range(len(variables))])
+        ejercicio_base['ecuacion'] = f"{tipo_simplex}(Z) = " + " + ".join([f"{terminos_funcion[i]}{variables[i]}" for i in range(len(variables))])
+
+        ejercicio_base['fecha_creacion'] = ejercicio.fecha_creacion.strftime('%H:%M | %Y-%m-%d')
+        ejercicios.append(ejercicio_base)
     
     context = {
         'ejercicios': ejercicios
@@ -224,7 +240,7 @@ def logout_view(request):
         logout(request)
     return redirect('metodos_numericos:index')
 
-def simplex_view(request):
+def simplex_view(request, id_ejercicio=None):
     """Vista para el método Simplex"""
     context = {}
     
@@ -315,7 +331,6 @@ def simplex_view(request):
                 return render(request, 'metodos_numericos/simplex.html', context)
             
             print(f"Función objetivo final: {funcion_objetivo}")
-            print(f"Restricciones finales: {restricciones}")
             
             # Resolver usando Simplex
             resultado = resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
@@ -340,6 +355,9 @@ def simplex_view(request):
                 'nombres_variables': nombres_variables,
                 'num_variables': len(funcion_objetivo)
             })
+
+            if(request.user.is_authenticated):
+                guardar_simplex(request.user.id, "S", f"{','.join(str(numero) for numero in funcion_objetivo)}!{tipo_optimizacion}!{','.join(nombres_variables)}",restricciones, ','.join (str(numero)for numero in resultado['solucion']))
             
         except ValueError as e:
             messages.error(request, f'Error en los datos de entrada: {str(e)}')
@@ -348,6 +366,45 @@ def simplex_view(request):
             print(f"Error completo: {e}")
             import traceback
             traceback.print_exc()
+        return render(request, 'metodos_numericos/simplex.html', context)
+
+    if id_ejercicio:
+        try:
+            # Cargar ejercicio existente
+            from .models import Ejercicio
+            ejercicio = Ejercicio.objects.get(id=id_ejercicio, user=request.user)
+            context['ejercicio_db'] = ejercicio
+            
+            # Mantener los datos del ejercicio en el formulario
+            funcion_objetivo_input = ejercicio.ecuacion.split("!")[0].split(',')
+            tipo_optimizacion_input = ejercicio.ecuacion.split("!")[1]
+            nombres_variables_input = ejercicio.ecuacion.split("!")[2].split(",")
+            
+            restricciones_input = json.loads(ejercicio.restricciones)
+            coeficientes_restricciones = []
+            tipo_restricciones = []
+            valores_restricciones = []
+            for restriccion in restricciones_input:
+                coeficientes = []
+                for coeficiente in restriccion.get('coeficientes', []):
+                    coeficientes.append(float(coeficiente))
+                tipo_restricciones.append(restriccion.get('tipo', '<='))
+                valores_restricciones.append(float(restriccion.get('valor', 0)))
+                coeficientes_restricciones.append(coeficientes)
+            
+            context['funcion_objetivo_input_db'] = funcion_objetivo_input
+            context['tipo_optimizacion'] = tipo_optimizacion_input
+            context['nombres_variables_db'] = nombres_variables_input
+            context['num_variables'] = len(nombres_variables_input)
+            context['restricciones_data'] = restricciones_input
+            context['coeficientes_restricciones'] = coeficientes_restricciones
+            context['tipo_restricciones'] = tipo_restricciones
+            context['valores_restricciones'] = valores_restricciones
+            context['num_restricciones'] = len(valores_restricciones)
+            
+        except Ejercicio.DoesNotExist:
+            messages.error(request, 'Ejercicio no encontrado o no autorizado.')
+            return redirect('metodos_numericos:simplex')
     
     return render(request, 'metodos_numericos/simplex.html', context)
 
@@ -495,19 +552,33 @@ def preparar_problema_simplex(c, restricciones, tipo, nombres_variables, pasos):
         'nombres_variables': nombres_variables
     }
 
+##Para hermite
 def guardar_ejercicio(uid, tipo, puntos, polinomio_solucion):
     if( uid and tipo and puntos and polinomio_solucion):
         if Ejercicio.objects.filter(user_id=uid, tipo=tipo, puntos=puntos).exists():
             # Si ya existe un ejercicio con esos parámetros, no lo guardamos de nuevo
             return False
-        ejercicio = Ejercicio(user_id=uid, tipo=tipo, puntos=puntos, solucion=polinomio_solucion)
+        current_date = datetime.datetime.now()
+        ejercicio = Ejercicio(user_id=uid, tipo=tipo, puntos=puntos, solucion=polinomio_solucion, fecha_creacion=current_date)
         ejercicio.save()
         return True
-    
+
+# Para integración
 def guardar_integracion(uid, tipo, ecuacion, polinomio_solucion):
     if(uid and tipo and ecuacion and polinomio_solucion):
         if Ejercicio.objects.filter(user_id=uid, tipo=tipo, ecuacion=ecuacion).exists():
             return False
-        ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, solucion=polinomio_solucion)
+        current_date = datetime.datetime.now()
+        ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, solucion=polinomio_solucion, fecha_creacion=current_date)
         ejercicio.save()
         return True
+
+# Para Simplex
+def guardar_simplex(uid, tipo, ecuacion, restricciones, solucion):
+    if(uid and tipo and ecuacion and restricciones and solucion):
+        current_date = datetime.datetime.now()
+        ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, restricciones=json.dumps(restricciones), solucion=solucion, fecha_creacion=current_date)
+        ejercicio.save()
+        return True
+    
+    return False

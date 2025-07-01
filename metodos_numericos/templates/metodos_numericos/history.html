@@ -31,23 +31,28 @@
             <tbody>
                 {% for ejercicio in ejercicios %}
                 <tr>
-                    <td>{{ ejercicio.fecha_creacion }}</td>
-                    <td>{{ ejercicio.ecuacion }}</td>
-                    <td>{{ ejercicio.solucion }}</td>
-                    <td><button class="btn btn-white"><i class="fa fa-pencil"></i> Editar</button></td>
-                    <td><button class="btn btn-danger"><i class="fa fa-trash"></i> Eliminar</button></td>
+                    <td style="vertical-align: middle;">{{ ejercicio.fecha_creacion }}</td>
+                    <td class="math-display">$${{ ejercicio.ecuacion }}$$</td>
+                    <td class="math-display">$${{ ejercicio.solucion }}$$</td>
+                    <td><a class="btn btn-white" href="/simplex/{{ejercicio.id}}"><i class="fa fa-pencil"></i> {%trans "Editar"%}</a></td>
+                    <td><a class="btn btn-danger" href="/eliminar-simplex/{{ejercicio.id}}"><i class="fa fa-trash"></i> {%trans "Eliminar"%}</a></td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center"><i class="fa fa-clock"></i> {%trans "No hay ejercicios en el historial"%}</td>
+                    <td colspan="5" class="text-center"><i class="fa fa-clock"></i> {%trans "No hay ejercicios"%}</td>
                 </tr>
                 <tr>
-                    <td colspan="5" class="text-center"><button class="btn btn-white"><i class="fa fa-clock"></i> Realizar metodo simplex</button></td>
+                    <td colspan="5" class="text-center"><a class="btn btn-white" href="/simplex"><i class="fa fa-circle-check"></i> {%trans "Comenzar"%}</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
-
         </table>
     </div>
 </div>
+
+{% if ejercicios %}
+    <script>
+        MathJax.typeset();
+    </script>
+{% endif %}
 {% endblock %}

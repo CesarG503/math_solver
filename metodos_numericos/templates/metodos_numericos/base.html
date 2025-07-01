@@ -34,7 +34,7 @@
     
     {% load static %}
     <link rel="stylesheet" href="{% static 'metodos_numericos/css/style.css' %}">
-    {% if request.resolver_match.url_name == 'simplex' %}
+    {% if 'simplex' in request.resolver_match.url_name %}
         <link rel="stylesheet" href="{% static 'metodos_numericos/css/tablas.css' %}">
     {% endif %}
     <link rel="stylesheet" href="{% static 'metodos_numericos/css/perfil.css' %}">

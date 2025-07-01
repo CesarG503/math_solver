@@ -9,6 +9,7 @@ urlpatterns = [
     path('hermite/<int:id_ejercicio>/', views.hermite_view, name='hermite_id'),
     path('integracion/', views.integracion_view, name='integracion'),
     path('simplex/', views.simplex_view, name='simplex'),
+    path('simplex/<int:id_ejercicio>/', views.simplex_view, name='simplex_id'),
     path('history/', views.history_view, name='history'),
     #Authentication URLs
     path('login/', views.login_view, name='login'),
@@ -18,4 +19,5 @@ urlpatterns = [
     #Ejercicios URLs
     path('ejercicios/', api.ejercicios, name='ejercicios'),
     path('eliminar-hermite/<int:id_ejercicio>/', api.eliminar_hermite, name='eliminar_hermite'),
+    path('eliminar-simplex/<int:id_ejercicio>/', api.eliminar_simplex, name='eliminar_simplex'),
 ]

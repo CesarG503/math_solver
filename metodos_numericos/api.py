@@ -38,3 +38,13 @@ def eliminar_hermite(request, id_ejercicio):
     except Ejercicio.DoesNotExist:
         messages.error(request, 'El ejercicio no existe o no pertenece a tu cuenta.')
     return redirect('metodos_numericos:index')
+
+@login_required
+def eliminar_simplex(request, id_ejercicio):
+    try:
+        ejercicio = Ejercicio.objects.get(id=id_ejercicio, user=request.user.id)
+        ejercicio.delete()
+        messages.success(request, 'Ejercicio eliminado correctamente.')
+    except Ejercicio.DoesNotExist:
+        messages.error(request, 'El ejercicio no existe o no pertenece a tu cuenta.')
+    return redirect('metodos_numericos:history')

@@ -52,7 +52,12 @@
                                 <i class="fas fa-hashtag me-1"></i>Variables
                             </label>
                             <select class="form-select" id="num_variables" onchange="generarCamposVariables()">
-                                <option value="2" selected>2 variables</option>
+                                {%if ejercicio_db %}
+                                    <option value="{{num_variables}}" selected>{{num_variables}} variables</option>
+                                    <option value="2">2 variables</option>
+                                {% else %}
+                                    <option value="2" selected>2 variables</option>
+                                {% endif %}
                                 <option value="3">3 variables</option>
                                 <option value="4">4 variables</option>
                                 <option value="5">5 variables</option>
@@ -73,11 +78,22 @@
                                 <thead class="table-primary">
                                     <tr id="variables-header">
                                         <!-- Se genera dinámicamente -->
+                                         {%if ejercicio_db %}
+                                            {% for variable in nombres_variables_db %}
+                                            <th class="text-center" style="min-width: 80px;">Variable {{forloop.counter}}</th>
+                                            {% endfor %}
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr id="variables-names">
                                         <!-- Se genera dinámicamente -->
+                                        {%if ejercicio_db %}
+                                            {% for variable in nombres_variables_db %}
+                                            <td><input id="nombre_var_{{forloop.counter|add:"-1"}}" class="form-control form-control-sm text-center variable-name-input" type="text" value="{{ variable }}"
+                                                onchange="actualizarNombreVariable({{forloop.counter|add:"-1"}}, this.value)" placeholder="x{{forloop.counter}}"></td>
+                                            {% endfor %}
+                                        {% endif %}
                                     </tr>
                                 </tbody>
                             </table>
@@ -95,11 +111,26 @@
                                 <thead class="table-success">
                                     <tr id="objetivo-header">
                                         <!-- Se genera dinámicamente -->
+                                         {%if ejercicio_db %}
+                                            {% for variable in nombres_variables_db %}
+                                            <th class="text-center" style="min-width: 120px;">
+                                                <span id="obj_label_{{forloop.counter|add:"-1"}}">{{variable}}</span>
+                                            </th>
+                                            {% endfor %}
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr id="objetivo-coeficientes">
                                         <!-- Se genera dinámicamente -->
+                                    {%if ejercicio_db %}
+                                        {% for variable in funcion_objetivo_input_db %}
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm text-center objetivo-input" name="coef_obj_{{forloop.counter|add:"-1"}}" step="any" placeholder="{{forloop.counter|add:"-1"}}" id="coef_obj_{{forloop.counter|add:"-1"}}"
+                                            value="{{ variable }}">
+                                        </td>
+                                        {% endfor %}
+                                    {% endif %}
                                     </tr>
                                 </tbody>
                             </table>
@@ -118,6 +149,13 @@
                                     <tr id="restricciones-header">
                                         <th class="text-center" style="min-width: 60px;">#</th>
                                         <!-- Variables se generan dinámicamente -->
+                                        {%if ejercicio_db %}
+                                            {% for variable in nombres_variables_db %}
+                                            <th class="text-center" style="min-width: 100px;">
+                                                <span id="rest_label_{{forloop.counter|add:"-1"}}">{{variable}}</span>
+                                            </th>
+                                            {% endfor %}
+                                        {% endif %}
                                         <th class="text-center" style="min-width: 80px;">Tipo</th>
                                         <th class="text-center" style="min-width: 100px;">Valor</th>
                                         <th class="text-center" style="min-width: 80px;">Acción</th>
@@ -125,6 +163,38 @@
                                 </thead>
                                 <tbody id="restricciones-tbody">
                                     <!-- Las restricciones se añaden dinámicamente -->
+                                     {% load index_filters %}
+                                    {%if ejercicio_db %}
+                                        {% for fila in coeficientes_restricciones %}
+                                            <tr class="restriccion-row" id="restriccion_{{forloop.counter|add:"-1"}}" style="opacity: 1; transform: translateY(0px); transition: 0.3s;">
+                                                <td class="text-center fw-bold">{{forloop.counter}}</td>
+                                                {% for coef in fila %}
+                                                    <td>
+                                                        <input class="form-control form-control-sm text-center restriccion-input" type="number" value="{{coef}}" name="restriccion_{{forloop.parentloop.counter|add:"-1"}}_coef_{{forloop.counter|add:"-1"}}"
+                                                         step="any" placeholder="{{forloop.parentloop.counter|add:"-1"}}">
+                                                    </td>
+                                                {% endfor %}
+                                                <td style="min-width:80px">
+                                                    <select class="form-select form-select-sm" 
+                                                            name="restriccion_{{forloop.counter|add:"-1"}}_tipo">
+                                                            <option value="<=" {% if tipo_restricciones|index:forloop.counter0 == '<=' %}selected{% endif %}>&le;</option>
+                                                            <option value=">=" {% if tipo_restricciones|index:forloop.counter0 == '>=' %}selected{% endif %}>&ge;</option>
+                                                            <option value="=" {% if tipo_restricciones|index:forloop.counter0 == '=' %}selected{% endif %}>=</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm text-center restriccion-valor" name="restriccion_{{forloop.counter|add:"-1"}}_valor" placeholder="0" step="any" required="" value="{{valores_restricciones|index:forloop.counter0}}">
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                            onclick="eliminarRestriccion({{forloop.counter|add:"-1"}})"
+                                                            title="Eliminar restricción">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
                                 </tbody>
                             </table>
                         </div>
@@ -398,6 +468,14 @@
 <script src="{% static 'metodos_numericos/js/simplex.js' %}"></script>
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <script src="{% static 'metodos_numericos/js/simplex-graph.js' %}"></script>
+
+{%if ejercicio_db %}
+<script>
+    window.cargaDB = true;
+    window.numRestricciones = {{ num_restricciones }};
+    window.nombresVariables = {{ nombres_variables_db|safe }};
+</script>
+{%endif%}
 
 {% if datos_grafica %}
 <script>

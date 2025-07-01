@@ -66,6 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
   updateValorOptimoTheme(savedTheme)
 
   // Inicializar campos
+  if(window.cargaDB){
+    if(window.numRestricciones > 0){
+      contadorRestricciones = window.numRestricciones;
+    }
+    nombresVariables = window.nombresVariables || ["x", "x"]
+    return;
+  }
   generarCamposVariables()
   agregarRestriccion()
 })
@@ -89,9 +96,12 @@ function generarTablaVariables() {
   const header = document.getElementById("variables-header")
   const names = document.getElementById("variables-names")
 
+  if(window.cargaDB){
+    return;
+  }
+
   header.innerHTML = ""
   names.innerHTML = ""
-
   for (let i = 0; i < numVariables; i++) {
     // Header
     const th = document.createElement("th")
@@ -115,6 +125,10 @@ function generarTablaVariables() {
 function generarTablaObjetivo() {
   const header = document.getElementById("objetivo-header")
   const coefs = document.getElementById("objetivo-coeficientes")
+
+  if(window.cargaDB){
+    return;
+  }
 
   header.innerHTML = ""
   coefs.innerHTML = ""
@@ -140,6 +154,10 @@ function generarTablaObjetivo() {
 
 function generarHeaderRestricciones() {
   const header = document.getElementById("restricciones-header")
+
+  if(window.cargaDB){
+    return;
+  }
 
   // Limpiar header completamente
   header.innerHTML = ""
@@ -204,6 +222,9 @@ function actualizarNombreVariable(indice, nuevoNombre) {
 }
 
 function limpiarRestricciones() {
+  if(window.cargaDB){
+    return;
+  }
   const tbody = document.getElementById("restricciones-tbody")
   tbody.innerHTML = ""
   contadorRestricciones = 0
@@ -663,4 +684,20 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.transform = "translateY(0)"
     }, index * 100)
   })
+
+  if(window.cargaDB) {
+    const simplexForm = document.getElementById("simplexForm")
+    if (simplexForm) {
+      let e = {
+        target: simplexForm,
+        preventDefault: () => {},
+        bubbles: true,
+        cancelable: true
+      }
+      e.preventDefault()
+      procesarFormulario(e)
+      simplexForm.submit();
+    }
+    return;
+  }
 })
