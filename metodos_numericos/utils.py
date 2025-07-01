@@ -484,131 +484,194 @@ def generar_datos_grafica_integracion(funcion_str, a, b, n, metodo, resultado):
     except Exception as e:
         return None
 
-def metodo_simplex(funcion_objetivo, restricciones, tipo_optimizacion):
+def generar_datos_grafica_simplex(funcion_objetivo, restricciones, solucion, nombres_variables, tipo_optimizacion):
     """
-    Implementa el método Simplex para programación lineal
-    
-    Args:
-        funcion_objetivo: Dict con coeficientes de la función objetivo
-        restricciones: Lista de restricciones con coeficientes, tipo y valor
-        tipo_optimizacion: 'maximizar' o 'minimizar'
-    
-    Returns:
-        Dict con resultado, tablas paso a paso y solución óptima
+    Genera datos para la gráfica del método Simplex (solo para 2 variables)
     """
-    pasos = []
-    pasos.append("=== MÉTODO SIMPLEX ===")
-    pasos.append(f"Tipo de optimización: {tipo_optimizacion.upper()}")
-    pasos.append("")
+    import numpy as np
     
-    # Convertir a forma estándar
-    problema_std = _convertir_forma_estandar(funcion_objetivo, restricciones, tipo_optimizacion, pasos)
-    
-    if problema_std is None:
-        return {
-            'error': 'No se pudo convertir el problema a forma estándar',
-            'pasos': pasos
-        }
-    
-    # Resolver usando Simplex
-    resultado = _resolver_simplex(problema_std, pasos)
-    
-    return resultado
-
-def _convertir_forma_estandar(funcion_objetivo, restricciones, tipo_optimizacion, pasos):
-    """Convierte el problema a forma estándar para el método Simplex"""
-    
-    pasos.append("1. CONVERSIÓN A FORMA ESTÁNDAR")
-    pasos.append("")
-    
-    # Mostrar problema original
-    pasos.append("Problema original:")
-    obj_str = " + ".join([f"{coef}x{i+1}" if coef >= 0 else f"{coef}x{i+1}" 
-                         for i, coef in enumerate(funcion_objetivo)])
-    pasos.append(f"{tipo_optimizacion.capitalize()} Z = {obj_str}")
-    
-    pasos.append("Sujeto a:")
-    for i, rest in enumerate(restricciones):
-        rest_str = " + ".join([f"{coef}x{j+1}" if coef >= 0 else f"{coef}x{j+1}" 
-                              for j, coef in enumerate(rest['coeficientes'])])
-        pasos.append(f"  {rest_str} {rest['tipo']} {rest['valor']}")
-    
-    pasos.append("  xi ≥ 0 para todo i")
-    pasos.append("")
-    
-    # Convertir minimización a maximización si es necesario
-    if tipo_optimizacion == 'minimizar':
-        funcion_objetivo = [-coef for coef in funcion_objetivo]
-        pasos.append("Convertir minimización a maximización (multiplicar por -1):")
-        obj_str = " + ".join([f"{coef}x{i+1}" if coef >= 0 else f"{coef}x{i+1}" 
-                             for i, coef in enumerate(funcion_objetivo)])
-        pasos.append(f"Maximizar Z = {obj_str}")
-        pasos.append("")
-    
-    # Añadir variables de holgura/exceso
-    num_vars_originales = len(funcion_objetivo)
-    num_restricciones = len(restricciones)
-    
-    # Matriz A extendida y vector b
-    A = []
-    b = []
-    variables_basicas = []
-    
-    pasos.append("Añadir variables de holgura/exceso:")
-    
-    for i, rest in enumerate(restricciones):
-        fila = rest['coeficientes'].copy()
+    try:
+        # Solo funciona para 2 variables
+        if len(funcion_objetivo) != 2:
+            return None
+            
+        # Coeficientes de la función objetivo
+        c1, c2 = funcion_objetivo[0], funcion_objetivo[1]
         
-        # Añadir variables de holgura/exceso
-        for j in range(num_restricciones):
-            if i == j:
-                if rest['tipo'] == '<=':
-                    fila.append(1)  # Variable de holgura
-                    variables_basicas.append(f"s{i+1}")
-                elif rest['tipo'] == '>=':
-                    fila.append(-1)  # Variable de exceso
-                    variables_basicas.append(f"e{i+1}")
-                else:  # rest['tipo'] == '='
-                    fila.append(0)
-                    # Para igualdades necesitamos variables artificiales
-                    variables_basicas.append(f"a{i+1}")
+        # Determinar rango de la gráfica
+        x_max = 10
+        y_max = 10
+        
+        # Ajustar rango basado en restricciones
+        for rest in restricciones:
+            if rest['valor'] > 0:
+                if rest['coeficientes'][0] > 0:
+                    x_max = max(x_max, rest['valor'] / rest['coeficientes'][0] + 2)
+                if rest['coeficientes'][1] > 0:
+                    y_max = max(y_max, rest['valor'] / rest['coeficientes'][1] + 2)
+        
+        x_max = min(x_max, 20)  # Limitar el rango máximo
+        y_max = min(y_max, 20)
+        
+        # Generar puntos para las líneas de restricción
+        x_line = np.linspace(0, x_max, 100)
+        
+        restricciones_data = []
+        vertices_factibles = [(0, 0)]  # Siempre incluir el origen
+        
+        # Procesar cada restricción
+        for i, rest in enumerate(restricciones):
+            a1, a2 = rest['coeficientes'][0], rest['coeficientes'][1]
+            b = rest['valor']
+            tipo = rest['tipo']
+            
+            # Calcular línea de restricción: a1*x + a2*y = b
+            if a2 != 0:
+                y_line = (b - a1 * x_line) / a2
+                # Filtrar valores negativos
+                valid_indices = (y_line >= 0) & (x_line >= 0)
+                x_valid = x_line[valid_indices]
+                y_valid = y_line[valid_indices]
             else:
-                fila.append(0)
+                # Línea vertical
+                if a1 != 0:
+                    x_vert = b / a1
+                    x_valid = [x_vert, x_vert]
+                    y_valid = [0, y_max]
+                else:
+                    continue
+            
+            restricciones_data.append({
+                'x': x_valid.tolist() if hasattr(x_valid, 'tolist') else x_valid,
+                'y': y_valid.tolist() if hasattr(y_valid, 'tolist') else y_valid,
+                'nombre': f'Restricción {i+1}: {a1:.1f}x₁ + {a2:.1f}x₂ {tipo} {b:.1f}',
+                'tipo': tipo,
+                'coeficientes': [a1, a2],
+                'valor': b
+            })
+            
+            # Encontrar intersecciones con los ejes
+            if a1 != 0 and b/a1 >= 0:
+                vertices_factibles.append((b/a1, 0))
+            if a2 != 0 and b/a2 >= 0:
+                vertices_factibles.append((0, b/a2))
         
-        A.append(fila)
-        b.append(rest['valor'])
+        # Encontrar intersecciones entre restricciones
+        for i in range(len(restricciones)):
+            for j in range(i+1, len(restricciones)):
+                rest1 = restricciones[i]
+                rest2 = restricciones[j]
+                
+                a1, a2, b1 = rest1['coeficientes'][0], rest1['coeficientes'][1], rest1['valor']
+                c1, c2, b2 = rest2['coeficientes'][0], rest2['coeficientes'][1], rest2['valor']
+                
+                # Resolver sistema 2x2
+                det = a1*c2 - a2*c1
+                if abs(det) > 1e-10:  # No son paralelas
+                    x_int = (b1*c2 - b2*a2) / det
+                    y_int = (a1*b2 - c1*b1) / det
+                    
+                    if x_int >= 0 and y_int >= 0:
+                        vertices_factibles.append((x_int, y_int))
         
-        # Mostrar restricción convertida
-        rest_str = " + ".join([f"{coef}x{j+1}" if coef >= 0 else f"{coef}x{j+1}" 
-                              for j, coef in enumerate(rest['coeficientes'])])
-        if rest['tipo'] == '<=':
-            pasos.append(f"  {rest_str} + s{i+1} = {rest['valor']}")
-        elif rest['tipo'] == '>=':
-            pasos.append(f"  {rest_str} - e{i+1} = {rest['valor']}")
+        # Filtrar vértices que satisfacen todas las restricciones
+        vertices_validos = []
+        for x, y in vertices_factibles:
+            valido = True
+            for rest in restricciones:
+                a1, a2 = rest['coeficientes'][0], rest['coeficientes'][1]
+                valor_rest = a1*x + a2*y
+                
+                if rest['tipo'] == '<=':
+                    if valor_rest > rest['valor'] + 1e-10:
+                        valido = False
+                        break
+                elif rest['tipo'] == '>=':
+                    if valor_rest < rest['valor'] - 1e-10:
+                        valido = False
+                        break
+                else:  # '='
+                    if abs(valor_rest - rest['valor']) > 1e-10:
+                        valido = False
+                        break
+            
+            if valido:
+                vertices_validos.append((x, y))
+        
+        # Eliminar duplicados
+        vertices_unicos = []
+        for v in vertices_validos:
+            es_duplicado = False
+            for vu in vertices_unicos:
+                if abs(v[0] - vu[0]) < 1e-6 and abs(v[1] - vu[1]) < 1e-6:
+                    es_duplicado = True
+                    break
+            if not es_duplicado:
+                vertices_unicos.append(v)
+        
+        # Ordenar vértices para formar el polígono convexo
+        if len(vertices_unicos) > 2:
+            # Encontrar el centroide
+            cx = sum(v[0] for v in vertices_unicos) / len(vertices_unicos)
+            cy = sum(v[1] for v in vertices_unicos) / len(vertices_unicos)
+            
+            # Ordenar por ángulo respecto al centroide
+            import math
+            def angulo(v):
+                return math.atan2(v[1] - cy, v[0] - cx)
+            
+            vertices_unicos.sort(key=angulo)
+        
+        # Líneas de la función objetivo
+        if c2 != 0:
+            # Diferentes valores de Z para mostrar la dirección de optimización
+            z_values = []
+            if solucion:
+                z_optimo = c1 * solucion[0] + c2 * solucion[1]
+                z_values = [z_optimo * 0.5, z_optimo * 0.75, z_optimo]
+            else:
+                z_values = [5, 10, 15]
+            
+            objetivo_lines = []
+            for z in z_values:
+                y_obj = (z - c1 * x_line) / c2
+                valid_obj = (y_obj >= 0) & (x_line >= 0) & (y_obj <= y_max)
+                objetivo_lines.append({
+                    'x': x_line[valid_obj].tolist(),
+                    'y': y_obj[valid_obj].tolist(),
+                    'z': z,
+                    'es_optimo': abs(z - (z_values[-1] if z_values else 0)) < 1e-6
+                })
         else:
-            pasos.append(f"  {rest_str} = {rest['valor']}")
-    
-    # Extender función objetivo con ceros para variables de holgura/exceso
-    c = funcion_objetivo + [0] * num_restricciones
-    
-    pasos.append("")
-    pasos.append("Función objetivo extendida:")
-    obj_str = " + ".join([f"{coef}x{i+1}" if i < num_vars_originales 
-                         else f"{coef}{variables_basicas[i-num_vars_originales]}" 
-                         for i, coef in enumerate(c) if coef != 0])
-    pasos.append(f"Maximizar Z = {obj_str}")
-    pasos.append("")
-    
-    return {
-        'A': A,
-        'b': b,
-        'c': c,
-        'variables_basicas': variables_basicas,
-        'num_vars_originales': num_vars_originales,
-        'tipo_original': tipo_optimizacion
-    }
+            objetivo_lines = []
+        
+        return {
+            'restricciones': restricciones_data,
+            'vertices_factibles': vertices_unicos,
+            'objetivo_lines': objetivo_lines,
+            'punto_optimo': {
+                'x': solucion[0] if solucion else 0,
+                'y': solucion[1] if solucion else 0,
+                'z': c1 * solucion[0] + c2 * solucion[1] if solucion else 0
+            },
+            'rango': {
+                'x_max': x_max,
+                'y_max': y_max
+            },
+            'funcion_objetivo': {
+                'c1': c1,
+                'c2': c2,
+                'ecuacion': f'{c1:.2f}x₁ + {c2:.2f}x₂'
+            },
+            'nombres_variables': nombres_variables,
+            'tipo_optimizacion': tipo_optimizacion
+        }
+        
+    except Exception as e:
+        print(f"Error generando datos de gráfica: {e}")
+        return None
 
-def _resolver_simplex(problema, pasos):
+def metodo_simplex(problema, pasos):
     """Resuelve el problema usando el algoritmo Simplex"""
     
     A = problema['A']
@@ -617,6 +680,7 @@ def _resolver_simplex(problema, pasos):
     variables_basicas = problema['variables_basicas']
     num_vars_originales = problema['num_vars_originales']
     tipo_original = problema['tipo_original']
+    nombres_variables = problema['nombres_variables']
     
     m = len(A)  # número de restricciones
     n = len(c)  # número de variables
@@ -649,7 +713,7 @@ def _resolver_simplex(problema, pasos):
         pasos.append("")
         
         # Mostrar tabla actual
-        tabla_info = _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos)
+        tabla_info = _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos, nombres_variables, num_vars_originales)
         tablas_simplex.append(tabla_info)
         
         # Verificar optimalidad
@@ -665,7 +729,7 @@ def _resolver_simplex(problema, pasos):
         
         # Determinar nombre de variable entrante
         if col_pivote < num_vars_originales:
-            var_entrante = f"x{col_pivote + 1}"
+            var_entrante = nombres_variables[col_pivote]
         else:
             var_entrante = f"s{col_pivote - num_vars_originales + 1}"
         
@@ -762,6 +826,8 @@ def _resolver_simplex(problema, pasos):
         pasos.append("")
         pasos.append("   Antes:")
         fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[fila_pivote]]) + "]"
+        
+        
         pasos.append(fila_str)
         
         for j in range(len(tabla[fila_pivote])):
@@ -815,11 +881,15 @@ def _resolver_simplex(problema, pasos):
     
     # Extraer solución
     solucion = [0.0] * num_vars_originales
+    solucion_con_nombres = {}
+    
     for i, var in enumerate(variables_basicas):
-        if var.startswith('x'):
-            var_num = int(var[1:]) - 1
-            if var_num < num_vars_originales:
-                solucion[var_num] = tabla[i][-1]
+        # Buscar si es una variable original
+        for j, nombre_var in enumerate(nombres_variables):
+            if var == nombre_var:
+                solucion[j] = tabla[i][-1]
+                solucion_con_nombres[nombre_var] = tabla[i][-1]
+                break
     
     valor_objetivo = tabla[-1][-1]
     # Mostrar siempre el valor óptimo como positivo
@@ -832,13 +902,13 @@ def _resolver_simplex(problema, pasos):
     pasos.append("3. SOLUCIÓN ÓPTIMA")
     pasos.append("")
     pasos.append("📋 VARIABLES DE DECISIÓN:")
-    for i, val in enumerate(solucion):
-        pasos.append(f"   x{i+1} = {val:.6f}")
+    for i, (nombre, val) in enumerate(zip(nombres_variables, solucion)):
+        pasos.append(f"   {nombre} = {val:.6f}")
     
     pasos.append("")
     pasos.append("📊 VARIABLES DE HOLGURA/EXCESO:")
     for i, var in enumerate(variables_basicas):
-        if not var.startswith('x'):
+        if var not in nombres_variables:
             pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
     
     pasos.append("")
@@ -852,6 +922,8 @@ def _resolver_simplex(problema, pasos):
     
     return {
         'solucion': solucion,
+        'solucion_con_nombres': solucion_con_nombres,
+        'nombres_variables': nombres_variables,
         'valor_objetivo': valor_objetivo_mostrar,
         'pasos': pasos,
         'tablas': tablas_simplex,
@@ -860,7 +932,7 @@ def _resolver_simplex(problema, pasos):
         'historial_pivotes': historial_pivotes
     }
 
-def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
+def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos, nombres_variables, num_vars_originales):
     """Muestra la tabla Simplex de manera formateada con HTML"""
     
     m = len(tabla) - 1  # número de restricciones
@@ -869,20 +941,20 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
     pasos.append("📋 TABLA SIMPLEX:")
     pasos.append("")
     
-    # Crear tabla HTML
+    # Crear tabla HTML con estilos mejorados
     tabla_html = '<div class="simplex-table-container">'
     tabla_html += f'<div class="table-title">Iteración {iteracion}</div>'
-    tabla_html += '<table class="simplex-table">'
+    tabla_html += '<table class="simplex-table table table-bordered table-hover">'
     
     # Encabezado
-    tabla_html += '<thead><tr>'
-    tabla_html += '<th class="base-header">Base</th>'
+    tabla_html += '<thead class="table-dark"><tr>'
+    tabla_html += '<th class="base-header text-center">Base</th>'
     for j in range(n):
-        if j < 10:  # Asumiendo máximo 10 variables originales
-            tabla_html += f'<th class="var-header">x<sub>{j+1}</sub></th>'
+        if j < num_vars_originales:
+            tabla_html += f'<th class="var-header text-center">{nombres_variables[j]}</th>'
         else:
-            tabla_html += f'<th class="slack-header">s<sub>{j-9}</sub></th>'
-    tabla_html += '<th class="rhs-header">b(i)</th>'
+            tabla_html += f'<th class="slack-header text-center">s<sub>{j-num_vars_originales+1}</sub></th>'
+    tabla_html += '<th class="rhs-header text-center">b(i)</th>'
     tabla_html += '</tr></thead>'
     
     # Cuerpo de la tabla
@@ -891,27 +963,29 @@ def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos):
     # Filas de restricciones
     for i in range(m):
         tabla_html += f'<tr class="constraint-row" data-row="{i}">'
-        tabla_html += f'<td class="base-column">{variables_basicas[i]}</td>'
+        tabla_html += f'<td class="base-column text-center fw-bold">{variables_basicas[i]}</td>'
         for j in range(len(tabla[i])):
             valor = tabla[i][j]
-            clase_celda = f'data-cell data-row-{i} data-col-{j}'
+            clase_celda = f'data-cell text-center data-row-{i} data-col-{j}'
             if j == len(tabla[i]) - 1:  # RHS column
-                clase_celda += ' rhs-cell'
+                clase_celda += ' rhs-cell fw-bold'
             tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
         tabla_html += '</tr>'
     
     # Fila objetivo
-    tabla_html += '<tr class="objective-row">'
-    tabla_html += '<td class="base-column objective-label">Z</td>'
+    tabla_html += '<tr class="objective-row table-info">'
+    tabla_html += '<td class="base-column objective-label text-center fw-bold">Z</td>'
     for j in range(len(tabla[-1])):
         valor = tabla[-1][j]
-        clase_celda = f'objective-cell data-col-{j}'
+        clase_celda = f'objective-cell text-center data-col-{j}'
         if j == len(tabla[-1]) - 1:  # RHS column (valor de Z)
-            clase_celda += ' objective-value'
+            clase_celda += ' objective-value fw-bold'
         tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
     tabla_html += '</tr>'
     
-    tabla_html += '</tbody></table></div>'
+    tabla_html += '</tbody></table>'
+    
+    tabla_html += '</div>'
     
     pasos.append(tabla_html)
     pasos.append("")

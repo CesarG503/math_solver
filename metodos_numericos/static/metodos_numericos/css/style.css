@@ -80,22 +80,27 @@ body {
   margin-bottom: 1rem;
   border-collapse: collapse;
 }
+
 .table-bootstrap thead {
   background-color: #202020;
 }
+
 .table-bootstrap th,
 .table-bootstrap td {
   padding: 0.25rem;
   vertical-align: middle;
   border-top: 1px solid #464646;
 }
+
 .table-bootstrap th {
   font-weight: bold;
   border-bottom: 2px solid #616161;
 }
+
 .table-bootstrap tbody tr:nth-of-type(odd) {
   background-color: #555555;
 }
+
 .table-bootstrap tbody tr:hover {
   background-color: #333333;
 }
@@ -109,14 +114,13 @@ body {
 }
 
 /* Estilos para botones de edicion */
-#button-normal{
+#button-normal {
   display: block;
 }
 
-#button-small{
+#button-small {
   display: none;
 }
-
 
 /* Estilos para código matemático */
 code {
@@ -133,6 +137,7 @@ code {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -157,15 +162,15 @@ code {
     font-size: 0.8rem;
   }
 
-  #button-small{
+  #button-small {
     display: block;
   }
 
-  #button-normal{
+  #button-normal {
     display: none;
   }
 
-  .navbar-header{
+  .navbar-header {
     justify-content: space-between;
   }
 }
@@ -314,6 +319,7 @@ code {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -339,317 +345,6 @@ code {
   }
 }
 
-/* Estilos para tablas de resultados */
-.table-responsive {
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.table th {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  font-weight: 600;
-}
-
-.table td {
-  border-color: #dee2e6;
-  vertical-align: middle;
-}
-
-/* Estilos para iconos */
-.fa-3x {
-  font-size: 3rem;
-}
-
-.text-primary {
-  color: #007bff !important;
-}
-
-.text-success {
-  color: #28a745 !important;
-}
-
-.text-warning {
-  color: #ffc107 !important;
-}
-
-/* Footer */
-footer {
-  margin-top: auto;
-  border-top: 1px solid #dee2e6;
-}
-
-/* Navbar */
-.navbar-brand {
-  font-weight: 600;
-  font-size: 1.25rem;
-}
-
-.nav-link {
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.nav-link:hover {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-/* Variables CSS para temas */
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-table-header: #007bff;
-  --bg-table-row-even: #f8f9fa;
-  --bg-table-row-odd: #ffffff;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-table-header: #ffffff;
-  --border-color: #dee2e6;
-  --border-table: #007bff;
-}
-
-[data-theme="dark"] {
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #2d2d2d;
-  --bg-table-header: #0056b3;
-  --bg-table-row-even: #2d2d2d;
-  --bg-table-row-odd: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #adb5bd;
-  --text-table-header: #ffffff;
-  --border-color: #495057;
-  --border-table: #0056b3;
-}
-
-/* Estilos mejorados para tablas Simplex */
-.simplex-table-container {
-  background-color: var(--bg-primary);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border: 2px solid var(--border-table);
-  overflow-x: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.table-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  text-align: center;
-  padding: 0.5rem;
-  background-color: var(--bg-table-header);
-  color: var(--text-table-header);
-  border-radius: 0.5rem;
-}
-
-.simplex-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: "Courier New", monospace;
-  font-size: 0.9rem;
-  margin: 0;
-  background-color: var(--bg-primary);
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.simplex-table th {
-  background-color: var(--bg-table-header);
-  color: var(--text-table-header);
-  padding: 0.75rem 0.5rem;
-  text-align: center;
-  font-weight: 600;
-  border: 1px solid var(--border-table);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.simplex-table .base-header {
-  background-color: #6c757d;
-  min-width: 80px;
-}
-
-.simplex-table .var-header {
-  background-color: var(--bg-table-header);
-  min-width: 70px;
-}
-
-.simplex-table .slack-header {
-  background-color: #17a2b8;
-  min-width: 70px;
-}
-
-.simplex-table .rhs-header {
-  background-color: #28a745;
-  min-width: 80px;
-}
-
-.simplex-table td {
-  padding: 0.6rem 0.4rem;
-  text-align: center;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  background-color: var(--bg-table-row-odd);
-  transition: all 0.3s ease;
-}
-
-.simplex-table tr:nth-child(even) td {
-  background-color: var(--bg-table-row-even);
-}
-
-.simplex-table tr:hover td {
-  background-color: rgba(0, 123, 255, 0.1);
-  transform: scale(1.03);
-  color: green;
-}
-
-/* Estilos especiales para diferentes tipos de celdas */
-.simplex-table .base-column {
-  background-color: #6c757d !important;
-  color: white !important;
-  font-weight: 600;
-  min-width: 80px;
-}
-
-.simplex-table .rhs-cell {
-  background-color: rgba(40, 167, 69, 0.1) !important;
-  font-weight: 600;
-  border-left: 0px solid #28a745 !important;
-}
-
-.simplex-table .objective-row td {
-  background-color: rgba(40, 167, 69, 0.15) !important;
-  font-weight: 600;
-  border-top: 1px solid var(--border-table) !important;
-}
-
-.simplex-table .objective-label {
-  background-color: #28a745 !important;
-  color: white !important;
-  font-weight: bold;
-}
-
-.simplex-table .objective-value {
-  background-color: rgba(40, 167, 69, 0.3) !important;
-  font-weight: bold;
-  font-size: 1.1em;
-  border: 0px solid #28a745 !important;
-}
-
-/* Estilos para resaltar pivotes */
-.simplex-table .pivot-cell {
-  background-color: rgba(255, 193, 7, 0.8) !important;
-  color: #ffffff !important;
-  font-weight: bold;
-  font-size: 1.1em;
-  border: 3px solid #ffc107 !important;
-  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-  animation: pulse-pivot 2s infinite;
-}
-.simplex-table .pivot-cell:hover {
-  color: #fff900; /* Neon yellow */
-  text-shadow: 0 0 8px #fff900, 0 0 16px #fff900;
-}
-
-@keyframes pulse-pivot {
-  0% {
-    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(255, 193, 7, 0.8);
-  }
-  100% {
-    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-  }
-}
-
-.simplex-table .entering-variable {
-  background-color: rgba(0, 123, 255, 0.3) !important;
-  border-left: 1px solid #007bff !important;
-  border-right: 1px solid #007bff !important;
-}
-
-.simplex-table .leaving-variable {
-  background-color: rgba(220, 53, 69, 0.3) !important;
-  border-top: 1.5px solid #dc3545 !important;
-  border-bottom: 1.5px solid #dc3545 !important;
-}
-
-/* Estilos para columna pivote */
-.simplex-table .pivot-column {
-  background-color: rgba(0, 123, 255, 0.2) !important;
-}
-
-/* Estilos para fila pivote */
-.simplex-table .pivot-row {
-  background-color: rgba(220, 53, 69, 0.2) !important;
-  border-top: 1px solid #dc3545 !important;
-  border-bottom: 1.5px solid #dc3545 !important;
-}
-
-/* Indicadores visuales mejorados */
-.variable-indicator {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin: 0.25rem;
-}
-
-.entering-indicator {
-  background-color: rgba(0, 123, 255, 0.2);
-  color: #007bff;
-  border: 1px solid #007bff;
-}
-
-.leaving-indicator {
-  background-color: rgba(220, 53, 69, 0.2);
-  color: #dc3545;
-  border: 1px solid #dc3545;
-}
-
-.pivot-indicator {
-  background-color: rgba(255, 193, 7, 0.3);
-  color: #856404;
-  border: 1px solid #ffc107;
-}
-
-/* Responsive para tablas mejorado */
-@media (max-width: 768px) {
-  .simplex-table {
-    font-size: 0.7rem;
-  }
-
-  .simplex-table th,
-  .simplex-table td {
-    padding: 0.3rem 0.2rem;
-  }
-
-  .simplex-table-container {
-    padding: 1rem;
-    margin: 1rem 0;
-  }
-
-  .table-title {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .simplex-table {
-    font-size: 0.6rem;
-  }
-
-  .simplex-table th,
-  .simplex-table td {
-    padding: 0.2rem 0.1rem;
-  }
-}
 
 /* Estilos para alertas de variables */
 .alert-info {
@@ -668,34 +363,6 @@ footer {
   border-left: 4px solid #28a745;
 }
 
-/* Animaciones para transiciones */
-.simplex-table td {
-  transition: all 0.3s ease;
-}
-
-.simplex-table tr {
-  transition: all 0.3s ease;
-}
-
-/* Mejoras para el modo oscuro */
-[data-theme="dark"] .simplex-table-container {
-  background-color: var(--bg-primary);
-  border-color: #495057;
-}
-
-[data-theme="dark"] .table-title {
-  background-color: #495057;
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .simplex-table .base-column {
-  background-color: #495057 !important;
-}
-
-[data-theme="dark"] .simplex-table .objective-label {
-  background-color: #495057 !important;
-}
-
 /* Toggle de tema */
 .theme-toggle {
   position: sticky;
@@ -712,6 +379,11 @@ footer {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .theme-toggle:hover {
@@ -744,8 +416,24 @@ footer {
     right: 10px;
   }
 }
+/* Toggle de tema */
+.theme-toggle {
+  position: sticky;
+  top: 95px;
+  right: 20px;
+  float: right;
+  z-index: 1000;
 
-/* Animaciones para cambio de tema */
+  color: var(--text-table-header);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -801,137 +489,4 @@ footer {
   .d-md-inline {
     display: inline !important;
   }
-}
-
-/* Estilos para tabla de puntos de Hermite */
-#puntos-table {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-#puntos-table thead th {
-  font-weight: 600;
-  text-align: center;
-  vertical-align: middle;
-}
-
-#puntos-table tbody td {
-  vertical-align: middle;
-}
-
-#puntos-table .form-control-sm {
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-#puntos-table .form-control-sm:focus {
-  transform: scale(1.02);
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-#puntos-table .is-valid {
-  border-color: #28a745;
-  background-color: rgba(40, 167, 69, 0.1);
-}
-
-#puntos-table .is-invalid {
-  border-color: #dc3545;
-  background-color: rgba(220, 53, 69, 0.1);
-}
-
-/* Animaciones para agregar/quitar filas */
-@keyframes fadeInRow {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-#puntos-tbody tr {
-  animation: fadeInRow 0.3s ease-out;
-}
-
-/* Responsive para tabla de puntos */
-@media (max-width: 768px) {
-  #puntos-table {
-    font-size: 0.8rem;
-  }
-
-  #puntos-table .form-control-sm {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-
-  #puntos-table th,
-  #puntos-table td {
-    padding: 0.5rem 0.25rem;
-  }
-}
-
-/* Estilos para SweetAlert2 personalizado */
-.swal2-modal-custom {
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-.swal2-modal-custom .swal2-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.swal2-modal-custom .swal2-content {
-  font-size: 1rem;
-}
-
-/* Animaciones para la tabla de puntos de Hermite */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Estilos para la tabla de puntos */
-#puntos-table {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#puntos-table thead th {
-  font-weight: 600;
-  text-align: center;
-  border: none;
-}
-
-#puntos-table tbody tr {
-  transition: background-color 0.2s ease;
-}
-
-#puntos-table tbody tr:hover {
-  background-color: rgba(0, 123, 255, 0.05) !important;
-}
-
-/* Estilos para los inputs de la tabla */
-.x-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(144, 202, 249, 0.25);
-}
-
-.fx-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(165, 214, 167, 0.25);
-}
-
-.derivada-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(255, 204, 128, 0.25);
-}
-
-/* Botón de eliminar punto */
-.btn-outline-danger:hover {
-  transform: scale(1.05);
-  transition: transform 0.1s ease;
 }
