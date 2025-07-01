@@ -323,6 +323,17 @@ def simplex_view(request):
             # Resolver usando Simplex
             resultado = resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
             
+            # Generar datos para gráfica (solo para 2 variables)
+            if len(funcion_objetivo) == 2:
+                from .utils import generar_datos_grafica_simplex
+                solucion_para_grafica = resultado.get('solucion', None)
+                datos_grafica = generar_datos_grafica_simplex(
+                    funcion_objetivo, restricciones, solucion_para_grafica, 
+                    nombres_variables, tipo_optimizacion
+                )
+                if datos_grafica:
+                    context['datos_grafica'] = json.dumps(datos_grafica)
+
             context.update(resultado)
             context.update({
                 'funcion_objetivo_input': funcion_objetivo_str,
