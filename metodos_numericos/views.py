@@ -318,6 +318,8 @@ def simplex_view(request):
 
 def resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables):
     """Función auxiliar para resolver el problema Simplex"""
+    from .utils import preparar_problema_simplex, metodo_simplex
+    
     pasos = []
     
     # Preparar el problema para el método Simplex
@@ -327,138 +329,6 @@ def resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres
     resultado = metodo_simplex(problema, pasos)
     
     return resultado
-
-def preparar_problema_simplex(c, restricciones, tipo, nombres_variables, pasos):
-    """Convierte el problema a forma estándar para el método Simplex"""
-    
-    pasos.append("1. PREPARACIÓN DEL PROBLEMA")
-    pasos.append("")
-    pasos.append("📋 PROBLEMA ORIGINAL:")
-    
-    # Mostrar función objetivo
-    if tipo == 'maximizar':
-        pasos.append(f"   Maximizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
-    else:
-        pasos.append(f"   Minimizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
-    
-    pasos.append("   Sujeto a:")
-    for i, rest in enumerate(restricciones):
-        coef_str = " + ".join([f"{rest['coeficientes'][j]:.3f}·{nombres_variables[j]}" for j in range(len(rest['coeficientes']))])
-        pasos.append(f"      {coef_str} {rest['tipo']} {rest['valor']:.3f}")
-    
-    pasos.append(f"      {', '.join(nombres_variables)} ≥ 0")
-    pasos.append("")
-    
-    # Convertir a forma estándar
-    pasos.append("🔄 CONVERSIÓN A FORMA ESTÁNDAR:")
-    pasos.append("")
-    
-    A = []
-    b = []
-    variables_basicas = []
-    num_vars_originales = len(c)
-    contador_slack = 1
-    contador_surplus = 1
-    contador_artificial = 1
-    
-    # Procesar restricciones
-    for i, rest in enumerate(restricciones):
-        fila = rest['coeficientes'][:]
-        
-        if rest['tipo'] == '<=':
-            # Agregar variable de holgura
-            var_slack = f"s{contador_slack}"
-            variables_basicas.append(var_slack)
-            contador_slack += 1
-            pasos.append(f"   Restricción {i+1}: Agregar variable de holgura {var_slack}")
-            
-        elif rest['tipo'] == '>=':
-            # Agregar variable de exceso y artificial
-            var_surplus = f"e{contador_surplus}"
-            var_artificial = f"a{contador_artificial}"
-            variables_basicas.append(var_artificial)
-            contador_surplus += 1
-            contador_artificial += 1
-            pasos.append(f"   Restricción {i+1}: Agregar variable de exceso {var_surplus} y artificial {var_artificial}")
-            
-        else:  # '='
-            # Agregar variable artificial
-            var_artificial = f"a{contador_artificial}"
-            variables_basicas.append(var_artificial)
-            contador_artificial += 1
-            pasos.append(f"   Restricción {i+1}: Agregar variable artificial {var_artificial}")
-        
-        A.append(fila)
-        b.append(rest['valor'])
-    
-    # Completar matriz A con variables de holgura/exceso/artificiales
-    num_restricciones = len(restricciones)
-    num_vars_slack = contador_slack - 1
-    num_vars_surplus = contador_surplus - 1
-    num_vars_artificial = contador_artificial - 1
-    
-    total_vars = num_vars_originales + num_vars_slack + num_vars_surplus + num_vars_artificial
-    
-    # Expandir matriz A
-    for i in range(num_restricciones):
-        # Agregar ceros para las variables adicionales
-        while len(A[i]) < total_vars:
-            A[i].append(0.0)
-    
-    # Llenar las columnas de variables de holgura/exceso/artificiales
-    col_actual = num_vars_originales
-    contador_slack = 1
-    contador_surplus = 1
-    contador_artificial = 1
-    
-    for i, rest in enumerate(restricciones):
-        if rest['tipo'] == '<=':
-            A[i][col_actual] = 1.0  # Variable de holgura
-            col_actual += 1
-            
-        elif rest['tipo'] == '>=':
-            A[i][col_actual] = -1.0  # Variable de exceso
-            A[i][col_actual + 1] = 1.0  # Variable artificial
-            col_actual += 2
-            
-        else:  # '='
-            A[i][col_actual] = 1.0  # Variable artificial
-            col_actual += 1
-    
-    # Extender función objetivo
-    c_extendida = c[:]
-    # Agregar ceros para variables de holgura y exceso
-    for _ in range(num_vars_slack + num_vars_surplus):
-        c_extendida.append(0.0)
-    # Agregar penalización para variables artificiales
-    for _ in range(num_vars_artificial):
-        if tipo == 'maximizar':
-            c_extendida.append(-1000000)  # Gran penalización negativa para maximización
-        else:
-            c_extendida.append(1000000)   # Gran penalización positiva para minimización
-    
-    pasos.append("")
-    pasos.append("✅ FORMA ESTÁNDAR OBTENIDA:")
-    if tipo == 'maximizar':
-        pasos.append("   Maximizar: Z = " + " + ".join([f"{c_extendida[i]:.3f}·x{i+1}" for i in range(len(c_extendida))]))
-    else:
-        pasos.append("   Minimizar: Z = " + " + ".join([f"{c_extendida[i]:.3f}·x{i+1}" for i in range(len(c_extendida))]))
-    
-    pasos.append("   Sujeto a:")
-    for i in range(len(A)):
-        coef_str = " + ".join([f"{A[i][j]:.3f}·x{j+1}" for j in range(len(A[i]))])
-        pasos.append(f"      {coef_str} = {b[i]:.3f}")
-    pasos.append("")
-    
-    return {
-        'A': A,
-        'b': b,
-        'c': c_extendida,
-        'variables_basicas': variables_basicas,
-        'num_vars_originales': num_vars_originales,
-        'tipo_original': tipo,
-        'nombres_variables': nombres_variables
-    }
 
 def guardar_ejercicio(uid, tipo, puntos, polinomio_solucion):
     if( uid and tipo and puntos and polinomio_solucion):

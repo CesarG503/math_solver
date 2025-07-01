@@ -59,23 +59,22 @@ function initializeSimplexGraph(datosGrafica) {
   })
 
   // 3. Líneas de la función objetivo
+  // Solo mostrar la línea óptima (es_optimo) y no las demás líneas Z auxiliares
   datosGrafica.objetivo_lines.forEach((objLine, index) => {
-    const isOptimal = objLine.es_optimo
+    if (!objLine.es_optimo) return // Solo graficar la óptima
     traces.push({
       x: objLine.x,
       y: objLine.y,
       type: "scatter",
       mode: "lines",
-      name: isOptimal
-        ? `Función Objetivo Óptima (Z=${objLine.z.toFixed(2)})`
-        : `Función Objetivo (Z=${objLine.z.toFixed(2)})`,
+      name: `Función Objetivo Óptima (Z=${objLine.z.toFixed(2)})`,
       line: {
-        color: isOptimal ? "#FF1744" : "#FF8A65",
-        width: isOptimal ? 4 : 2,
-        dash: isOptimal ? "solid" : "dash",
+        color: "#FF1744",
+        width: 4,
+        dash: "solid",
       },
       hovertemplate: `Z = ${objLine.z.toFixed(3)}<br>x₁=%{x:.3f}, x₂=%{y:.3f}<extra></extra>`,
-      showlegend: isOptimal,
+      showlegend: true,
     })
   })
 

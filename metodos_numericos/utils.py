@@ -671,21 +671,238 @@ def generar_datos_grafica_simplex(funcion_objetivo, restricciones, solucion, nom
         print(f"Error generando datos de gráfica: {e}")
         return None
 
+def preparar_problema_simplex(c, restricciones, tipo, nombres_variables, pasos):
+    """Convierte el problema a forma estándar para el método Simplex"""
+    
+    pasos.append("1. PREPARACIÓN DEL PROBLEMA")
+    pasos.append("")
+    pasos.append("📋 PROBLEMA ORIGINAL:")
+    
+    # Mostrar función objetivo
+    if tipo == 'maximizar':
+        pasos.append(f"   Maximizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
+    else:
+        pasos.append(f"   Minimizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
+    
+    pasos.append("   Sujeto a:")
+    for i, rest in enumerate(restricciones):
+        coef_str = " + ".join([f"{rest['coeficientes'][j]:.3f}·{nombres_variables[j]}" for j in range(len(rest['coeficientes']))])
+        pasos.append(f"      {coef_str} {rest['tipo']} {rest['valor']:.3f}")
+    
+    pasos.append(f"      {', '.join(nombres_variables)} ≥ 0")
+    pasos.append("")
+    
+    # Detectar si necesitamos el método de la Gran M
+    necesita_gran_m = any(rest['tipo'] in ['>=', '='] for rest in restricciones)
+    
+    if necesita_gran_m:
+        pasos.append("🔍 DETECCIÓN DEL MÉTODO:")
+        pasos.append("   Se detectaron restricciones de tipo ≥ o =")
+        pasos.append("   ➡️ Se aplicará el MÉTODO DE LA GRAN M")
+        pasos.append("")
+    else:
+        pasos.append("🔍 DETECCIÓN DEL MÉTODO:")
+        pasos.append("   Todas las restricciones son de tipo ≤")
+        pasos.append("   ➡️ Se aplicará el MÉTODO SIMPLEX ESTÁNDAR")
+        pasos.append("")
+    
+    # Convertir a forma estándar
+    pasos.append("🔄 CONVERSIÓN A FORMA ESTÁNDAR:")
+    pasos.append("")
+    
+    A = []
+    b = []
+    variables_basicas = []
+    variables_artificiales = []
+    num_vars_originales = len(c)
+    contador_slack = 1
+    contador_surplus = 1
+    contador_artificial = 1
+    
+    # Procesar restricciones
+    for i, rest in enumerate(restricciones):
+        fila = rest['coeficientes'][:]
+        
+        if rest['tipo'] == '<=':
+            # Agregar variable de holgura
+            var_slack = f"s{contador_slack}"
+            variables_basicas.append(var_slack)
+            contador_slack += 1
+            pasos.append(f"   Restricción {i+1}: Agregar variable de holgura {var_slack}")
+            
+        elif rest['tipo'] == '>=':
+            # Agregar variable de exceso y artificial
+            var_surplus = f"e{contador_surplus}"
+            var_artificial = f"a{contador_artificial}"
+            variables_basicas.append(var_artificial)
+            variables_artificiales.append(var_artificial)
+            contador_surplus += 1
+            contador_artificial += 1
+            pasos.append(f"   Restricción {i+1}: Agregar variable de exceso {var_surplus} y artificial {var_artificial}")
+            
+        else:  # '='
+            # Agregar variable artificial
+            var_artificial = f"a{contador_artificial}"
+            variables_basicas.append(var_artificial)
+            variables_artificiales.append(var_artificial)
+            contador_artificial += 1
+            pasos.append(f"   Restricción {i+1}: Agregar variable artificial {var_artificial}")
+        
+        A.append(fila)
+        b.append(rest['valor'])
+    
+    # Completar matriz A con variables de holgura/exceso/artificiales
+    num_restricciones = len(restricciones)
+    num_vars_slack = contador_slack - 1
+    num_vars_surplus = contador_surplus - 1
+    num_vars_artificial = contador_artificial - 1
+    
+    total_vars = num_vars_originales + num_vars_slack + num_vars_surplus + num_vars_artificial
+    
+    # Expandir matriz A
+    for i in range(num_restricciones):
+        # Agregar ceros para las variables adicionales
+        while len(A[i]) < total_vars:
+            A[i].append(0.0)
+    
+    # Llenar las columnas de variables de holgura/exceso/artificiales
+    col_actual = num_vars_originales
+    contador_slack = 1
+    contador_surplus = 1
+    contador_artificial = 1
+    
+    for i, rest in enumerate(restricciones):
+        if rest['tipo'] == '<=':
+            A[i][col_actual] = 1.0  # Variable de holgura
+            col_actual += 1
+            
+        elif rest['tipo'] == '>=':
+            A[i][col_actual] = -1.0  # Variable de exceso
+            A[i][col_actual + 1] = 1.0  # Variable artificial
+            col_actual += 2
+            
+        else:  # '='
+            A[i][col_actual] = 1.0  # Variable artificial
+            col_actual += 1
+    
+    # Extender función objetivo
+    c_extendida = c[:]
+    
+    # Agregar ceros para variables de holgura y exceso
+    for _ in range(num_vars_slack + num_vars_surplus):
+        c_extendida.append(0.0)
+    
+    # Valor de la Gran M
+    M = 1000000
+    
+    # Agregar penalización para variables artificiales (Gran M)
+    for _ in range(num_vars_artificial):
+        if tipo == 'maximizar':
+            c_extendida.append(-M)  # Gran penalización negativa para maximización
+        else:
+            c_extendida.append(M)   # Gran penalización positiva para minimización
+    
+    if necesita_gran_m:
+        pasos.append("")
+        pasos.append("📊 MÉTODO DE LA GRAN M:")
+        pasos.append(f"   Valor de M utilizado: {M:,}")
+        pasos.append("   Variables artificiales penalizadas:")
+        for var_art in variables_artificiales:
+            if tipo == 'maximizar':
+                pasos.append(f"      {var_art}: coeficiente = -M = -{M:,}")
+            else:
+                pasos.append(f"      {var_art}: coeficiente = +M = +{M:,}")
+    
+    pasos.append("")
+    pasos.append("✅ FORMA ESTÁNDAR OBTENIDA:")
+    
+    # Mostrar función objetivo con M simbólica para mejor comprensión
+    obj_str_parts = []
+    for i in range(len(c_extendida)):
+        coef = c_extendida[i]
+        if i < num_vars_originales:
+            var_name = nombres_variables[i]
+        elif i < num_vars_originales + num_vars_slack:
+            var_name = f"s{i - num_vars_originales + 1}"
+        elif i < num_vars_originales + num_vars_slack + num_vars_surplus:
+            var_name = f"e{i - num_vars_originales - num_vars_slack + 1}"
+        else:
+            var_name = f"a{i - num_vars_originales - num_vars_slack - num_vars_surplus + 1}"
+            # Mostrar M simbólicamente
+            if abs(coef) == M:
+                if coef > 0:
+                    obj_str_parts.append(f"+M·{var_name}")
+                else:
+                    obj_str_parts.append(f"-M·{var_name}")
+                continue
+        
+        if coef != 0:
+            if coef > 0 and obj_str_parts:
+                obj_str_parts.append(f"+{coef:.3f}·{var_name}")
+            else:
+                obj_str_parts.append(f"{coef:.3f}·{var_name}")
+    
+    if tipo == 'maximizar':
+        pasos.append("   Maximizar: Z = " + "".join(obj_str_parts))
+    else:
+        pasos.append("   Minimizar: Z = " + "".join(obj_str_parts))
+    
+    pasos.append("   Sujeto a:")
+    for i in range(len(A)):
+        coef_parts = []
+        for j in range(len(A[i])):
+            coef = A[i][j]
+            if j < num_vars_originales:
+                var_name = nombres_variables[j]
+            elif j < num_vars_originales + num_vars_slack:
+                var_name = f"s{j - num_vars_originales + 1}"
+            elif j < num_vars_originales + num_vars_slack + num_vars_surplus:
+                var_name = f"e{j - num_vars_originales - num_vars_slack + 1}"
+            else:
+                var_name = f"a{j - num_vars_originales - num_vars_slack - num_vars_surplus + 1}"
+            
+            if coef != 0:
+                if coef > 0 and coef_parts:
+                    coef_parts.append(f"+{coef:.3f}·{var_name}")
+                else:
+                    coef_parts.append(f"{coef:.3f}·{var_name}")
+        
+        pasos.append(f"      {''.join(coef_parts)} = {b[i]:.3f}")
+    pasos.append("")
+    
+    return {
+        'A': A,
+        'b': b,
+        'c': c_extendida,
+        'variables_basicas': variables_basicas,
+        'variables_artificiales': variables_artificiales,
+        'num_vars_originales': num_vars_originales,
+        'tipo_original': tipo,
+        'nombres_variables': nombres_variables,
+        'necesita_gran_m': necesita_gran_m,
+        'M': M
+    }
+
 def metodo_simplex(problema, pasos):
-    """Resuelve el problema usando el algoritmo Simplex"""
+    """Resuelve el problema usando el algoritmo Simplex con soporte para Gran M"""
     
     A = problema['A']
     b = problema['b']
     c = problema['c']
     variables_basicas = problema['variables_basicas']
+    variables_artificiales = problema.get('variables_artificiales', [])
     num_vars_originales = problema['num_vars_originales']
     tipo_original = problema['tipo_original']
     nombres_variables = problema['nombres_variables']
+    necesita_gran_m = problema.get('necesita_gran_m', False)
+    M = problema.get('M', 1000000)
     
     m = len(A)  # número de restricciones
     n = len(c)  # número de variables
     
     pasos.append("2. APLICACIÓN DEL MÉTODO SIMPLEX")
+    if necesita_gran_m:
+        pasos.append("   (Utilizando el Método de la Gran M)")
     pasos.append("")
     
     # Crear tabla inicial
@@ -700,6 +917,43 @@ def metodo_simplex(problema, pasos):
     else:
         fila_obj = [coef for coef in c] + [0]   # Positiva para minimización
     tabla.append(fila_obj)
+    
+    # Si usamos Gran M, necesitamos eliminar las variables artificiales de la función objetivo
+    if necesita_gran_m and variables_artificiales:
+        pasos.append("🔧 ELIMINACIÓN DE VARIABLES ARTIFICIALES DE LA FUNCIÓN OBJETIVO:")
+        pasos.append("   (Operaciones iniciales para el método de la Gran M)")
+        pasos.append("")
+        
+        # Para cada variable artificial en la base, eliminarla de la función objetivo
+        for i, var_basica in enumerate(variables_basicas):
+            if var_basica in variables_artificiales:
+                # Encontrar la columna de esta variable artificial
+                col_artificial = -1
+                
+                # Buscar la columna que corresponde a esta variable artificial
+                for j in range(n):
+                    # Verificar si esta columna tiene 1 en la fila i y 0 en las demás filas de restricción
+                    es_columna_basica = True
+                    for k in range(m):
+                        if k == i and abs(tabla[k][j] - 1.0) > 1e-10:
+                            es_columna_basica = False
+                            break
+                        elif k != i and abs(tabla[k][j]) > 1e-10:
+                            es_columna_basica = False
+                            break
+                    
+                    if es_columna_basica and abs(tabla[-1][j]) > 1e-10:
+                        col_artificial = j
+                        break
+                
+                if col_artificial >= 0:
+                    # Eliminar la variable artificial de la función objetivo
+                    coef_obj = tabla[-1][col_artificial]
+                    pasos.append(f"   Eliminando {var_basica} de la función objetivo:")
+                    pasos.append(f"   Fila objetivo = Fila objetivo - ({coef_obj:.6f}) × Fila {i+1}")
+                    
+                    for j in range(len(tabla[-1])):
+                        tabla[-1][j] -= coef_obj * tabla[i][j]
     
     iteracion = 0
     tablas_simplex = []
@@ -720,6 +974,36 @@ def metodo_simplex(problema, pasos):
         fila_obj_actual = tabla[-1][:-1]
         if all(coef >= -1e-10 for coef in fila_obj_actual):  # Usar tolerancia numérica
             pasos.append("✓ Todos los coeficientes en la fila objetivo son ≥ 0")
+            
+            # Verificar si hay variables artificiales en la solución final
+            if necesita_gran_m:
+                variables_artificiales_en_solucion = []
+                for i, var in enumerate(variables_basicas):
+                    if var in variables_artificiales and abs(tabla[i][-1]) > 1e-10:
+                        variables_artificiales_en_solucion.append((var, tabla[i][-1]))
+                
+                if variables_artificiales_en_solucion:
+                    pasos.append("")
+                    pasos.append("❌ PROBLEMA SIN SOLUCIÓN FACTIBLE")
+                    pasos.append("   Variables artificiales con valor no cero en la solución:")
+                    for var, valor in variables_artificiales_en_solucion:
+                        pasos.append(f"      {var} = {valor:.6f}")
+                    pasos.append("")
+                    pasos.append("🔍 INTERPRETACIÓN:")
+                    pasos.append("   - El problema original no tiene solución factible")
+                    pasos.append("   - Las restricciones son inconsistentes")
+                    pasos.append("   - No existe ningún punto que satisfaga todas las restricciones")
+                    
+                    return {
+                        'error': 'Problema sin solución factible - Las restricciones son inconsistentes',
+                        'pasos': pasos,
+                        'tablas': tablas_simplex,
+                        'interpretacion': 'Las restricciones del problema son inconsistentes',
+                        'sugerencia': 'Revise las restricciones del problema para asegurar que sean consistentes'
+                    }
+                else:
+                    pasos.append("✓ Todas las variables artificiales tienen valor cero")
+            
             pasos.append("¡SOLUCIÓN ÓPTIMA ENCONTRADA!")
             break
         
@@ -731,7 +1015,9 @@ def metodo_simplex(problema, pasos):
         if col_pivote < num_vars_originales:
             var_entrante = nombres_variables[col_pivote]
         else:
-            var_entrante = f"s{col_pivote - num_vars_originales + 1}"
+            # Determinar el tipo de variable no original
+            idx_no_original = col_pivote - num_vars_originales
+            var_entrante = f"var_{col_pivote + 1}"
         
         pasos.append(f"🔵 VARIABLE ENTRANTE: {var_entrante} (columna {col_pivote + 1})")
         pasos.append(f"   Coeficiente más negativo: {coef_entrante:.6f}")
@@ -826,8 +1112,6 @@ def metodo_simplex(problema, pasos):
         pasos.append("")
         pasos.append("   Antes:")
         fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[fila_pivote]]) + "]"
-        
-        
         pasos.append(fila_str)
         
         for j in range(len(tabla[fila_pivote])):
@@ -901,6 +1185,11 @@ def metodo_simplex(problema, pasos):
     pasos.append("")
     pasos.append("3. SOLUCIÓN ÓPTIMA")
     pasos.append("")
+    
+    if necesita_gran_m:
+        pasos.append("🎯 MÉTODO DE LA GRAN M - SOLUCIÓN FINAL:")
+        pasos.append("")
+    
     pasos.append("📋 VARIABLES DE DECISIÓN:")
     for i, (nombre, val) in enumerate(zip(nombres_variables, solucion)):
         pasos.append(f"   {nombre} = {val:.6f}")
@@ -908,8 +1197,15 @@ def metodo_simplex(problema, pasos):
     pasos.append("")
     pasos.append("📊 VARIABLES DE HOLGURA/EXCESO:")
     for i, var in enumerate(variables_basicas):
-        if var not in nombres_variables:
+        if var not in nombres_variables and var not in variables_artificiales:
             pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
+    
+    if necesita_gran_m and variables_artificiales:
+        pasos.append("")
+        pasos.append("🚫 VARIABLES ARTIFICIALES (deben ser cero):")
+        for i, var in enumerate(variables_basicas):
+            if var in variables_artificiales:
+                pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
     
     pasos.append("")
     # Mostrar valor óptimo siempre positivo en los pasos
@@ -929,7 +1225,8 @@ def metodo_simplex(problema, pasos):
         'tablas': tablas_simplex,
         'variables_basicas': variables_basicas,
         'tipo_optimizacion': tipo_original,
-        'historial_pivotes': historial_pivotes
+        'historial_pivotes': historial_pivotes,
+        'metodo_usado': 'Gran M' if necesita_gran_m else 'Simplex Estándar'
     }
 
 def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos, nombres_variables, num_vars_originales):

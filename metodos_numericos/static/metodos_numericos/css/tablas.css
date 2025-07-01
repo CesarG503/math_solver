@@ -1419,3 +1419,128 @@ footer {
     box-shadow: 0 0 10px rgba(255, 179, 0, 0.5);
   }
 }
+
+
+/* Estilos específicos para el método de la Gran M */
+.artificial-header {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    font-weight: bold;
+}
+
+.surplus-header {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+}
+
+.table-warning .base-column {
+    background-color: #fff3cd;
+    color: #856404;
+    font-weight: bold;
+}
+
+.bg-warning.text-dark {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+}
+
+/* Animación para resaltar variables artificiales */
+@keyframes highlight-artificial {
+    0% { background-color: #fff3cd; }
+    50% { background-color: #ffeaa7; }
+    100% { background-color: #fff3cd; }
+}
+
+.artificial-highlight {
+    animation: highlight-artificial 2s ease-in-out infinite;
+}
+
+/* Estilos para valores grandes (M) */
+.gran-m-value {
+    font-weight: bold;
+    color: #dc3545;
+    font-size: 0.9em;
+}
+
+/* Tooltip para explicar el método de la Gran M */
+.gran-m-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.gran-m-tooltip::after {
+    content: "Variable artificial penalizada con Gran M";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.gran-m-tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Estilos para tema oscuro */
+[data-theme="dark"] .artificial-header {
+    background-color: #664d03 !important;
+    color: #fff3cd !important;
+}
+
+[data-theme="dark"] .surplus-header {
+    background-color: #055160 !important;
+    color: #d1ecf1 !important;
+}
+
+[data-theme="dark"] .table-warning .base-column {
+    background-color: #664d03;
+    color: #fff3cd;
+}
+
+[data-theme="dark"] .bg-warning.text-dark {
+    background-color: #664d03 !important;
+    color: #fff3cd !important;
+}
+
+/* Indicador visual para método usado */
+.metodo-indicator {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.metodo-simplex {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.metodo-gran-m {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+[data-theme="dark"] .metodo-simplex {
+    background-color: #155724;
+    color: #d4edda;
+    border: 1px solid #0f4419;
+}
+
+[data-theme="dark"] .metodo-gran-m {
+    background-color: #664d03;
+    color: #fff3cd;
+    border: 1px solid #4d3900;
+}

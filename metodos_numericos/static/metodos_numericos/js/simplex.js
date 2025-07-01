@@ -440,7 +440,7 @@ function procesarFormulario(e) {
   inputNombres.value = nombresVariables.join(",")
   e.target.appendChild(inputNombres)
 
-  // Procesar restricciones
+  // Procesar restricciones con mejor validación
   const restricciones = document.querySelectorAll(".restriccion-row")
   restricciones.forEach((restriccion, index) => {
     const coeficientes = []
@@ -450,12 +450,32 @@ function procesarFormulario(e) {
       coeficientes.push(valor)
     }
 
-    // Crear campo oculto con coeficientes de la restricción
+    // Obtener tipo de restricción correctamente
+    const selectTipo = restriccion.querySelector('select[name*="_tipo"]')
+    const tipoRestriccion = selectTipo ? selectTipo.value : "<="
+
+    // Obtener valor de la restricción
+    const inputValor = restriccion.querySelector(".restriccion-valor")
+    const valorRestriccion = Number.parseFloat(inputValor.value) || 0
+
+    // Crear campos ocultos con información completa de la restricción
     const inputRestCoef = document.createElement("input")
     inputRestCoef.type = "hidden"
     inputRestCoef.name = `restriccion_${index}_coeficientes`
     inputRestCoef.value = coeficientes.join(",")
     e.target.appendChild(inputRestCoef)
+
+    const inputRestTipo = document.createElement("input")
+    inputRestTipo.type = "hidden"
+    inputRestTipo.name = `restriccion_${index}_tipo`
+    inputRestTipo.value = tipoRestriccion
+    e.target.appendChild(inputRestTipo)
+
+    const inputRestValor = document.createElement("input")
+    inputRestValor.type = "hidden"
+    inputRestValor.name = `restriccion_${index}_valor`
+    inputRestValor.value = valorRestriccion
+    e.target.appendChild(inputRestValor)
   })
 }
 

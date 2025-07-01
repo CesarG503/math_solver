@@ -212,6 +212,30 @@
                 </div>
             </div>
         </div>
+
+        {% if metodo_usado %}
+            <div class="alert alert-info d-flex align-items-center mb-3 ps-2 pt-1 bg-light">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                    <strong>Método utilizado:</strong> 
+                    <span class="metodo-indicator {% if metodo_usado == 'Gran M' %}metodo-gran-m{% else %}metodo-simplex{% endif %}">
+                        {% if metodo_usado == 'Gran M' %}
+                            🔢 Método de la Gran M
+                        {% else %}
+                            📊 Simplex Estándar
+                        {% endif %}
+                    </span>
+                    <br>
+                    <small class="text-muted">
+                        {% if metodo_usado == 'Gran M' %}
+                            Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o =
+                        {% else %}
+                            Se utilizó el método Simplex estándar (todas las restricciones son ≤)
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            {% endif %}
         
         <div class="card mt-3 shadow-sm">
             <div class="card-header bg-info text-white">
@@ -230,6 +254,31 @@
                             <h4 class="text-warning mt-4 mb-3">
                                 <i class="fas fa-step-forward me-2"></i>{{ paso }}
                             </h4>
+                        {% elif "📋 PROBLEMA ORIGINAL:" in paso %}
+                            <h5 class="text-primary mt-3">
+                                <i class="fas fa-clipboard me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "🔍 DETECCIÓN DEL MÉTODO:" in paso %}
+                            <h5 class="text-info mt-3">
+                                <i class="fas fa-search me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "🔄 CONVERSIÓN A FORMA ESTÁNDAR:" in paso %}
+                            <h5 class="text-success mt-3">
+                                <i class="fas fa-sync me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "📊 MÉTODO DE LA GRAN M:" in paso %}
+                            <div class="alert alert-warning py-2 mb-2 ps-2">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>{{ paso|slice:"2:" }}</strong>
+                            </div>
+                        {% elif "✅ FORMA ESTÁNDAR OBTENIDA:" in paso %}
+                            <h5 class="text-success mt-3">
+                                <i class="fas fa-check-circle me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "🔧 ELIMINACIÓN DE VARIABLES ARTIFICIALES" in paso %}
+                            <h5 class="text-warning mt-3">
+                                <i class="fas fa-tools me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
                         {% elif "📋 TABLA SIMPLEX:" in paso %}
                             <h5 class="text-success mt-3">
                                 <i class="fas fa-table me-2"></i>{{ paso|slice:"2:" }}
@@ -276,6 +325,8 @@
                             </div>
                         {% elif "📋" in paso or "📊" in paso %}
                             <h5 class="text-info mt-3">{{ paso }}</h5>
+                        {% elif "🔍 INTERPRETACIÓN:" in paso %}
+                            <h6 class="text-warning mt-2">{{ paso|slice:"2:" }}</h6>
                         {% elif paso|slice:":3" == "   " %}
                             <pre class="bg-light p-2 rounded small mb-1">{{ paso }}</pre>
                         {% elif paso|slice:":2" == "1." or paso|slice:":2" == "2." or paso|slice:":2" == "3." %}
