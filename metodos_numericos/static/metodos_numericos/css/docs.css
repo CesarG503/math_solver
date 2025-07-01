@@ -98,8 +98,100 @@ mjx-container {
   justify-content: center;
   align-items: center;
   padding: 1rem;
-
 }
+
+/* Añadir margen superior al contenedor principal */
+.container {
+  padding-top: 80px;
+}
+
+/* From Uiverse.io by gharsh11032000 */ 
+.card-ui {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  max-width: 100%;
+  border-radius: 24px;
+  line-height: 1.6;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+a{
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.content-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-block: auto;
+  padding: 36px;
+  width: 100%;
+  border-radius: 22px;
+  color: #ffffff;
+  overflow: hidden;
+  background: #48e;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content-card::before {
+  position: absolute;
+  content: "";
+  top: -4%;
+  left: 50%;
+  width: 90%;
+  height: 90%;
+  transform: translate(-50%);
+  background: #ced8ff;
+  z-index: -1;
+  transform-origin: bottom;
+
+  border-radius: inherit;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content-card::after {
+  position: absolute;
+  content: "";
+  top: -8%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%);
+  background: #e7ecff;
+  z-index: -2;
+  transform-origin: bottom;
+  border-radius: inherit;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+
+
+.content-card .link:hover {
+  text-decoration: underline;
+}
+
+.card-ui:hover {
+  transform: translate(0px, -16px);
+}
+
+.card-ui:hover .content-card::before {
+  rotate: -8deg;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.card-ui:hover .content-card::after {
+  rotate: 8deg;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
 
 @keyframes float {
   0% {
