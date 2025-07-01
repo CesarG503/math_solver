@@ -137,7 +137,7 @@ function initializeSimplexGraph(datosGrafica) {
     })
   }
 
-  // Configuración del layout
+  // Configuración del layout optimizada para responsive
   const layout = {
     title: {
       text: `Método Simplex - Gráfica de Programación Lineal<br><sub>Función Objetivo: ${datosGrafica.tipo_optimizacion} Z = ${datosGrafica.funcion_objetivo.ecuacion}</sub>`,
@@ -162,10 +162,10 @@ function initializeSimplexGraph(datosGrafica) {
     },
     plot_bgcolor: "#fafafa",
     paper_bgcolor: "#ffffff",
-    showlegend: false,
+    showlegend: true,
     legend: {
-      x: 1.02,
-      y: 1,
+      x: 0.02,
+      y: 0.98,
       bgcolor: "rgba(255,255,255,0.9)",
       bordercolor: "#ccc",
       borderwidth: 1,
@@ -173,23 +173,11 @@ function initializeSimplexGraph(datosGrafica) {
     },
     dragmode: "pan",
     hovermode: "closest",
-    margin: { t: 80, r: 150, b: 60, l: 60 },
-    annotations: [
-      {
-        x: datosGrafica.rango.x_max * 0.02,
-        y: datosGrafica.rango.y_max * 0.95,
-        text: `<b>Región Factible:</b><br>Área sombreada en verde<br><b>Restricciones:</b><br>Líneas de colores<br><b>Función Objetivo:</b><br>Líneas rojas`,
-        showarrow: false,
-        align: "left",
-        bgcolor: "rgba(255,255,255,0.8)",
-        bordercolor: "#ccc",
-        borderwidth: 1,
-        font: { size: 9 },
-      },
-    ],
+    margin: { t: 80, r: 50, b: 60, l: 60 },
+    autosize: true,
   }
 
-  // Configuración
+  // Configuración optimizada
   const config = {
     displayModeBar: true,
     modeBarButtonsToAdd: [
@@ -209,7 +197,7 @@ function initializeSimplexGraph(datosGrafica) {
     responsive: true,
   }
 
-  // Crear gráfica
+  // Crear gráfica con configuración responsive
   Plotly.newPlot(graphDiv, traces, layout, config)
   currentSimplexPlot = graphDiv
 
@@ -220,22 +208,36 @@ function initializeSimplexGraph(datosGrafica) {
     }
   }, 100)
 
-  // Forzar resize tras renderizado inicial
-  setTimeout(() => { Plotly.Plots.resize(graphDiv) }, 100);
-
-  // Ajuste automático con ResizeObserver
+  // Ajuste automático con ResizeObserver (igual que Hermite)
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => {
-      Plotly.Plots.resize(graphDiv)
+      if (graphDiv && Plotly) {
+        Plotly.Plots.resize(graphDiv)
+      }
     })
     ro.observe(graphDiv)
   } else {
     // Fallback: ajustar al redimensionar ventana
-    window.addEventListener('resize', () => Plotly.Plots.resize(graphDiv))
+    window.addEventListener("resize", () => {
+      if (graphDiv && Plotly) {
+        Plotly.Plots.resize(graphDiv)
+      }
+    })
   }
 
   // Mostrar instrucciones
   showSimplexGraphInstructions()
+
+  // Detectar tema desde localStorage (key: theme, value: 'dark' o 'light')
+  let theme = null
+  try {
+    theme = localStorage.getItem('theme')
+  } catch (e) {}
+  if (theme === 'dark') {
+    setTimeout(() => updateSimplexGraphTheme(true), 150)
+  } else if (theme === 'light') {
+    setTimeout(() => updateSimplexGraphTheme(false), 150)
+  }
 }
 
 function showSimplexInfo(datosGrafica) {
@@ -248,7 +250,8 @@ function showSimplexInfo(datosGrafica) {
     Swal.fire({
       icon: "error",
       title: "Sin datos",
-      text: "No hay información para mostrar."
+      text: "No hay información para mostrar.",
+      customClass: { popup: "swal2-modal-custom" },
     })
     return
   }
@@ -266,15 +269,15 @@ function showSimplexInfo(datosGrafica) {
       <div class="text-start" style="max-width: 100vw; overflow-x: auto;">
         <div class="groups" style="background:rgba(255,255,255,0.97); box-shadow:0 2px 12px rgba(0,0,0,0.08); border-radius:10px; padding:10px 18px; margin-bottom:0; min-width:320px; max-width:540px;">
           <h6 class="text-primary">Función Objetivo:</h6>
-          <p><strong>${datosGrafica.tipo_optimizacion || ""}:</strong> Z = ${(datosGrafica.funcion_objetivo?.ecuacion) || "-"}</p>
+          <p><strong>${datosGrafica.tipo_optimizacion || ""}:</strong> Z = ${datosGrafica.funcion_objetivo?.ecuacion || "-"}</p>
           <h6 class="text-primary">Restricciones:</h6>
           <ul style="font-size:0.97em;">${restrictionsHtml}</ul>
           <h6 class="text-primary">Vértices de la Región Factible:</h6>
           <ul style="font-size:0.97em;">${verticesHtml}</ul>
           <h6 class="text-primary">Punto Óptimo:</h6>
-          <p><strong>${(datosGrafica.nombres_variables?.[0] || "x₁")} = ${(datosGrafica.punto_optimo?.x !== undefined ? datosGrafica.punto_optimo.x.toFixed(6) : "-")}</strong></p>
-          <p><strong>${(datosGrafica.nombres_variables?.[1] || "x₂")} = ${(datosGrafica.punto_optimo?.y !== undefined ? datosGrafica.punto_optimo.y.toFixed(6) : "-")}</strong></p>
-          <p><strong>Valor Óptimo: Z = ${(datosGrafica.punto_optimo?.z !== undefined ? datosGrafica.punto_optimo.z.toFixed(6) : "-")}</strong></p>
+          <p><strong>${datosGrafica.nombres_variables?.[0] || "x₁"} = ${datosGrafica.punto_optimo?.x !== undefined ? datosGrafica.punto_optimo.x.toFixed(6) : "-"}</strong></p>
+          <p><strong>${datosGrafica.nombres_variables?.[1] || "x₂"} = ${datosGrafica.punto_optimo?.y !== undefined ? datosGrafica.punto_optimo.y.toFixed(6) : "-"}</strong></p>
+          <p><strong>Valor Óptimo: Z = ${datosGrafica.punto_optimo?.z !== undefined ? datosGrafica.punto_optimo.z.toFixed(6) : "-"}</strong></p>
         </div>
       </div>
     `,
@@ -287,11 +290,11 @@ function showSimplexInfo(datosGrafica) {
     width: "600px",
     didOpen: () => {
       // Forzar z-index alto para el modal y el fondo
-      const swalPopup = document.querySelector('.swal2-container')
+      const swalPopup = document.querySelector(".swal2-container")
       if (swalPopup) {
-        swalPopup.style.zIndex = '3000'
+        swalPopup.style.zIndex = "3000"
       }
-    }
+    },
   })
 }
 
@@ -299,23 +302,38 @@ function showSimplexGraphInstructions() {
   const instructions = document.getElementById("simplex-graph-instructions")
   if (instructions) {
     instructions.innerHTML = `
-            <div class="alert text-dark bg-light alert-info ps-3 pt-2 pb-2 mb-2">
-                <h6><i class="fas fa-info-circle me-2"></i>Interpretación de la gráfica:</h6>
-                <ul class="mb-2 small">
-                    <li><strong>Área Verde:</strong> Región factible donde se cumplen todas las restricciones</li>
-                    <li><strong>Líneas de Colores:</strong> Cada restricción del problema</li>
-                    <li><strong>Líneas Rojas:</strong> Función objetivo (la sólida es la óptima)</li>
-                    <li><strong>Puntos Verdes:</strong> Vértices de la región factible</li>
-                    <li><strong>Estrella Roja:</strong> Punto óptimo encontrado por Simplex</li>
-                </ul>
-                <div class="text-center">
-                    <small class="text-muted">
-                        <i class="fas fa-lightbulb me-1"></i>
-                        El método Simplex encuentra el óptimo evaluando los vértices de la región factible
-                    </small>
-                </div>
-            </div>
-        `
+      <div class="alert text-dark bg-light alert-info ps-3 pt-2 pb-2 mb-2">
+        <h6><i class="fas fa-info-circle me-2"></i>Interpretación de la gráfica:</h6>
+        <ul class="mb-2 small">
+          <li><strong>Área Verde:</strong> Región factible donde se cumplen todas las restricciones</li>
+          <li><strong>Líneas de Colores:</strong> Cada restricción del problema</li>
+          <li><strong>Líneas Rojas:</strong> Función objetivo (la sólida es la óptima)</li>
+          <li><strong>Puntos Verdes:</strong> Vértices de la región factible</li>
+          <li><strong>Estrella Roja:</strong> Punto óptimo encontrado por Simplex</li>
+        </ul>
+        <div class="mt-2 text-center">
+          <small class="text-muted">
+            <i class="fas fa-lightbulb me-1"></i>
+            El método Simplex encuentra el óptimo evaluando los vértices de la región factible
+          </small>
+        </div>
+        <div class="mt-2 text-center">
+          <button id="info-problema-btn" class="btn btn-info btn-sm" type="button">
+            <i class="fas fa-info-circle"></i> Ver información del problema
+          </button>
+        </div>
+      </div>
+    `
+
+    // Agregar event listener al botón
+    const btn = document.getElementById("info-problema-btn")
+    if (btn) {
+      btn.addEventListener("click", () => {
+        if (window.datosGraficaSimplex) {
+          showSimplexInfo(window.datosGraficaSimplex)
+        }
+      })
+    }
   }
 }
 
@@ -331,9 +349,34 @@ function updateSimplexGraphTheme(isDark) {
     "yaxis.gridcolor": isDark ? "#444444" : "#e0e0e0",
     "xaxis.zerolinecolor": isDark ? "#666666" : "#999999",
     "yaxis.zerolinecolor": isDark ? "#666666" : "#999999",
+    // Cambiar color de fondo de la leyenda
+    "legend.bgcolor": isDark ? "#23272e" : "rgba(255,255,255,0.9)",
+    "legend.bordercolor": isDark ? "#444" : "#ccc",
+    // Cambiar color del título
+    "title.font.color": isDark ? "#fff" : "#333",
   }
 
   Plotly.relayout(currentSimplexPlot, update)
+
+  // Cambiar fondo de los labels de la leyenda (SVG)
+  const graphDiv = currentSimplexPlot
+  if (graphDiv) {
+    const legend = graphDiv.querySelector('.legend')
+    if (legend) {
+      legend.style.background = isDark ? '#23272e' : 'rgba(255,255,255,0.9)'
+      legend.style.color = isDark ? '#fff' : '#222'
+      // Cambiar fondo de los labels
+      const labels = legend.querySelectorAll('g.traces text')
+      labels.forEach(label => {
+        label.style.fill = isDark ? '#fff' : '#222'
+      })
+    }
+    // Forzar color del título en SVG
+    const title = graphDiv.querySelector('.gtitle')
+    if (title) {
+      title.style.fill = isDark ? '#fff' : '#333'
+    }
+  }
 }
 
 // Exportar funciones para uso global
