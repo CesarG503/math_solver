@@ -42,8 +42,8 @@
         <a class="nav-item rounded-pill" id="section2Btn">Teoria</a>
         <a class="nav-item rounded-pill" id="section3Btn">Manual</a>
         <a class="nav-item rounded-pill" id="section4Btn">Nosotros</a>
-        <a class="btn bg-success " href="{% url "metodos_numericos:simplex"%}"></i>Comenzar</a>
   </div>
+     <a class="btn bg-success" href="{% url "metodos_numericos:simplex"%}"></i>Comenzar</a>
     {% if request.user.is_authenticated %}
     
             <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
@@ -51,8 +51,6 @@
             <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
     
     {% endif %}
-
-           
 </nav> 
 
     {% if request.user.is_authenticated %}
@@ -60,7 +58,6 @@
         {% include 'metodos_numericos/perfil.html' %}
     {% endif %}
     
-
     <div class="container mx-auto">
 
         <div class="row align-items-center justify-content-center min-vh-100" style="min-height: 85vh;" id="section1">
