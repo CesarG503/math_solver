@@ -49,9 +49,10 @@
         {% endif %}
         </div>
         <div class="navbar-nav">
-            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:index' %}">{% trans "Inicio" %}</a>
-            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:hermite' %}">{%trans "Hermite"%}</a>
-            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:integracion' %}">{%trans "Integracion"%}</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:index' %}">Inicio</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:hermite' %}"> Hermite</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:integracion' %}">Integracion</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:simplex' %}">Simplex</a>
         {% if request.user.is_authenticated %}
         </div>
                 <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
