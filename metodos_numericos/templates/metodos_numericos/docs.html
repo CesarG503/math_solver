@@ -42,6 +42,7 @@
         <a class="nav-item rounded-pill" id="section2Btn">Teoria</a>
         <a class="nav-item rounded-pill" id="section3Btn">Manual</a>
         <a class="nav-item rounded-pill" id="section4Btn">Nosotros</a>
+        <a class="btn bg-success " href="{% url "metodos_numericos:simplex"%}"></i>Comenzar</a>
   </div>
     {% if request.user.is_authenticated %}
     
@@ -53,30 +54,6 @@
 
            
 </nav> 
-
-{% comment %} <nav class="navbar padding bg-secondary estilo-brillo border border-secondary hover-neon position-sticky top-0 p-1">
-        <div class="navbar-header">
-            <div class="navbar-brand">Metodos de optimización
-            </div>
-            <button class="navbar-toggle">
-                <div class="img-menu-white"></div>
-            </button>
-            
-            <button id="button-small" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="/media/perfiles/retro.jpg" alt="perfil"></button>
-            
-        </div>
-        <div class="navbar-nav">
-            <a class="nav-item rounded-pill" href="/">Inicio</a>
-            <a class="nav-item rounded-pill" href="/hermite/"> Hermite</a>
-            <a class="nav-item rounded-pill" href="/integracion/">Integracion</a>
-            <a class="nav-item rounded-pill" href="/simplex/">Simplex</a>
-        
-        </div>
-                <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="/media/perfiles/retro.jpg" alt="perfil"></button>
-        
-
-
-    </nav> {% endcomment %}
 
     {% if request.user.is_authenticated %}
      <!-- Panel deslizante de perfil -->
@@ -695,7 +672,7 @@
 
 
     {% comment %} NOSOTROS {% endcomment %}
-    <h2 class='text-white-neon text-center my-5 pt-5' id='section4'><i class="fa-solid fa-people-group"></i> EQUIPO DE DESARROLLO</h2>
+    <h2 class='text-white-neon text-center my-5 PY-1' id='section4'><i class="fa-solid fa-people-group"></i> EQUIPO DE DESARROLLO</h2>
     <div class="row justify-content-between mx-auto container-xl ">
         <div class="col-lg-4 my-5">
             <a class="card-ui" href="https://github.com/Mixgyt">
