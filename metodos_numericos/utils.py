@@ -484,6 +484,193 @@ def generar_datos_grafica_integracion(funcion_str, a, b, n, metodo, resultado):
     except Exception as e:
         return None
 
+def generar_datos_grafica_simplex(funcion_objetivo, restricciones, solucion, nombres_variables, tipo_optimizacion):
+    """
+    Genera datos para la gráfica del método Simplex (solo para 2 variables)
+    """
+    import numpy as np
+    
+    try:
+        # Solo funciona para 2 variables
+        if len(funcion_objetivo) != 2:
+            return None
+            
+        # Coeficientes de la función objetivo
+        c1, c2 = funcion_objetivo[0], funcion_objetivo[1]
+        
+        # Determinar rango de la gráfica
+        x_max = 10
+        y_max = 10
+        
+        # Ajustar rango basado en restricciones
+        for rest in restricciones:
+            if rest['valor'] > 0:
+                if rest['coeficientes'][0] > 0:
+                    x_max = max(x_max, rest['valor'] / rest['coeficientes'][0] + 2)
+                if rest['coeficientes'][1] > 0:
+                    y_max = max(y_max, rest['valor'] / rest['coeficientes'][1] + 2)
+        
+        x_max = min(x_max, 20)  # Limitar el rango máximo
+        y_max = min(y_max, 20)
+        
+        # Generar puntos para las líneas de restricción
+        x_line = np.linspace(0, x_max, 100)
+        
+        restricciones_data = []
+        vertices_factibles = [(0, 0)]  # Siempre incluir el origen
+        
+        # Procesar cada restricción
+        for i, rest in enumerate(restricciones):
+            a1, a2 = rest['coeficientes'][0], rest['coeficientes'][1]
+            b = rest['valor']
+            tipo = rest['tipo']
+            
+            # Calcular línea de restricción: a1*x + a2*y = b
+            if a2 != 0:
+                y_line = (b - a1 * x_line) / a2
+                # Filtrar valores negativos
+                valid_indices = (y_line >= 0) & (x_line >= 0)
+                x_valid = x_line[valid_indices]
+                y_valid = y_line[valid_indices]
+            else:
+                # Línea vertical
+                if a1 != 0:
+                    x_vert = b / a1
+                    x_valid = [x_vert, x_vert]
+                    y_valid = [0, y_max]
+                else:
+                    continue
+            
+            restricciones_data.append({
+                'x': x_valid.tolist() if hasattr(x_valid, 'tolist') else x_valid,
+                'y': y_valid.tolist() if hasattr(y_valid, 'tolist') else y_valid,
+                'nombre': f'Restricción {i+1}: {a1:.1f}x₁ + {a2:.1f}x₂ {tipo} {b:.1f}',
+                'tipo': tipo,
+                'coeficientes': [a1, a2],
+                'valor': b
+            })
+            
+            # Encontrar intersecciones con los ejes
+            if a1 != 0 and b/a1 >= 0:
+                vertices_factibles.append((b/a1, 0))
+            if a2 != 0 and b/a2 >= 0:
+                vertices_factibles.append((0, b/a2))
+        
+        # Encontrar intersecciones entre restricciones
+        for i in range(len(restricciones)):
+            for j in range(i+1, len(restricciones)):
+                rest1 = restricciones[i]
+                rest2 = restricciones[j]
+                
+                a1, a2, b1 = rest1['coeficientes'][0], rest1['coeficientes'][1], rest1['valor']
+                c1, c2, b2 = rest2['coeficientes'][0], rest2['coeficientes'][1], rest2['valor']
+                
+                # Resolver sistema 2x2
+                det = a1*c2 - a2*c1
+                if abs(det) > 1e-10:  # No son paralelas
+                    x_int = (b1*c2 - b2*a2) / det
+                    y_int = (a1*b2 - c1*b1) / det
+                    
+                    if x_int >= 0 and y_int >= 0:
+                        vertices_factibles.append((x_int, y_int))
+        
+        # Filtrar vértices que satisfacen todas las restricciones
+        vertices_validos = []
+        for x, y in vertices_factibles:
+            valido = True
+            for rest in restricciones:
+                a1, a2 = rest['coeficientes'][0], rest['coeficientes'][1]
+                valor_rest = a1*x + a2*y
+                
+                if rest['tipo'] == '<=':
+                    if valor_rest > rest['valor'] + 1e-10:
+                        valido = False
+                        break
+                elif rest['tipo'] == '>=':
+                    if valor_rest < rest['valor'] - 1e-10:
+                        valido = False
+                        break
+                else:  # '='
+                    if abs(valor_rest - rest['valor']) > 1e-10:
+                        valido = False
+                        break
+            
+            if valido:
+                vertices_validos.append((x, y))
+        
+        # Eliminar duplicados
+        vertices_unicos = []
+        for v in vertices_validos:
+            es_duplicado = False
+            for vu in vertices_unicos:
+                if abs(v[0] - vu[0]) < 1e-6 and abs(v[1] - vu[1]) < 1e-6:
+                    es_duplicado = True
+                    break
+            if not es_duplicado:
+                vertices_unicos.append(v)
+        
+        # Ordenar vértices para formar el polígono convexo
+        if len(vertices_unicos) > 2:
+            # Encontrar el centroide
+            cx = sum(v[0] for v in vertices_unicos) / len(vertices_unicos)
+            cy = sum(v[1] for v in vertices_unicos) / len(vertices_unicos)
+            
+            # Ordenar por ángulo respecto al centroide
+            import math
+            def angulo(v):
+                return math.atan2(v[1] - cy, v[0] - cx)
+            
+            vertices_unicos.sort(key=angulo)
+        
+        # Líneas de la función objetivo
+        if c2 != 0:
+            # Diferentes valores de Z para mostrar la dirección de optimización
+            z_values = []
+            if solucion:
+                z_optimo = c1 * solucion[0] + c2 * solucion[1]
+                z_values = [z_optimo * 0.5, z_optimo * 0.75, z_optimo]
+            else:
+                z_values = [5, 10, 15]
+            
+            objetivo_lines = []
+            for z in z_values:
+                y_obj = (z - c1 * x_line) / c2
+                valid_obj = (y_obj >= 0) & (x_line >= 0) & (y_obj <= y_max)
+                objetivo_lines.append({
+                    'x': x_line[valid_obj].tolist(),
+                    'y': y_obj[valid_obj].tolist(),
+                    'z': z,
+                    'es_optimo': abs(z - (z_values[-1] if z_values else 0)) < 1e-6
+                })
+        else:
+            objetivo_lines = []
+        
+        return {
+            'restricciones': restricciones_data,
+            'vertices_factibles': vertices_unicos,
+            'objetivo_lines': objetivo_lines,
+            'punto_optimo': {
+                'x': solucion[0] if solucion else 0,
+                'y': solucion[1] if solucion else 0,
+                'z': c1 * solucion[0] + c2 * solucion[1] if solucion else 0
+            },
+            'rango': {
+                'x_max': x_max,
+                'y_max': y_max
+            },
+            'funcion_objetivo': {
+                'c1': c1,
+                'c2': c2,
+                'ecuacion': f'{c1:.2f}x₁ + {c2:.2f}x₂'
+            },
+            'nombres_variables': nombres_variables,
+            'tipo_optimizacion': tipo_optimizacion
+        }
+        
+    except Exception as e:
+        print(f"Error generando datos de gráfica: {e}")
+        return None
+
 def metodo_simplex(problema, pasos):
     """Resuelve el problema usando el algoritmo Simplex"""
     

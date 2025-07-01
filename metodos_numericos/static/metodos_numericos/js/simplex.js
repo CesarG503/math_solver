@@ -26,7 +26,7 @@ function updateValorOptimoTheme(theme) {
   }
 }
 
-// Modificar updateThemeButton para actualizar el valor óptimo
+// Modificar updateThemeButton para actualizar el valor óptimo y la gráfica
 function updateThemeButton(theme) {
   const icon = document.getElementById("theme-icon")
   const boton = document.querySelector(".theme-toggle")
@@ -50,6 +50,11 @@ function updateThemeButton(theme) {
     body.classList.remove("text-light")
   }
   updateValorOptimoTheme(theme)
+
+  // Actualizar tema de la gráfica de Simplex si existe
+  if (typeof window.updateSimplexGraphTheme === "function") {
+    window.updateSimplexGraphTheme(theme === "dark")
+  }
 }
 
 // Cargar tema guardado
@@ -330,11 +335,11 @@ function cargarEjemplo() {
   if (rest2_tipo) rest2_tipo.value = "<="
   if (rest2_valor) rest2_valor.value = "6"
 
-
   showNotification("Ejemplo cargado correctamente", "success")
   // Actualizar la sección de problema actual
   setTimeout(actualizarProblemaActual, 20)
 }
+
 function showNotification(message, type = "info") {
   let icon = type
   if (type === "danger") icon = "error"
@@ -344,17 +349,17 @@ function showNotification(message, type = "info") {
   if (type === "success") icon = "success"
   if (type === "info") icon = "info"
 
-  Swal.fire({
+  window.Swal.fire({
     toast: true,
-    position: 'top-end',
+    position: "top-end",
     icon: icon,
     title: message,
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
     customClass: {
-      popup: 'swal2-shadow'
-    }
+      popup: "swal2-shadow",
+    },
   })
 }
 
@@ -410,7 +415,7 @@ function procesarFormulario(e) {
 // Actualiza la sección de "Problema actual Ingresado" con los datos actuales
 function actualizarProblemaActual() {
   // Obtener tipo de optimización
-  const tipoOpt = document.querySelector('input[name="tipo_optimizacion"]:checked')?.value || 'maximizar'
+  const tipoOpt = document.querySelector('input[name="tipo_optimizacion"]:checked')?.value || "maximizar"
   // Obtener nombres de variables
   const nombres = nombresVariables
   // Obtener coeficientes de la función objetivo
@@ -420,33 +425,35 @@ function actualizarProblemaActual() {
     coefs.push(Number.parseFloat(input?.value) || 0)
   }
   // Construir función objetivo
-  let objStr = (tipoOpt === 'maximizar' ? 'Maximizar' : 'Minimizar') + ' '
-  objStr += coefs.map((c, i) => {
-    const sign = c >= 0 && i > 0 ? ' + ' : (c < 0 ? ' - ' : '')
-    return (i > 0 ? sign : (c < 0 ? '-' : '')) + Math.abs(c) + nombres[i]
-  }).join('')
+  let objStr = (tipoOpt === "maximizar" ? "Maximizar" : "Minimizar") + " "
+  objStr += coefs
+    .map((c, i) => {
+      const sign = c >= 0 && i > 0 ? " + " : c < 0 ? " - " : ""
+      return (i > 0 ? sign : c < 0 ? "-" : "") + Math.abs(c) + nombres[i]
+    })
+    .join("")
 
   // Obtener restricciones
   const restricciones = []
-  const filas = document.querySelectorAll('.restriccion-row')
+  const filas = document.querySelectorAll(".restriccion-row")
   filas.forEach((fila, idx) => {
-    let restr = ''
+    let restr = ""
     for (let i = 0; i < numVariables; i++) {
       const input = fila.querySelector(`[name$="_coef_${i}"]`)
       const val = Number.parseFloat(input?.value) || 0
-      restr += (i > 0 ? (val >= 0 ? ' + ' : ' - ') : (val < 0 ? '-' : '')) + Math.abs(val) + nombres[i]
+      restr += (i > 0 ? (val >= 0 ? " + " : " - ") : val < 0 ? "-" : "") + Math.abs(val) + nombres[i]
     }
-    const tipo = fila.querySelector('select')?.value || '<='
-    const valor = fila.querySelector('.restriccion-valor')?.value || '0'
+    const tipo = fila.querySelector("select")?.value || "<="
+    const valor = fila.querySelector(".restriccion-valor")?.value || "0"
     restr += ` ${tipo} ${valor}`
     restricciones.push(restr)
   })
 
   // Variables no negativas
-  let varsNoNeg = nombres.join(', ') + ' ≥ 0'
+  const varsNoNeg = nombres.join(", ") + " ≥ 0"
 
   // Renderizar en el contenedor
-  const cont = document.getElementById('problema-actual')
+  const cont = document.getElementById("problema-actual")
   if (cont) {
     cont.innerHTML = `
       <h6 class="text-primary mb-2">
@@ -456,21 +463,22 @@ function actualizarProblemaActual() {
         <p class="mb-2"><strong>Problema:</strong> ${objStr}</p>
         <p class="mb-2"><strong>Sujeto a:</strong></p>
         <ul class="mb-2 ps-3">
-          ${restricciones.map(r => `<li>${r}</li>`).join('')}
+          ${restricciones.map((r) => `<li>${r}</li>`).join("")}
           <li>${varsNoNeg}</li>
         </ul>
       </div>
     `
   }
 }
-
 // Llama a actualizarProblemaActual en cada cambio relevante
-['input', 'change'].forEach(evt => {
+;["input", "change"].forEach((evt) => {
   document.addEventListener(evt, (e) => {
     if (
-      e.target.matches('.objetivo-input, .variable-name-input, .restriccion-input, .restriccion-valor, select[name^="restriccion_"]') ||
-      e.target.id === 'num_variables' ||
-      e.target.name === 'tipo_optimizacion'
+      e.target.matches(
+        '.objetivo-input, .variable-name-input, .restriccion-input, .restriccion-valor, select[name^="restriccion_"]',
+      ) ||
+      e.target.id === "num_variables" ||
+      e.target.name === "tipo_optimizacion"
     ) {
       setTimeout(actualizarProblemaActual, 10)
     }
