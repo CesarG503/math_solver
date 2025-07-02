@@ -9,6 +9,9 @@ from .utils import interpolacion_hermite, integracion_compuesta, metodo_simplex
 import json
 import datetime
 
+def docs(request):
+    return render(request, 'metodos_numericos/docs.html')
+
 def index(request):
     """Vista principal con opciones de métodos numéricos"""
     return render(request, 'metodos_numericos/index.html')
@@ -347,13 +350,17 @@ def simplex_view(request, id_ejercicio=None):
                     context['datos_grafica'] = json.dumps(datos_grafica)
 
             context.update(resultado)
+            # Mantener los datos de entrada para repoblar el formulario
+            context['mantener_datos'] = True
             context.update({
                 'funcion_objetivo_input': funcion_objetivo_str,
                 'tipo_optimizacion': tipo_optimizacion,
                 'num_restricciones': len(restricciones),
                 'restricciones_data': restricciones,
                 'nombres_variables': nombres_variables,
-                'num_variables': len(funcion_objetivo)
+                'num_variables': len(funcion_objetivo),
+                'funcion_objetivo_valores': funcion_objetivo,  # Valores numéricos para repoblar
+                'nombres_variables_str': nombres_variables_str  # String original
             })
 
             if(request.user.is_authenticated):
@@ -410,6 +417,8 @@ def simplex_view(request, id_ejercicio=None):
 
 def resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables):
     """Función auxiliar para resolver el problema Simplex"""
+    from .utils import preparar_problema_simplex, metodo_simplex
+    
     pasos = []
     
     # Preparar el problema para el método Simplex

@@ -205,6 +205,11 @@
                             <button type="button" class="btn btn-outline-success btn-sm" onclick="cargarEjemplo()">
                                 <i class="fas fa-lightbulb me-1"></i>Cargar Ejemplo
                             </button>
+                            {% if mantener_datos %}
+                            <button type="button" class="btn btn-outline-warning btn-sm" onclick="limpiarFormulario()">
+                                <i class="fas fa-eraser me-1"></i>Limpiar Todo
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                     
@@ -277,6 +282,30 @@
                 </div>
             </div>
         </div>
+
+        {% if metodo_usado %}
+            <div class="alert alert-info d-flex align-items-center mb-3 ps-2 pt-1 bg-light">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                    <strong>Método utilizado:</strong> 
+                    <span class="metodo-indicator {% if metodo_usado == 'Gran M' %}metodo-gran-m{% else %}metodo-simplex{% endif %}">
+                        {% if metodo_usado == 'Gran M' %}
+                            🔢 Método de la Gran M
+                        {% else %}
+                            📊 Simplex Estándar
+                        {% endif %}
+                    </span>
+                    <br>
+                    <small class="text-muted">
+                        {% if metodo_usado == 'Gran M' %}
+                            Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o =
+                        {% else %}
+                            Se utilizó el método Simplex estándar (todas las restricciones son ≤)
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            {% endif %}
         
         <div class="card mt-3 shadow-sm">
             <div class="card-header bg-info text-white">
@@ -295,6 +324,31 @@
                             <h4 class="text-warning mt-4 mb-3">
                                 <i class="fas fa-step-forward me-2"></i>{{ paso }}
                             </h4>
+                        {% elif "📋 PROBLEMA ORIGINAL:" in paso %}
+                            <h5 class="text-primary mt-3">
+                                <i class="fas fa-clipboard me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "🔍 DETECCIÓN DEL MÉTODO:" in paso %}
+                            <h5 class="text-info mt-3">
+                                <i class="fas fa-search me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "🔄 CONVERSIÓN A FORMA ESTÁNDAR:" in paso %}
+                            <h5 class="text-success mt-3">
+                                <i class="fas fa-sync me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "📊 MÉTODO DE LA GRAN M:" in paso %}
+                            <div class="alert alert-warning py-2 mb-2 ps-2">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>{{ paso|slice:"2:" }}</strong>
+                            </div>
+                        {% elif "✅ FORMA ESTÁNDAR OBTENIDA:" in paso %}
+                            <h5 class="text-success mt-3">
+                                <i class="fas fa-check-circle me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
+                        {% elif "🔧 ELIMINACIÓN DE VARIABLES ARTIFICIALES" in paso %}
+                            <h5 class="text-warning mt-3">
+                                <i class="fas fa-tools me-2"></i>{{ paso|slice:"2:" }}
+                            </h5>
                         {% elif "📋 TABLA SIMPLEX:" in paso %}
                             <h5 class="text-success mt-3">
                                 <i class="fas fa-table me-2"></i>{{ paso|slice:"2:" }}
@@ -341,6 +395,8 @@
                             </div>
                         {% elif "📋" in paso or "📊" in paso %}
                             <h5 class="text-info mt-3">{{ paso }}</h5>
+                        {% elif "🔍 INTERPRETACIÓN:" in paso %}
+                            <h6 class="text-warning mt-2">{{ paso|slice:"2:" }}</h6>
                         {% elif paso|slice:":3" == "   " %}
                             <pre class="bg-light p-2 rounded small mb-1">{{ paso }}</pre>
                         {% elif paso|slice:":2" == "1." or paso|slice:":2" == "2." or paso|slice:":2" == "3." %}
@@ -429,44 +485,58 @@
     </div>
 </div>
 
-<div class="container-fluid m-auto">
-{% if datos_grafica %}
-        <div class="card shadow-sm mb-3" style="max-width: 1000px;">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">
-                    <i class="fas fa-chart-area me-2"></i>Gráfica de Programación Lineal
-                </h4>
-            </div>
-            <div class="card-body">
-                <div id="simplex-graph" style="width: 100%; height: 500px;"></div>
-                <div id="simplex-graph-instructions" class="mt-3">
-                    <!-- Las instrucciones se cargan dinámicamente -->
-                </div>
-            </div>
-        </div>
-        {% elif num_variables == 2 %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-body text-center py-4">
-                <i class="fas fa-chart-area fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Gráfica de Programación Lineal</h5>
-                <p class="text-muted">La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables.</p>
-            </div>
-        </div>
-        {% elif num_variables > 2 %}
-        <div class="card shadow-sm mb-3">
-            <div class="card-body text-center py-4">
-                <i class="fas fa-cube fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Gráfica no disponible</h5>
-                <p class="text-muted">La visualización gráfica solo está disponible para problemas con 2 variables.</p>
-                <small class="text-muted">Tu problema tiene {{ num_variables }} variables.</small>
-            </div>
-        </div>
-        {% endif %}
+<div class="container-fluid p-0 m-auto">
+  {% if datos_grafica %}
+  <div class="card shadow-sm mb-3">
+    <div class="card-header bg-warning-neon text-dark">
+      <h4 class="mb-0">
+        <i class="fas fa-chart-area me-2"></i>Gráfica de Programación Lineal
+      </h4>
+    </div>
+    <div class="card-body p-2">
+      <div id="simplex-graph" style="width: 100%; height: 600px; min-height: 500px;"></div>
+      <div id="simplex-graph-instructions" class="mt-3">
+        <!-- Las instrucciones se cargan dinámicamente -->
+      </div>
+    </div>
+  </div>
+  {% elif num_variables == 2 %}
+  <div class="card shadow-sm mb-3">
+    <div class="card-body text-center py-4">
+      <i class="fas fa-chart-area fa-3x text-muted mb-3"></i>
+      <h5 class="text-muted">Gráfica de Programación Lineal</h5>
+      <p class="text-muted">La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables.</p>
+    </div>
+  </div>
+  {% elif num_variables > 2 %}
+  <div class="card shadow-sm mb-3">
+    <div class="card-body text-center py-4">
+      <i class="fas fa-cube fa-3x text-muted mb-3"></i>
+      <h5 class="text-muted">Gráfica no disponible</h5>
+      <p class="text-muted">La visualización gráfica solo está disponible para problemas con 2 variables.</p>
+      <small class="text-muted">Tu problema tiene {{ num_variables }} variables.</small>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 {% load static %}
+{% if mantener_datos %}
+<script>
+// Pasar datos para rellenar
+window.datosSimplexTemplate = {
+    num_variables: {{ num_variables|default:2 }},
+    tipo_optimizacion: '{{ tipo_optimizacion|default:"maximizar" }}',
+    nombres_variables: {{ nombres_variables|safe|default:"[]" }},
+    funcion_objetivo_valores: {{ funcion_objetivo_valores|safe|default:"[]" }},
+    restricciones_data: {{ restricciones_data|safe|default:"[]" }}
+};
+</script>
+<div data-mantener-datos="true" style="display: none;"></div>
+{% endif %}
 <script src="{% static 'metodos_numericos/js/simplex.js' %}"></script>
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{% static 'metodos_numericos/js/simplex-graph.js' %}"></script>
 
 {%if ejercicio_db %}
@@ -487,6 +557,18 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         initializeSimplexGraph(datosGrafica);
     }, 100);
+    
+    // Si hay datos para mantener, repoblar campos
+    {% if mantener_datos %}
+    setTimeout(repoblarCampos, 300);
+    {% endif %}
+});
+</script>
+{% elif mantener_datos %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Repoblar campos sin gráfica
+    setTimeout(repoblarCampos, 200);
 });
 </script>
 {% endif %}

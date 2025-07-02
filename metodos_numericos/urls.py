@@ -5,6 +5,7 @@ app_name = 'metodos_numericos'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('docs/', views.docs),
     path('hermite/', views.hermite_view, name='hermite'),
     path('hermite/<int:id_ejercicio>/', views.hermite_view, name='hermite_id'),
     path('integracion/', views.integracion_view, name='integracion'),
