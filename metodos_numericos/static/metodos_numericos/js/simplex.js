@@ -974,6 +974,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Actualizar el placeholder del problema actual
 document.addEventListener("DOMContentLoaded", () => {
+  if(window.cargaDB) return;
   const problemaActual = document.getElementById("problema-actual")
   if (problemaActual && problemaActual.innerHTML.includes("Ingresa los valores")) {
     problemaActual.innerHTML = `<h5>${getTranslation("Ingresa los valores de tu ejercicio para visualizarlo")}</h5>`
