@@ -2,6 +2,7 @@
 let contadorRestricciones = 0
 let numVariables = 2
 let nombresVariables = ["x", "x"]
+let tooltipsEnabled = true
 
 // Función para obtener traducciones
 function getTranslation(key) {
@@ -70,10 +71,111 @@ document.addEventListener("DOMContentLoaded", () => {
   enhanceSimplexTables()
   updateValorOptimoTheme(savedTheme)
 
+  // Cargar estado de tooltips
+  const tooltipsState = localStorage.getItem("tooltipsEnabled")
+  if (tooltipsState !== null) {
+    tooltipsEnabled = tooltipsState === "true"
+  }
+
+  // Inicializar tooltips
+  initializeTooltips()
+
   // Inicializar campos
   generarCamposVariables()
   agregarRestriccion()
 })
+
+// Funciones para tooltips
+function initializeTooltips() {
+  // Agregar event listeners a todos los elementos con tooltip
+  const tooltipTriggers = document.querySelectorAll(".tooltip-trigger")
+
+  tooltipTriggers.forEach((trigger) => {
+    trigger.addEventListener("mouseenter", (e) => {
+      if (tooltipsEnabled) {
+        showTooltipContent(e.target.closest(".tooltip-trigger"))
+      }
+    })
+
+    trigger.addEventListener("mouseleave", () => {
+      if (tooltipsEnabled) {
+        hideTooltipContent()
+      }
+    })
+
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault()
+      if (tooltipsEnabled) {
+        const trigger = e.target.closest(".tooltip-trigger")
+        toggleTooltipContent(trigger)
+      }
+    })
+  })
+}
+
+function showTooltipContent(trigger) {
+  if (!tooltipsEnabled) return
+
+  const tooltipId = trigger.getAttribute("data-tooltip")
+  const tooltipData = window.tooltipsContent[tooltipId]
+
+  if (!tooltipData) return
+
+  const tooltip = document.getElementById("tooltip-container")
+  const title = tooltip.querySelector(".tooltip-title")
+  const body = tooltip.querySelector(".tooltip-body")
+
+  title.textContent = tooltipData.title
+  body.textContent = tooltipData.content
+
+  // Posicionar tooltip
+  const rect = trigger.getBoundingClientRect()
+  const tooltipRect = tooltip.getBoundingClientRect()
+
+  let left = rect.left + rect.width / 2 - 300 / 2 // 300px es el ancho aproximado del tooltip
+  let top = rect.bottom + 10
+
+  // Ajustar si se sale de la pantalla
+  if (left < 10) left = 10
+  if (left + 300 > window.innerWidth - 10) left = window.innerWidth - 310
+  if (top + 150 > window.innerHeight - 10) top = rect.top - 160 // 150px altura aproximada
+
+  tooltip.style.left = left + "px"
+  tooltip.style.top = top + "px"
+  tooltip.style.display = "block"
+
+  // Auto-hide después de 5 segundos
+  clearTimeout(window.tooltipTimeout)
+  window.tooltipTimeout = setTimeout(() => {
+    hideTooltipContent()
+  }, 5000)
+}
+
+function hideTooltipContent() {
+  const tooltip = document.getElementById("tooltip-container")
+  tooltip.style.display = "none"
+  clearTimeout(window.tooltipTimeout)
+}
+
+function toggleTooltipContent(trigger) {
+  const tooltip = document.getElementById("tooltip-container")
+  if (tooltip.style.display === "block") {
+    hideTooltipContent()
+  } else {
+    showTooltipContent(trigger)
+  }
+}
+
+// Función para actualizar el estado de tooltips desde el perfil
+function updateTooltipsState(enabled) {
+  tooltipsEnabled = enabled
+  if (!enabled) {
+    hideTooltipContent()
+  }
+}
+
+// Hacer la función disponible globalmente
+window.updateTooltipsState = updateTooltipsState
 
 function generarCamposVariables() {
   numVariables = Number.parseInt(document.getElementById("num_variables").value)
@@ -169,7 +271,12 @@ function generarHeaderRestricciones() {
   const thTipo = document.createElement("th")
   thTipo.className = "text-center"
   thTipo.style.minWidth = "80px"
-  thTipo.textContent = getTranslation("Tipo")
+  thTipo.innerHTML = `
+    ${getTranslation("Tipo")}
+    <span class="tooltip-trigger ms-1" data-tooltip="constraint-types">
+        <i class="fas fa-info-circle text-muted small"></i>
+    </span>
+  `
   header.appendChild(thTipo)
 
   // Valor
@@ -185,6 +292,9 @@ function generarHeaderRestricciones() {
   thAccion.style.minWidth = "80px"
   thAccion.textContent = getTranslation("Acción")
   header.appendChild(thAccion)
+
+  // Re-inicializar tooltips para los nuevos elementos
+  setTimeout(initializeTooltips, 100)
 }
 
 function actualizarNombreVariable(indice, nuevoNombre) {
@@ -410,12 +520,12 @@ function showNotification(message, type = "info") {
     timer: 3000,
     timerProgressBar: true,
     customClass: {
-      popup: "swal2-shadow"
+      popup: "swal2-shadow",
     },
     didOpen: (toast) => {
       toast.style.zIndex = 10000
-      toast.style.top = '90px'
-    }
+      toast.style.top = "90px"
+    },
   })
 }
 

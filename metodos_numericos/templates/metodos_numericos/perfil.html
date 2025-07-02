@@ -1,5 +1,4 @@
-
-    <div class="profile-panel bg-secondary-neon" id="profilePanel">
+<div class="profile-panel bg-secondary-neon" id="profilePanel">
         <div class="row">
             <div class="col">
                 <button class="btn btn-white rounded-pill px-3 py-2" onclick="toggleProfilePanel()" id="cerrarPerfil">
@@ -54,6 +53,25 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Nueva sección para tooltips -->
+            <div class="info-section mb-3">
+                <label>Ayuda y sugerencias:</label>
+                <div class="d-flex align-items-center justify-content-between">
+                    <span class="text-white-neon">Tooltips informativos</span>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="tooltipsToggle" checked onchange="toggleTooltips()">
+                        <label class="form-check-label text-white-neon" for="tooltipsToggle">
+                            <i class="fas fa-info-circle me-1"></i>
+                            <span id="tooltipsStatus">Activados</span>
+                        </label>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-1">
+                    Los tooltips te ayudan a entender cada parte del método Simplex
+                </small>
+            </div>
+
             <div class="text-center mt-4">
                 <button type="button" class="btn edit-button px-4 py-2" onclick="actualizarPerfil()">
                     <i class="fa fa-save me-2"></i>Guardar cambios
