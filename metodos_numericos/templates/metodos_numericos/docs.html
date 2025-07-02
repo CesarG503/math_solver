@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     {% load static %}
+    {% load i18n %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% comment %} agregando icono {% endcomment %}
@@ -30,25 +31,25 @@
 <body>
 
     <!-- Navbar -->
- <nav class="navbar padding bg-secondary estilo-brillo border border-primary hover-neon rounded-1 position-sticky top-0">
+ <nav class="navbar padding bg-secondary estilo-brillo border border-primary hover-neon rounded-1 border-0 position-sticky top-0">
   <div class="navbar-header justify-content-between ">
       <div class="navbar-brand fst-italic fs-sm-3"> <i class="fa-solid fa-chart-simple fst-italic text-primary "></i> SimpleX</div>
       <button class="navbar-toggle">
           <div class="img-menu-white"></div>
       </button>
   </div>
-  <div class="navbar-nav">
-        <a class="nav-item rounded-pill" id="section1Btn">Inicio</a>
-        <a class="nav-item rounded-pill" id="section2Btn">Teoria</a>
-        <a class="nav-item rounded-pill" id="section3Btn">Manual</a>
-        <a class="nav-item rounded-pill" id="section4Btn">Nosotros</a>
-  </div>
-     <a class="btn bg-success" href="{% url "metodos_numericos:simplex"%}"></i>Comenzar</a>
+<div class="navbar-nav">
+    <a class="nav-item rounded-pill" id="section1Btn">{% trans "NavInicio" %}</a>
+    <a class="nav-item rounded-pill" id="section2Btn">{% trans "NavTeoria" %}</a>
+    <a class="nav-item rounded-pill" id="section3Btn">{% trans "NavManual" %}</a>
+    <a class="nav-item rounded-pill" id="section4Btn">{% trans "NavNosotros" %}</a>
+</div>
+     <a class="btn bg-success" href="{% url "metodos_numericos:simplex"%}"></i>{% trans "HeroBotonComenzar" %}</a>
     {% if request.user.is_authenticated %}
     
             <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
     {% else %}
-            <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
+            <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">{% trans "Inicio" %}</a>
     
     {% endif %}
 </nav> 
@@ -90,16 +91,22 @@
             </div>
             <div class="col-lg-6 mb-5">
                 <div class="callout">
-                    <h1 class="text-white animate__animated animate__bounce fw-bold">Metodo Simplex</h1>
-                    <h3 class='text-warning-neon animate__animated animate__bounce'>Documentación</h3>
+                    <h1 class="text-white animate__animated animate__bounce fw-bold">{% trans "HeroTitulo" %}</h1>
+                    <h3 class="text-warning-neon animate__animated animate__bounce">{% trans "HeroSubtitulo" %}</h3>
 
                     <p class="descripcion-hero">
-                    El método Simplex es detallado y propenso a errores si se falla en un cálculo.
-                    Por eso, es clave entender cada paso del proceso.
+                        {% trans "HeroDescripcion" %}
                     </p>
+
                     <div class="botones-hero">
-                        <a class="btn bg-success btn-lg animate__animated animate__bounceIn animate__delay-1s me-3" href="{% url "metodos_numericos:simplex"%}"><i class="fa-solid fa-forward"></i> Comenzar</a>
-                        <a class="btn bg-warning btn-lg animate__animated animate__bounceIn animate__delay-1s" href="https://github.com/CesarG503/math_solver"><i class="fa-brands fa-github"></i> Proyecto</a>
+                        <a class="btn bg-success btn-lg animate__animated animate__bounceIn animate__delay-1s me-3"
+                        href="{% url 'metodos_numericos:simplex' %}">
+                            <i class="fa-solid fa-forward"></i> {% trans "HeroBotonComenzar" %}
+                        </a>
+                        <a class="btn bg-warning btn-lg animate__animated animate__bounceIn animate__delay-1s"
+                        href="https://github.com/CesarG503/math_solver">
+                            <i class="fa-brands fa-github"></i> {% trans "HeroBotonProyecto" %}
+                        </a>
                     </div>
                 </div>
             </div>
@@ -107,12 +114,9 @@
 
 
         <section class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo" id="section2">
-            <h2><i class="fa-solid fa-circle-question"></i> Que es el metodo Simplex</h2>
+            <h2><i class="fa-solid fa-circle-question"></i> {% trans "Section2Title" %}</h2>
             <p>
-                El método simplex es un procedimiento iterativo para resolver
-                problemas de programación lineal, donde se busca obtener la 
-                solución óptima de la función objetivo que logre cumplir 
-                el conjunto de restricciones.
+                {% trans "Section2Description" %}
             </p>
         </section>
 
@@ -126,52 +130,46 @@
                             <div class="row align-items-center min-vh-100 row-equal">
                                 <div class="col-lg-6 mx-auto">
                                     <div class="card bg-success mb-3">
-                                        <div class="card-header text-white card-equal" >
-                                            <h4 class='card-title'><i class="fa-solid fa-circle-info"></i> Conceptos Básicos</h4>
+                                        <div class="card-header text-white card-equal">
+                                            <h4 class="card-title">
+                                                <i class="fa-solid fa-circle-info"></i> {% trans "CardTitle" %}
+                                            </h4>
                                         </div>
                                         <div class="card-body">
-                                            <p class="card-text text-primary ">
-                                                Para comprender de mejor manera el método simplex vamos a revisar algunas definiciones.
-                                                El método parte de dos afirmaciones importantes
+                                            <p class="card-text text-primary">
+                                                {% trans "CardIntro" %}
                                             </p>
                                             <p class="text-white">
-                                                <i class="fa-solid fa-1 text-danger badge"></i> -                                                El conjunto de posibles soluciones o conjunto factible de cualquier
-                                                problema de programación lineal puede representarse mediante un poliedro
-                                                convexo.
+                                                <i class="fa-solid fa-1 text-danger badge"></i> – {% trans "CardPoint1" %}
                                             </p>
                                             <p class="text-white">
-                                                <i class="fa-solid fa-2 text-danger badge"></i> - 
-                                                    Si un problema de programación lineal tiene una solución óptima y finita, 
-                                                    ésta estará en un vértice del poliedro convexo que representa al problema.
+                                                <i class="fa-solid fa-2 text-danger badge"></i> – {% trans "CardPoint2" %}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <div class="card bg-danger mb-3 card-equal" >
+                                    <div class="card bg-danger mb-3 card-equal">
                                         <div class="card-header text-white">
-                                            <h4 class='card-title'><i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> Pasos del Método Simplex</h4>
+                                            <h4 class="card-title">
+                                                <i class="fa-solid fa-person-walking-dashed-line-arrow-right"></i> {% trans "StepsTitle" %}
+                                            </h4>
                                         </div>
                                         <div class="card-body">
                                             <p class="text-white">
-                                                <i class="fa-solid fa-1 text-danger badge"></i> - 
-                                                Definir el problema en la forma estándar y generar nuestra matriz.
+                                                <i class="fa-solid fa-1 text-danger badge"></i> – {% trans "StepsPoint1" %}
                                             </p>
                                             <p class="text-white">
-                                                <i class="fa-solid fa-2 text-danger badge"></i> - 
-                                                Determinar la solución básica inicial.
+                                                <i class="fa-solid fa-2 text-danger badge"></i> – {% trans "StepsPoint2" %}
                                             </p>
                                             <p class="text-white">
-                                                <i class="fa-solid fa-3 text-danger badge"></i> - 
-                                                Seleccionar la variable de entrada utilizando la condición de optimalidad. Si no se puede seleccionar una variable de entrada, quiere decir que estamos en la condición óptima y finalizan las iteraciones. De otro modo se continúa con el siguiente paso.
+                                                <i class="fa-solid fa-3 text-danger badge"></i> – {% trans "StepsPoint3" %}
                                             </p>
                                             <p class="text-white">
-                                                <i class="fa-solid fa-4 text-danger badge"></i> - 
-                                                Seleccionar la variable de salida utilizando la condición de factibilidad.
+                                                <i class="fa-solid fa-4 text-danger badge"></i> – {% trans "StepsPoint4" %}
                                             </p>
                                             <p class="text-white">
-                                                <i class="fa-solid fa-5 text-danger badge"></i> - 
-                                                Actualizar nuestra matriz realizando las operaciones de Gauss-Jordan. Volver al paso número 3.
+                                                <i class="fa-solid fa-5 text-danger badge"></i> – {% trans "StepsPoint5" %}
                                             </p>
                                         </div>
                                     </div>
@@ -184,235 +182,202 @@
         </div>
 
         {% comment %} PRIMER PUNTO {% endcomment %}
-        <h2 class='text-white'><i class="fa-solid fa-shoe-prints"></i> Pasos del Metodo Simplex explicados a detalles</h2>
+        <h2 class="text-white">
+            <i class="fa-solid fa-shoe-prints"></i> {% trans "Detail1Title" %}
+        </h2>
         <details>
-            <summary class='h3 text-white'><i class="fa-solid fa-shoe-prints"></i> Definir el problema en la forma estándar y generar nuestra matriz</summary>
+            <summary class="h3 text-white">
+                <i class="fa-solid fa-shoe-prints"></i> {% trans "Detail1Step1Summary" %}
+            </summary>
             <div class="content container mt-4 padding">
-
-                <p>Un problema de programación lineal tiene la siguiente forma</p>
-                <div class="card row p-3 ">
-                    <div class="col-lg-6 formula bg-secondary-neon rounded-4 card-body border mx-auto text-center m-4" >
-                        <div class="">
-                            <h4 class='text-white'>Función Objetivo</h4>
-                            <p>Maximizar o Minimizar</p>
+                <p>{% trans "Detail1Intro" %}</p>
+                <div class="card row p-3">
+                    <div class="col-lg-6 formula bg-secondary-neon rounded-4 card-body border mx-auto text-center m-4">
+                        <div>
+                            <h4 class="text-white">{% trans "DetailObjectiveHeader" %}</h4>
+                            <p>{% trans "DetailObjectiveAction" %}</p>
                             <p>\[ Z = c_1 x_1 + c_2 x_2 + \dots + c_n x_n\]</p>
 
-                            <h4 class='text-white'>Sujeto a</h4>
+                            <h4 class="text-white">{% trans "DetailSubjectToHeader" %}</h4>
+                            <p>\[ {% trans "DetailConstraint1" %} \]</p>
+                            <p>\[ {% trans "DetailConstraint2" %} \]</p>
+                            <p>\[ \vdots \]</p>
+                            <p>\[ {% trans "DetailConstraintN" %} \]</p>
 
-                            <p>\[
-                                c_{11}x_1 + c_{12}x_2 + \dots + c_{1n}x_n \ (\ge, \le, =) \ b_1
-                            \]</p>
-
-                            <p>\[
-                                c_{21}x_1 + c_{22}x_2 + \dots + c_{2n}x_n \ (\ge, \le, =) \ b_2
-                            \]</p>
-
-                            <p>\[
-                                \vdots
-                            \]</p>
-
-                            <p>\[
-                                c_{m1}x_1 + c_{m2}x_2 + \dots + c_{mn}x_n \ (\ge, \le, =) \ b_m
-                            \]</p>
-
-                            <p>\[
-                                x_1 \ge 0,\quad x_2 \ge 0,\quad \dots,\quad x_n \ge 0
-                            \]</p>
+                            <p>\[ {% trans "DetailNonNegativity" %} \]</p>
                         </div>
                     </div>
 
-                    <div class="col-lg-6  mx-auto m-4">
-                        <p class='text-left'>Donde <span class='text-white'>\(x_1 , x_2, ... x_n \)</span> son las variables del problema.</p>
-                        <p>Antes de llevar nuestro modelo a la forma estándar debemos verificar que todas las restricciones tienen el lado derecho no negativo. Es decir:</p>
-                        <p class='text-white'>\[b_1, b_2, ... b_m \ge 0\] </p>
-                        <h4 class='text-white'><i class="fa-solid fa-clipboard-question text-danger"></i> ¿Qué hago si el lado derecho de la restricción es negativo?</h4>
-                        <p>Cuando el término independiente de la restricción es negativo, se debe multiplicar por -1 a toda la restricción para convertir el valor del lado derecho en positivo. Esta multiplicación también afectará al signo de la restricción de la siguiente forma:</p>
+                    <div class="col-lg-6 mx-auto m-4">
+                        <p class="text-left">{% trans "DetailVariablesNote" %}</p>
+                        <p>{% trans "PreStandardNote" %}</p>
+                        <p class="text-white">\[b_1, b_2, ... b_m \ge 0\]</p>
+
+                        <h4 class="text-white">
+                            <i class="fa-solid fa-clipboard-question text-danger"></i>
+                            {% trans "NegativeSideQuestion" %}
+                        </h4>
+                        <p>{% trans "NegativeSideExplanation" %}</p>
                         <p class="text-white">
-                            <i class="fa-solid fa-1 text-danger badge"></i> - 
-                            Si la restricción es del tipo mayor igual (≥), se deberá cambiar a menor igual \(\le\).
+                            <i class="fa-solid fa-1 text-danger badge"></i> – {% trans "NegativeStep1" %}
                         </p>
                         <p class="text-white">
-                            <i class="fa-solid fa-2 text-danger badge"></i> - 
-                            En caso la restricción sea del tipo menor igual \(\le\),  se deberá cambiar a mayor igual \(\ge\).
+                            <i class="fa-solid fa-2 text-danger badge"></i> – {% trans "NegativeStep2" %}
                         </p>
                         <p class="text-white">
-                            <i class="fa-solid fa-3 text-danger badge"></i> - 
-                            Si la restricción es una igualdad, el signo se mantiene.
+                            <i class="fa-solid fa-3 text-danger badge"></i> – {% trans "NegativeStep3" %}
                         </p>
                     </div>
                 </div>
-                <h2 class='text-white'>Convertir restricciones en igualdades</h2>
-                <p>Para convertir las restricciones en igualdades va a depender de su signo</p>
-                {% comment %} LISTA {% endcomment %}
-                <p><span class='text-danger-neon'>Si la restricción es menor igual \(\le\):</span> Para este tipo de restricciones debemos introducir una variable no negativa llamada de holgura y que son auxiliares para el problema. Por ejemplo:</p>
-                <div class="container-sm bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/01_ejemplo.png"%}" alt="">
-                </div>
-                <p><span class='text-danger-neon'>Si la restricción es mayor igual \(\ge\):</span> En este tipo de restricciones se debe restar una variable de exceso y así mismo agregar una variable artificial. Por ejemplo:</p>
-                <div class="container-sm bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/02_ejemplo.png"%}" alt="">
-                </div>
-                <p><span class='text-danger-neon'>Si la restricción es igual \(=\):</span> En este tipo de restricciones se debe restar una variable de exceso y así mismo agregar una variable artificial. Por ejemplo:</p>
-                <div class="container-sm bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/03_ejemplo.png"%}" alt="">
-                </div>
+
+                <h2 class="text-white">{% trans "ConvertToEqualitiesTitle" %}</h2>
+                <p>{% trans "ConvertToEqualitiesNote" %}</p>
+
                 <p>
-                    El método Simplex que abordaremos en esta entrada,
-                    se utiliza para los problemas de programación lineal donde todas las restricciones
-                    son del tipo menor e igual (≤). Para las restricciones que utilizan variables
-                    artificiales debemos utilizar el método de 2 fases o el método de la M Grande.
-                </p>
-                <h2 class="text-white">
-                    Generar la matriz del problema
-                </h2>
-                <p>
-                    Una vez que tenemos nuestro problema en la forma estándar, debemos generar la matriz del problema.
-                    La matriz del problema se compone de los coeficientes de la función objetivo y las restricciones.
-                    La matriz se organiza de la siguiente manera:
+                    <span class="text-danger-neon">{% trans "CaseLessEqual" %}</span>
+                    {% trans "CaseLessEqualDesc" %}
                 </p>
                 <div class="container-sm bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/04_ejemplo.png"%}" alt="">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/01_ejemplo.png' %}" alt="">
                 </div>
+
                 <p>
-                    Una vez convertidas nuestras restricciones en ecuaciones procederemos a generar nuestra matriz:
+                    <span class="text-danger-neon">{% trans "CaseGreaterEqual" %}</span>
+                    {% trans "CaseGreaterEqualDesc" %}
                 </p>
                 <div class="container-sm bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/05_ejemplo.png"%}" alt="">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/02_ejemplo.png' %}" alt="">
                 </div>
-                <p class="text-white">
-                    En nuestra matriz podemos identificar lo siguiente:
+
+                <p>
+                    <span class="text-danger-neon">{% trans "CaseEqual" %}</span>
+                    {% trans "CaseEqualDesc" %}
+                </p>
+                <div class="container-sm bg-light mx-auto">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/03_ejemplo.png' %}" alt="">
+                </div>
+
+                <p>{% trans "SimplexMethodScope" %}</p>
+
+                <h2 class="text-white">{% trans "GenerateMatrixTitle" %}</h2>
+                <p>{% trans "GenerateMatrixIntro" %}</p>
+                <div class="container-sm bg-light mx-auto">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/04_ejemplo.png' %}" alt="">
+                </div>
+                <p>{% trans "AfterConstraintsConverted" %}</p>
+                <div class="container-sm bg-light mx-auto">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/05_ejemplo.png' %}" alt="">
+                </div>
+
+                <p class="text-white">{% trans "MatrixOverview" %}</p>
+                <p>
+                    <span class="text-white">
+                        <i class="fa-solid fa-1 text-white"></i> – {% trans "MatrixItem1Title" %}
+                    </span>
+                    {% trans "MatrixItem1Desc" %}
                 </p>
                 <p>
                     <span class="text-white">
-                        <i class="fa-solid fa-1 text-white"></i> - 
-                        Vector de Costes:
+                        <i class="fa-solid fa-2 text-white"></i> – {% trans "MatrixItem2Title" %}
                     </span>
-                    Es el vector que contiene los coeficientes de todas las variables de la función objetivo. En la parte inferior del vector se indican las variables en orden.
+                    {% trans "MatrixItem2Desc" %}
                 </p>
                 <p>
                     <span class="text-white">
-                        <i class="fa-solid fa-2 text-white"></i> - 
-                        Vector Solución:
+                        <i class="fa-solid fa-3 text-white"></i> – {% trans "MatrixItem3Title" %}
                     </span>
-                    En esta columna se coloca la solución básica inicial y se va actualizando conforme se realizan las iteraciones. En la columna Cb se indica el coeficiente que corresponde a cada variable en el vector de costes. Así mismo siempre se iniciará con las variables de holgura en la base cuando el problema no tenga variables artificiales.
+                    {% trans "MatrixItem3Desc" %}
                 </p>
                 <p>
                     <span class="text-white">
-                        <i class="fa-solid fa-3 text-white"></i> - 
-                        Coeficientes Restricciones:
+                        <i class="fa-solid fa-4 text-white"></i> – {% trans "MatrixItem4Title" %}
                     </span>
-                    Se colocan los coeficientes de las restricciones en el mismo orden en que fueron formuladas. La columna R contiene a los términos independientes también conocido como vector de recursos.
-                </p>
-                <p>
-                    <span class="text-white">
-                        <i class="fa-solid fa-4 text-white"></i> - 
-                        Vector de costes reducidos:
-                    </span>
-                    También conocido como precios sombra. Este vector se calcula multiplicando el vector solución por los coeficientes de las restricciones y se resta el vector de costes. Este procedimiento lo explicaremos al detalle en nuestra entrada del método de las dos fases y de la M Grande, donde se presentan variables artificiales. En los ejercicios que veremos en esta entrada, al no existir variables artificiales, el vector de costes será igual al vector de costes multiplicado por «-1».
+                    {% trans "MatrixItem4Desc" %}
                 </p>
             </div>
-
         </details>
 
-        {% comment %} Paso numero 2 {% endcomment %}
+        {% comment %} Paso número 2 {% endcomment %}
         <details>
-             <summary class='h3 text-white'><i class="fa-solid fa-shoe-prints"></i> Determinar la solución básica inicial</summary>
+            <summary class="h3 text-white">
+                <i class="fa-solid fa-shoe-prints"></i> {% trans "Detail2Summary" %}
+            </summary>
             <div class="content container mt-4 padding">
-                <p>
-                    Como habíamos mencionado, el método simplex parte de un vértice de la región factible, es decir, un punto extremo. Con cada iteración avanzaremos de vértice en vértice hasta llegar a la solución óptima.
-
-                    En nuestro caso, en la matriz elaborada podemos ver la solución básica inicial que sería
-                    \(S_1=35, S_2=18\) y \(S_3=26\) cada variable del vector solución se iguala al valor que se encuentra en la columna \(R\). Estas variables se denominan variables básicas. El valor de \(Z\) inicial también se muestra en la columna \(R\) que es 0.
-                </p>
+                <p>{% trans "Detail2Description1" %}</p>
                 <div class="container-sm bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/06_ejemplo.png"%}" alt="">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/06_ejemplo.png' %}" alt="">
                 </div>
-                <p>
-                    Las variables que no se encuentran en la base se denominan variables no básicas y en este caso serían \(X_1\) y \(X_2\). Ambas tienen un valor de 0. ¿Con esta solución tenemos el mejor valor de \(Z\)? Para saberlo debemos continuar al siguiente paso:
-                </p>
-                
+                <p>{% trans "Detail2Description2" %}</p>
             </div>
         </details>
 
-        {% comment %} PASO NUMERO 3 {% endcomment %}
+        {% comment %} PASO NÚMERO 3 {% endcomment %}
         <details>
-            <summary class="h4 text-white"><i class="fa-solid fa-shoe-prints"></i> Seleccionar la variable de entrada utilizando la condición de optimalidad</summary>
-            <div class="content container mt-5 mx-auto" >
-            <section id="inicio" class="seccion-hero">
-                <div class="container">
-                    <div class="row align-items-center min-vh-100">
-                        <div class="col">
-                            <div class="row align-items-center min-vh-100 row-equal">
-                                <div class="col-lg-6 mx-auto">
-                                    <div class="card bg-danger mb-3">
-                                        <div class="card-header text-white card-equal" >
-                                            <h4 class='card-title'><i class="fa-solid fa-circle-info"></i> Condición de Optimalidad</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="card-text text-primary ">
-                                                La condición de optimalidad consiste en verificar si la solución actual que
-                                                tenemos en nuestra matriz es la óptima o si se puede mejorar. Se verifica de la siguiente manera
-                                            </p>
-                                            <p class="text-white">
-                                                <i class="fa-solid fa-chevron-right"></i> - En un problema de maximización si todos los coeficientes del vector de costes
-                                                reducidos son mayores o iguales que cero, quiere decir que estamos en el punto óptimo
-                                                y finaliza el problema
-                                            </p>
-                                            <p class="text-white">
-                                                <i class="fa-solid fa-chevron-right"></i> - Si un problema de programación lineal tiene una solución óptima y finita, 
-                                                ésta estará en un vértice del poliedro convexo que representa al problema.
-                                            </p>
-                                            <p class="text-primary">
-                                                Siguiendo con el ejemplo, siendo el problema de maximización, podemos ver que en el vector de costes reducidos existen valores negativos, lo que significa que no estamos en el óptimo. Eso quiere decir que debemos iniciar las iteraciones seleccionando la variable de entrada.
-                                            </p>
+            <summary class="h4 text-white">
+                <i class="fa-solid fa-shoe-prints"></i> {% trans "Detail3Summary" %}
+            </summary>
+            <div class="content container mt-5 mx-auto">
+                <section id="inicio" class="seccion-hero">
+                    <div class="container">
+                        <div class="row align-items-center min-vh-100">
+                            <div class="col">
+                                <div class="row align-items-center min-vh-100 row-equal">
+                                    <div class="col-lg-6 mx-auto">
+                                        <div class="card bg-danger mb-3">
+                                            <div class="card-header text-white card-equal">
+                                                <h4 class="card-title">
+                                                    <i class="fa-solid fa-circle-info"></i> {% trans "Detail3OptimalityTitle" %}
+                                                </h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="card-text text-primary">
+                                                    {% trans "Detail3OptimalityDesc" %}
+                                                </p>
+                                                <p class="text-white">
+                                                    <i class="fa-solid fa-chevron-right"></i> – {% trans "Detail3OptimalityPoint1" %}
+                                                </p>
+                                                <p class="text-white">
+                                                    <i class="fa-solid fa-chevron-right"></i> – {% trans "Detail3OptimalityPoint2" %}
+                                                </p>
+                                                <p class="text-primary">
+                                                    {% trans "Detail3OptimalityNote" %}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="card bg-info mb-3 card-equal" >
-                                        <div class="card-header text-white">
-                                            <h4 class='card-title'><i class="fa-solid fa-crosshairs"></i> Variable de Entrada</h4>
-                                        </div>
-                                        <div class="card-body">
-
-                                            <p>
-                                                La variable de entrada hace referencia a una de las variables no básicas
-                                                que ingresará a la base y formará parte de la solución del problema.
-                                            </p>
-                                            <p>
-                                                Los criterios para seleccionar la variable de entrada depende
-                                                si el problema es de maximización o minimización:
-                                            </p>
-                                            <p class="text-white">
-                                                <i class="fa-solid fa-chevron-right"></i> - Para problemas de <span class="text-primary-neon">maximización</span>, la variable de entrada será
-                                                la variable no básica con el coeficiente más negativo en el vector de costes reducidos.
-                                            </p>
-                                            <p class="text-white">
-                                                <i class="fa-solid fa-chevron-right"></i> - Para problemas de <span class="text-primary-neon">minimización</span>, la variable de entrada será
-                                                la variable no básica con el coeficiente más positivo en el vector de costes reducidos.
-                                            </p>
-                                            <p>
-                                                La columna donde está ubicada la variable se denomina columna pivote.
-                                            </p>
-
+                                    <div class="col-lg-6">
+                                        <div class="card bg-info mb-3 card-equal">
+                                            <div class="card-header text-white">
+                                                <h4 class="card-title">
+                                                    <i class="fa-solid fa-crosshairs"></i> {% trans "Detail3EntryVarTitle" %}
+                                                </h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{% trans "Detail3EntryVarDesc1" %}</p>
+                                                <p>{% trans "Detail3EntryVarDesc2" %}</p>
+                                                <p class="text-white">
+                                                    <i class="fa-solid fa-chevron-right"></i> – {% trans "Detail3EntryVarPoint1" %}
+                                                </p>
+                                                <p class="text-white">
+                                                    <i class="fa-solid fa-chevron-right"></i> – {% trans "Detail3EntryVarPoint2" %}
+                                                </p>
+                                                <p>{% trans "Detail3PivotNote" %}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </section>
+                <p>{% trans "Detail3ExampleNote" %}</p>
+                <div class="container-sm bg-light mx-auto mb-3">
+                    <img class="image" src="{% static 'metodos_numericos/img/example/07_ejemplo.png' %}" alt="">
                 </div>
-            </section>
-            <p>
-                En el ejemplo nuestra variable de entrada sería X1 dado que tiene el
-                valor más negativo en el vector de costes reducidos, es decir «-3»:
-            </p>
-            <div class="container-sm bg-light mx-auto mb-3">
-                <img class='image' src="{% static "metodos_numericos/img/example/07_ejemplo.png"%}" alt="">
             </div>
-        </div>
         </details>
-          {% comment %} Paso numero 4 {% endcomment %}
+
+        {% comment %} Paso numero 4 {% endcomment %}
         <details>
             <summary class='h4 text-white'><i class="fa-solid fa-shoe-prints"></i> Seleccionar la Variable de Salida con la Condición de Factibilidad</summary>
             <div class="container text-center">
@@ -478,274 +443,253 @@
                 </section>
             </div>    
         </details>
-        {% comment %} Paso numero 5 {% endcomment %}
-        <details>
-            <summary class='h4 text-white'><i class="fa-solid fa-shoe-prints"></i> Actualizar la Matriz</summary>
-            <div class="container">
-                <p>
-                    Una vez determinado nuestro elemento pivote, realizaremos las operaciones de Gauss-Jordan
-                    para formar nuestra matriz identidad. El nuevo valor de cada fila se calculará de la siguiente manera:
-                </p>
-                <p>
-                   <span class='text-warning-neon'><i class="fa-solid fa-chevron-right"></i> Para la fila pivote:</span> El nuevo valor se obtendrá dividiendo el valor actual entre el elemento pivote.
-                   \[ 
-                    \text{Nuevo valor de la fila pivote} = \text{Valor actual de la fila pivote} \div \text{Elemento pivote}
-                   \]
-                </p>
-                <p>
-                    <span class='text-warning-neon'><i class="fa-solid fa-chevron-right"></i> Para las otras filas:</span> El nuevo valor se calcula restando del valor actual,
-                    la multiplicación del elemento de la fila que se encuentra en la columna pivote por el nuevo valor calculado en la fila pivote.
-                    \[
-                    \text{Nuevo valor de la fila} = \text{Valor actual de la fila} - \left(\text{Valor de la columna pivote} \times \text{Nuevo valor de la fila pivote}\right)
-                    \]
-                </p>
-                <div class="content">
-                     <p>
-                        Para entenderlo mejor, continuaremos resolviendo el ejemplo. Iniciaremos con la fila pivote:
-                    </p>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/10_ejemplo.png"%}" alt="">
-                    </div>
-                    <p>
-                        En las otras filas realizaremos los cálculos de forma diferente. Iniciaremos con la fila de \(S_1\):
-                    </p>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/11_ejemplo.png"%}" alt="">
-                    </div>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/12_ejemplo.png"%}" alt="">
-                    </div>
-                    <p>
-                        Para la fila \(S_3\) tenemos:
-                    </p>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/13_ejemplo.png"%}" alt="">
-                    </div>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/14_ejemplo.png"%}" alt="">
-                    </div>
-                    <p>
-                        Finalmente, para la fila de \(Z\) tenemos:
-                    </p>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/15_ejemplo.png"%}" alt="">
-                    </div>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/16_ejemplo.png"%}" alt="">
-                    </div>
-                    <p>
-                        Una vez que hemos realizado las operaciones de Gauss-Jordan, nuestra matriz queda de la siguiente manera:
-                    </p>
-                    <div class="container-md bg-light mx-auto">
-                        <img class='image' src="{% static "metodos_numericos/img/example/17_ejemplo.png"%}" alt="">
-                    </div>
-                </div>
-                <p>
-                    Cómo puedes ver la posición donde se encontraba nuestro elemento pivote ahora es 1 y los
-                    elementos que lo acompañan en la columna se convierten en 0. Es así que empezamos a formar nuestra matriz identidad.
-                </p>
 
-                <h4 class='text-white '>Volver al paso número 3</h4>
-                <p>Con este último resultado, volveremos al paso 3 y repetiremos el proceso. Cómo existen valores negativos en el vector de costes reducidos, podemos seguir optimizando.</p>
-                <p>El único valor negativo es -4, por lo que la variable que ingresará es \(X_2\).</p>
-                <p>Para elegir la variable que va a salir, dividimos cada valor de la columna \(R\) por su contraparte de la columna \(X_2\) (este último valor debe ser positivo)</p>
-                <p>
-                    \[
-                        \frac{R}{X_2} = \frac{23}{19/3} = 3.632
-                    \]
-                </p>
-                <p>
-                \[ \text{El valor de la columna X}_2 \text{ es negativo por lo que no se toma en cuenta} \]
-                </p>
-                <p>
-                    \[
-                        \frac{14}{16/3} = 2.625
-                    \]
-                </p>
-                <p>
-                    El menor valor se encuentra en la fila de S3, por lo que es la variable que saldrá de la base. El elemento pivote es 16/3.
-                </p>
-                <p>
-                    Realizamos nuevamente las iteraciones obteniendo el siguiente resultado:
-                </p>
-                <div class="container-md bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/18_ejemplo.png"%}" alt="">
-                </div>
-                <p>
-                    En esta última matriz vemos que el vector de costes reducidos ya no tiene ningún valor negativo, lo que quiere decir que nos encontramos en el valor óptimo. Obtendremos los valores de las variables básicas y de Z de la siguiente forma:
-                </p>
-                <p>
-                    Las variables que no se encuentran en la base tendrán valor de 0.
-                </p>
-                {% comment %} Solución: X1= 31/4, X2= 21/8, S1= 51/8, S2= 0, S3= 0, Z = 57/2 {% endcomment %}
-                <p> 
-                    \[ \text{Solución: } X_1 = \frac{31}{4}, X_2 = \frac{21}{8}, S_1 = \frac{51}{8}, S_2 = 0, S_3 = 0, Z = \frac{57}{2} \]
-                </p>
-                <div class="container-md bg-light mx-auto">
-                    <img class='image' src="{% static "metodos_numericos/img/example/19_ejemplo.png"%}" alt="">
-                </div>
-                <br>
+    {% comment %} Paso número 5 {% endcomment %}
+<details>
+    <summary class="h4 text-white">
+        <i class="fa-solid fa-shoe-prints"></i> {% trans "Detail5Summary" %}
+    </summary>
+    <div class="container">
+        <p>{% trans "Detail5Intro" %}</p>
+
+        <p>
+            <span class="text-warning-neon">
+                <i class="fa-solid fa-chevron-right"></i> {% trans "Detail5PivotTitle" %}
+            </span> {% trans "Detail5PivotDesc" %}
+        </p>
+        <p>
+            <span class="text-warning-neon">
+                <i class="fa-solid fa-chevron-right"></i> {% trans "Detail5OtherTitle" %}
+            </span> {% trans "Detail5OtherDesc" %}
+        </p>
+
+        <div class="content">
+            <p>{% trans "Detail5ExampleIntro" %}</p>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/10_ejemplo.png' %}" alt="">
             </div>
-        </details>
-        <div class="alert alert-warning text-warning ps-3 pt-2 pb-2 mb-2 rounded-pill" role="alert">
-            Esta teoria ha sido extraida de la siguiente fuente: <a href="https://www.plandemejora.com/calculadora-metodo-simplex-online/">Plan de Mejora</a>
+
+            <p>{% trans "Detail5AfterpivotIntro" %}</p>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/11_ejemplo.png' %}" alt="">
+            </div>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/12_ejemplo.png' %}" alt="">
+            </div>
+
+            <p>{% trans "Detail5RowS3Intro" %}</p>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/13_ejemplo.png' %}" alt="">
+            </div>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/14_ejemplo.png' %}" alt="">
+            </div>
+
+            <p>{% trans "Detail5RowZIntro" %}</p>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/15_ejemplo.png' %}" alt="">
+            </div>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/16_ejemplo.png' %}" alt="">
+            </div>
+
+            <p>{% trans "Detail5PostOperations" %}</p>
+            <div class="container-md bg-light mx-auto">
+                <img class="image" src="{% static 'metodos_numericos/img/example/17_ejemplo.png' %}" alt="">
+            </div>
         </div>
 
-    <section class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo" id='section3'>
-        <h2><i class="fa-regular fa-file-code"></i> Manual de Usuario</h2>
+        <p>{% trans "Detail5MatrixIdentityDesc" %}</p>
+
+        <h4 class="text-white">{% trans "Detail5ReturnStep" %}</h4>
+        <p>{% trans "Detail5ReturnDesc" %}</p>
+
+        <p>{% trans "Detail5NegativeValueDesc" %}</p>
+        <p>{% trans "Detail5ChooseExitVarDesc" %}</p>
+
         <p>
-            Aquí encontrarás instrucciones paso a paso para ingresar datos, interpretar
-            resultados y sacar el máximo provecho de la herramienta.
+            \[ \frac{R}{X_2} = \frac{23}{19/3} = 3.632 \]
         </p>
+        <p>{% trans "Detail5IgnoreNegative" %}</p>
+        <p>
+            \[ \frac{14}{16/3} = 2.625 \]
+        </p>
+        <p>{% trans "Detail5SmallestValueDesc" %}</p>
+
+        <p>{% trans "Detail5NextIterationIntro" %}</p>
+        <div class="container-md bg-light mx-auto">
+            <img class="image" src="{% static 'metodos_numericos/img/example/18_ejemplo.png' %}" alt="">
+        </div>
+
+        <p>{% trans "Detail5OptReached" %}</p>
+        <p>{% trans "Detail5NonBasisZero" %}</p>
+
+        <p>{% trans "Detail5Solution" %}</p>
+
+        <div class="container-md bg-light mx-auto">
+            <img class="image" src="{% static 'metodos_numericos/img/example/19_ejemplo.png' %}" alt="">
+        </div>
+        <br>
+    </div>
+</details>
+
+
+    <div class="alert alert-warning text-warning ps-3 pt-2 pb-2 mb-2 rounded-pill" role="alert">
+        {% trans "AlertTextPrefix" %} <a href="https://www.plandemejora.com/calculadora-metodo-simplex-online/">{% trans "AlertTextLink" %}</a>
+    </div>
+
+    <section class="container bg-secondary-neon mt-5 border-warning text-white text-center py-5 estilo-brillo" id="section3">
+        <h2><i class="fa-regular fa-file-code"></i> {% trans "Section3Title" %}</h2>
+        <p>{% trans "Section3Description" %}</p>
     </section>
 
-    <div class="container ">
+    <div class="container">
         <div class="card content border border-info border-neon">
-            <h3 class='text-white-neon h2'>Explicacion paso a paso de como poder resolver un ejercicio</h3>
-            <h3 class='text-white'><i class="fa-solid fa-1 "></i> - Introducir los valores a la calculadora</h3>
-            <div class="container-md  mx-auto">
-                <img class='image' src="{% static "metodos_numericos/img/manual/manual_1.png"%}" alt="">
+            <h3 class="text-white-neon h2">{% trans 'ManualSectionTitle' %}</h3>
+
+            <h3 class="text-white">
+                <i class="fa-solid fa-1"></i> - {% trans 'ManualStep1Title' %}
+            </h3>
+            <div class="container-md mx-auto">
+                <img class="image"
+                    src="{% static 'metodos_numericos/img/manual/manual_1.png' %}"
+                    alt="{% trans 'ManualStep1ImageAlt' %}">
             </div>
-            <ol class='container-md mi-lista'>
-                <li>
-                    Se puede elegir el tipo de problema que se desea resolver, ya sea de \(\text{Maximización}\) o \(\text{Minimización}\).
-                    Puedes elegir la cantidad de variables que deseas utilizar, desde 2 hasta \(X\) variables.
-                </li>
-                <li>
-                    Puedes declarar nomnre a las variables, por defecto viene \(x_1\) y \(x_2 ... x_n\)
-                </li>
-                <li>
-                    Apartado para subir los valores de la \(\text{Funcion Objetivo}\), cada uno siguindo el orden de las variables.
-                </li>
+            <ol class="container-md mi-lista">
+                <li>{% trans 'ManualStep1Item1' %}</li>
+                <li>{% trans 'ManualStep1Item2' %}</li>
+                <li>{% trans 'ManualStep1Item3' %}</li>
             </ol>
-            <div class="container-md  mx-auto">
-                <img class='image' src="{% static "metodos_numericos/img/manual/manual_2.png"%}" alt="">
+
+            <div class="container-md mx-auto">
+                <img class="image"
+                    src="{% static 'metodos_numericos/img/manual/manual_2.png' %}"
+                    alt="{% trans 'ManualStep2ImageAlt' %}">
             </div>
-            <ol class='container-md mi-lista' start='4'>
-                <li>
-                    <span class='text-danger'>Boton de eliminar</span> sirve para poder eliminar una restricción que ya no se necesite o si has agregado restricciones de más.
-                </li>
-                <li>
-                    El cuadro completo es el lugar donde se ingresan las restricciones del problema, cada restricción debe seguir el orden de las variables.
-                </li>
-                <li>
-                    <p>
-                        <span class='text-white'>Boton de agregar</span> sirve para agregar una restricción más, si es que se desea agregar más restricciones al problema.
-                    </p>
-                    <p>
-                        <span class="text-white">Boton de carga Ejemplo</span> la app trae un ejemplo de un problema de programación lineal, para que puedas ver como funciona la app.
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <span class='text-white'>Boton de resolver</span> sirve para resolver el problema que se ha ingresado, una vez que se ha ingresado todos los valores necesarios.
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <span class='text-white'>Cuadro de previsualización</span> sirve para ver como se verá el problema que se ha ingresado, antes de resolverlo.
-                </li>
-                
+            <ol class="container-md mi-lista" start="4">
+                <li>{% trans 'ManualStep2Item4' %}</li>
+                <li>{% trans 'ManualStep2Item5' %}</li>
+                <li>{% trans 'ManualStep2Item6' %}</li>
+                <li>{% trans 'ManualStep2Item7' %}</li>
+                <li>{% trans 'ManualStep2Item8' %}</li>
             </ol>
-            <h3 class='text-white'><i class="fa-solid fa-2 "></i> - Muestra de Resultados</h3>
-            <div class="container-md  mx-auto">
-                <img class='image' src="{% static "metodos_numericos/img/manual/manual_3.png"%}" alt="">
+
+            <h3 class="text-white">
+                <i class="fa-solid fa-2"></i> - {% trans 'ManualResultsTitle' %}
+            </h3>
+            <div class="container-md mx-auto">
+                <img class="image"
+                    src="{% static 'metodos_numericos/img/manual/manual_3.png' %}"
+                    alt="{% trans 'ManualResultsImageAlt' %}">
             </div>
-            <ol class='container-md mi-lista'>
-                <li>
-                    <span class="text-white">Cuadro Respuesta Rapida</span> para los que no quieren ver todo el proceso, este cuadro muestra la respuesta rápida del problema que se ha ingresado.
-                </li>
+            <ol class="container-md mi-lista">
+                <li>{% trans 'ManualResultsItem1' %}</li>
             </ol>
-            <div class="container-md  mx-auto">
-                <img class='image' src="{% static "metodos_numericos/img/manual/manual_4.png"%}" alt="">
+
+            <div class="container-md mx-auto">
+                <img class="image"
+                    src="{% static 'metodos_numericos/img/manual/manual_4.png' %}"
+                    alt="{% trans 'ManualResultsDetailImageAlt' %}">
             </div>
-            <ol class='container-md mi-lista' start='2'>
-                <li>
-                    <span class="text-white">Cuadro de paso a paso</span> se encuentra el paso a paso de como se ha resuelto el problema, cada paso se explica detalladamente.
-                </li>
+            <ol class="container-md mi-lista" start="2">
+                <li>{% trans 'ManualResultsItem2' %}</li>
             </ol>
         </div>
     </div>
 
 
-    {% comment %} NOSOTROS {% endcomment %}
-    <h2 class='text-white-neon text-center my-5 PY-1' id='section4'><i class="fa-solid fa-people-group"></i> EQUIPO DE DESARROLLO</h2>
-    <div class="row justify-content-between mx-auto container-xl ">
-        <div class="col-lg-4 my-5">
-            <a class="card-ui" href="https://github.com/Mixgyt">
-                <div class="content-card">
-
-                    <div class="container-md mx-auto">
-                        <img src="{% static "metodos_numericos/img/team/enoc.png"%}" class='image rounded-pill border-neon' alt="Enoc">
-                    </div>
-                    <p class='h3'>
-                        <i class="fa-brands fa-github"></i> Mixgyt
-                    </p>
-                </div>  
-            </a>
-        </div>
-        <div class="col-lg-4 my-5">
-            <a class="card-ui" href="https://github.com/CesarG503">
-                <div class="content-card">
-
-                    <div class="container-md mx-auto">
-                        <img src="{% static "metodos_numericos/img/team/viper.png"%}" class='image rounded-pill border-neon' alt="Enoc">
-                    </div>
-                    <p class='h3'>
-                        <i class="fa-brands fa-github"></i> CesarG503
-                    </p>
-                </div>  
-            </a>
-        </div>
-        <div class="col-lg-4 my-5">
-            <a class="card-ui" href="https://github.com/JuanSPcode">
-                <div class="content-card">
-
-                    <div class="container-md">
-                        <img src="{% static "metodos_numericos/img/team/juan.png"%}" class='image rounded-pill border-neon' alt="Enoc">
-                    </div>
-                    <p class='h3'>
-                        <i class="fa-brands fa-github"></i> JuanSPcode
-                    </p>
-                </div>  
-            </a>
-        </div>
+ {% comment %} NOSOTROS {% endcomment %}
+<h2 class="text-white-neon text-center my-5 py-1" id="section4">
+    <i class="fa-solid fa-people-group"></i> {% trans "TeamSectionTitle" %}
+</h2>
+<div class="row justify-content-between mx-auto container-xl">
+    <div class="col-lg-4 my-5">
+        <a class="card-ui" href="https://github.com/Mixgyt">
+            <div class="content-card">
+                <div class="container-md mx-auto">
+                    <img src="https://avatars.githubusercontent.com/u/44759176?v=4"
+                         class="image rounded-pill border-neon"
+                         alt="Enoc">
+                </div>
+                <p class="h3">
+                    <i class="fa-brands fa-github"></i> Mixgyt
+                </p>
+            </div>  
+        </a>
+    </div>
+    <div class="col-lg-4 my-5">
+        <a class="card-ui" href="https://avatars.githubusercontent.com/u/114601874?v=4">
+            <div class="content-card">
+                <div class="container-md mx-auto">
+                    <img src="{% static 'metodos_numericos/img/team/viper.png' %}"
+                         class="image rounded-pill border-neon"
+                         alt="Enoc">
+                </div>
+                <p class="h3">
+                    <i class="fa-brands fa-github"></i> CesarG503
+                </p>
+            </div>  
+        </a>
+    </div>
+    <div class="col-lg-4 my-5">
+        <a class="card-ui" href="https://github.com/JuanSPcode">
+            <div class="content-card">
+                <div class="container-md">
+                    <img src="https://avatars.githubusercontent.com/u/136136391?v=4"
+                         class="image rounded-pill border-neon"
+                         alt="Enoc">
+                </div>
+                <p class="h3">
+                    <i class="fa-brands fa-github"></i> JuanSPcode
+                </p>
+            </div>  
+        </a>
     </div>
 </div>
 
 <footer class="mt-5 bg-secondary-neon mx-auto">
-        <div class="container py-4 mx-auto">
-            <div class="row justify-content-between mx-auto">
-                <!-- Columna 1: Información del proyecto -->
-                <div class="col-md-5 mb-2 text-center">
-                    <h4 class="text-primary-neon"><i class="fa-solid fa-chart-simple"></i> SimpleX</h4>
-                    <p class="text-white">Una herramienta avanzada para resolver problemas de programación lineal utilizando el método Simplex</p>
-                </div>
-                
-                
-                <!-- Columna 3: Información adicional -->
-                <div class="col-md-5 mb-2 text-center">
-                    <h4 class="text-primary-neon">Información del Proyecto</h4>
-                    <p class="text-white">Proyecto desarrollado como parte de la materio Metodo de optimización.</p>
-                    <div class="botones-hero">
-                        <a class="btn mx-auto bg-success btn-lg animate__animated animate__bounceIn animate__delay-1s me-3" href="{% url "metodos_numericos:simplex"%}"><i class="fa-solid fa-forward"></i> Comenzar</a>
-                        <a class="btn mx-auto bg-warning btn-lg animate__animated animate__bounceIn animate__delay-1s" href="https://github.com/CesarG503/math_solver"><i class="fa-brands fa-github"></i> Proyecto</a>
-                    </div>
-                </div>
+    <div class="container py-4 mx-auto">
+        <div class="row justify-content-between mx-auto">
+            <div class="col-md-5 mb-2 text-center">
+                <h4 class="text-primary-neon">
+                    <i class="fa-solid fa-chart-simple"></i> SimpleX
+                </h4>
+                <p class="text-white">
+                    {% trans "ToolDescription" %}
+                </p>
             </div>
-            <hr class="border-primary">
-            <!-- Derechos de autor -->
-            <p class="row justify-content-center align-items-center">
-                <img src="{% static "metodos_numericos/img/manual/Minerva.png"%}" alt="Minerva" height="50" > <a href="https://www.ues.edu.sv"> UNIVERSIDAD NACIONAL DE EL SALVADOR</a>
-            </p>
-            <div class="row ">
-                <div class="col-12 text-center">
-
-                    <p class="text-white">© {% now "Y" %} Math Solver. Todos los derechos reservados.</p>
+            <div class="col-md-5 mb-2 text-center">
+                <h4 class="text-primary-neon">
+                    {% trans "ProjectInfoTitle" %}
+                </h4>
+                <p class="text-white">
+                    {% trans "ProjectInfoDesc" %}
+                </p>
+                <div class="botones-hero">
+                    <a class="btn mx-auto bg-success btn-lg animate__animated animate__bounceIn animate__delay-1s me-3"
+                       href="{% url 'metodos_numericos:simplex' %}">
+                        <i class="fa-solid fa-forward"></i> {% trans "ButtonStart" %}
+                    </a>
+                    <a class="btn mx-auto bg-warning btn-lg animate__animated animate__bounceIn animate__delay-1s"
+                       href="https://github.com/CesarG503/math_solver">
+                        <i class="fa-brands fa-github"></i> {% trans "ButtonProject" %}
+                    </a>
                 </div>
             </div>
         </div>
-    </footer>
+        <hr class="border-primary">
+        <p class="row justify-content-center align-items-center">
+            <img src="{% static 'metodos_numericos/img/manual/Minerva.png' %}"
+                 alt="Minerva" height="50">
+            <a href="https://www.ues.edu.sv"> {% trans "UniversityName" %}</a>
+        </p>
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="text-white">© {% now "Y" %} {% trans "FooterCopyright" %}</p>
+            </div>
+        </div>
+    </div>
+</footer>
 
 
     
@@ -767,5 +711,12 @@
 <!-- MathJax para poner las formulas mas bonitas -->
  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+ {% comment %} <script src="https://unpkg.com/darkmode-js/lib/darkmode-js.min.js"></script>
+<script>
+  function addDarkmodeWidget() {
+    new Darkmode().showWidget();
+  }
+  window.addEventListener('load', addDarkmodeWidget);
+</script> {% endcomment %}
 </body>
 </html>

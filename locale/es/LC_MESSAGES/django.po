@@ -8,109 +8,79 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-28 22:16-0600\n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
-"1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:42
-msgid "Materia"
-msgstr "Metodos de optimización"
+# Simplex page translations
+msgid "Método Simplex - Métodos Numéricos"
+msgstr "Método Simplex - Métodos Numéricos"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:52
-#: .\metodos_numericos\templates\metodos_numericos\index.html:3
-msgid "Inicio"
-msgstr "Inicio"
+msgid "Cambiar tema"
+msgstr "Cambiar tema"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:53
-msgid "Hermite"
-msgstr "Hermite"
+msgid "Método Simplex - Programación Lineal"
+msgstr "Método Simplex - Programación Lineal"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:54
-msgid "Integracion"
-msgstr "Integración"
+msgid "Datos de entrada"
+msgstr "Datos de entrada"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:59
-msgid "Login"
-msgstr "Iniciar Sesión"
+msgid "Optimización"
+msgstr "Optimización"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:3
-#: .\metodos_numericos\templates\metodos_numericos\index.html:11
-msgid "AppTitle"
-msgstr "Metodos Númericos"
+msgid "Maximizar"
+msgstr "Maximizar"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:14
-msgid "Descripcion"
-msgstr ""
-"Aplicación web para resolver problemas de interpolación e integración "
-"numérica con soluciones paso a paso detalladas."
+msgid "Minimizar"
+msgstr "Minimizar"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:27
-msgid "Interpolacion Hermite"
-msgstr "Interpolación de Hermite"
+msgid "Variables"
+msgstr "Variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:29
-msgid "Descripcion Hermite"
-msgstr ""
-"Encuentra el polinomio interpolante que pasa por puntos dados considerando "
-"tanto los valores de la función como sus derivadas."
+msgid "2 variables"
+msgstr "2 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:32
-msgid "EntradaPuntos"
-msgstr "Entrada: Puntos (x, f(x), f'(x))"
+msgid "3 variables"
+msgstr "3 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:33
-msgid "TablaDD"
-msgstr "Tabla de diferencias divididas"
+msgid "4 variables"
+msgstr "4 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:34
-msgid "PolResultante"
-msgstr "Polinomio Resultante"
+msgid "5 variables"
+msgstr "5 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:35
-msgid "EvalPEspecifico"
-msgstr "Evaluacion en un punto especifico"
+msgid "6 variables"
+msgstr "6 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:38
-#: .\metodos_numericos\templates\metodos_numericos\index.html:61
-msgid "Comenzar"
-msgstr "Comenzar"
+msgid "7 variables"
+msgstr "7 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:50
-msgid "Integracion Numerica"
-msgstr "Integración Numerica"
+msgid "8 variables"
+msgstr "8 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:52
-msgid "Descripcion Integracion"
-msgstr ""
-"Calcula aproximaciones de integrales definidas usando métodos compuestos con "
-"explicación detallada de cada paso."
+msgid "Nombres de Variables"
+msgstr "Nombres de Variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:55
-msgid "Trapecio"
-msgstr "Regla del Trapecio"
+msgid "Personaliza los nombres de tus variables"
+msgstr "Personaliza los nombres de tus variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:56
-msgid "Simpson1/3"
-msgstr "Simpson 1/3"
+msgid "Función Objetivo"
+msgstr "Función Objetivo"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:57
-msgid "Simpson3/8"
-msgstr "Simpson 3/8"
+msgid "Coeficientes de cada variable en la función objetivo"
+msgstr "Coeficientes de cada variable en la función objetivo"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:58
-msgid "CalculoPAP"
-msgstr "Calculo Paso a Paso"
+msgid "Restricciones"
+msgstr "Restricciones"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:74
-msgid "InstruccionesUso"
-msgstr "Instrucciones de Uso"
+msgid "Tipo"
+msgstr "Tipo"
 
 #: .\metodos_numericos\templates\metodos_numericos\perfil.html:76
 msgid "Cambiar idioma"
@@ -154,3 +124,623 @@ msgstr "Cerrar Sesión"
 
 msgid "Cerrar panel"
 msgstr "Cerrar Panel"
+############################
+#  Traducciones para la documentación del Método Simplex
+############################
+
+msgid "NavInicio"
+msgstr "Inicio"
+
+msgid "NavTeoria"
+msgstr "Teoría"
+
+msgid "NavManual"
+msgstr "Manual"
+
+msgid "NavNosotros"
+msgstr "Nosotros"
+
+msgid "HeroTitulo"
+msgstr "Método Simplex"
+
+msgid "HeroSubtitulo"
+msgstr "Documentación"
+
+msgid "HeroDescripcion"
+msgstr "El método Simplex es detallado y propenso a errores si se falla en un cálculo. Por eso, es clave entender cada paso del proceso."
+
+msgid "HeroBotonComenzar"
+msgstr "Comenzar"
+
+msgid "HeroBotonProyecto"
+msgstr "Proyecto"
+
+msgid "Section2Title"
+msgstr "¿Qué es el método Simplex?"
+
+msgid "Section2Description"
+msgstr "El método Simplex es un procedimiento iterativo para resolver problemas de programación lineal, donde se busca obtener la solución óptima de la función objetivo que logre cumplir el conjunto de restricciones."
+
+msgid "CardTitle"
+msgstr "Conceptos Básicos"
+
+msgid "CardIntro"
+msgstr "Para comprender de mejor manera el método Simplex vamos a revisar algunas definiciones. El método parte de dos afirmaciones importantes."
+
+msgid "CardPoint1"
+msgstr "El conjunto de posibles soluciones o conjunto factible de cualquier problema de programación lineal puede representarse mediante un poliedro convexo."
+
+msgid "CardPoint2"
+msgstr "Si un problema de programación lineal tiene una solución óptima y finita, ésta estará en un vértice del poliedro convexo que representa al problema."
+
+msgid "StepsTitle"
+msgstr "Pasos del Método Simplex"
+
+msgid "StepsPoint1"
+msgstr "Definir el problema en la forma estándar y generar nuestra matriz."
+
+msgid "StepsPoint2"
+msgstr "Determinar la solución básica inicial."
+
+msgid "StepsPoint3"
+msgstr "Seleccionar la variable de entrada utilizando la condición de optimalidad. Si no se puede seleccionar una variable de entrada, quiere decir que estamos en la condición óptima y finalizan las iteraciones. De otro modo se continúa con el siguiente paso."
+
+msgid "StepsPoint4"
+msgstr "Seleccionar la variable de salida utilizando la condición de factibilidad."
+
+msgid "StepsPoint5"
+msgstr "Actualizar nuestra matriz realizando las operaciones de Gauss-Jordan. Volver al paso número 3."
+
+msgid "Detail1Title"
+msgstr "Pasos del Método Simplex explicados a detalle"
+
+msgid "Detail1Step1Summary"
+msgstr "Definir el problema en la forma estándar y generar nuestra matriz"
+
+msgid "Detail1Intro"
+msgstr "Un problema de programación lineal tiene la siguiente forma"
+
+msgid "DetailObjectiveHeader"
+msgstr "Función Objetivo"
+
+msgid "DetailObjectiveAction"
+msgstr "Maximizar o Minimizar"
+
+msgid "DetailSubjectToHeader"
+msgstr "Sujeto a"
+
+msgid "DetailConstraint1"
+msgstr "c_{11}x_1 + c_{12}x_2 + … + c_{1n}x_n (≥, ≤, =) b_1"
+
+msgid "DetailConstraint2"
+msgstr "c_{21}x_1 + c_{22}x_2 + … + c_{2n}x_n (≥, ≤, =) b_2"
+
+msgid "DetailConstraintN"
+msgstr "c_{m1}x_1 + c_{m2}x_2 + … + c_{mn}x_n (≥, ≤, =) b_m"
+
+msgid "DetailNonNegativity"
+msgstr "x_1 ≥ 0,  x_2 ≥ 0,  …,  x_n ≥ 0"
+
+msgid "DetailVariablesNote"
+msgstr "Donde x₁, x₂, …, xₙ son las variables del problema."
+
+msgid "PreStandardNote"
+msgstr "Antes de llevar nuestro modelo a la forma estándar debemos verificar que todas las restricciones tienen el lado derecho no negativo."
+
+msgid "NegativeSideQuestion"
+msgstr "¿Qué hago si el lado derecho de la restricción es negativo?"
+
+msgid "NegativeSideExplanation"
+msgstr "Cuando el término independiente de la restricción es negativo, se debe multiplicar por -1 toda la restricción —incluyendo su signo— para hacer el lado derecho positivo."
+
+msgid "NegativeStep1"
+msgstr "Si la restricción es del tipo mayor igual (≥), se deberá cambiar a menor igual (≤)."
+
+msgid "NegativeStep2"
+msgstr "Si la restricción es del tipo menor igual (≤), se deberá cambiar a mayor igual (≥)."
+
+msgid "NegativeStep3"
+msgstr "Si la restricción es una igualdad, el signo se mantiene."
+
+msgid "ConvertToEqualitiesTitle"
+msgstr "Convertir restricciones en igualdades"
+
+msgid "ConvertToEqualitiesNote"
+msgstr "Para convertir las restricciones en igualdades va a depender de su signo"
+
+msgid "CaseLessEqual"
+msgstr "Si la restricción es menor igual (≤):"
+
+msgid "CaseLessEqualDesc"
+msgstr "Para este tipo de restricciones debemos introducir una variable de holgura no negativa."
+
+msgid "CaseGreaterEqual"
+msgstr "Si la restricción es mayor igual (≥):"
+
+msgid "CaseGreaterEqualDesc"
+msgstr "Se debe restar una variable de exceso y agregar una variable artificial."
+
+msgid "CaseEqual"
+msgstr "Si la restricción es igual (=):"
+
+msgid "CaseEqualDesc"
+msgstr "Se debe restar una variable de exceso y agregar una variable artificial."
+
+msgid "SimplexMethodScope"
+msgstr "El método Simplex que abordaremos en esta entrada se utiliza para problemas de programación lineal con restricciones ≤. Para variables artificiales use el método de dos fases o la M Grande."
+
+msgid "GenerateMatrixTitle"
+msgstr "Generar la matriz del problema"
+
+msgid "GenerateMatrixIntro"
+msgstr "Una vez que tenemos nuestro problema en forma estándar, debemos generar la matriz con los coeficientes de la función objetivo y las restricciones."
+
+msgid "AfterConstraintsConverted"
+msgstr "Una vez convertidas las restricciones en ecuaciones, procedemos a generar nuestra matriz:"
+
+msgid "MatrixOverview"
+msgstr "En nuestra matriz podemos identificar lo siguiente:"
+
+msgid "MatrixItem1Title"
+msgstr "Vector de Costes:"
+
+msgid "MatrixItem1Desc"
+msgstr "Contiene los coeficientes de todas las variables de la función objetivo; debajo se muestran las variables en orden."
+
+msgid "MatrixItem2Title"
+msgstr "Vector Solución:"
+
+msgid "MatrixItem2Desc"
+msgstr "Columna con la solución básica inicial; en Cb se indica el coeficiente de cada variable en el vector de costes."
+
+msgid "MatrixItem3Title"
+msgstr "Coeficientes Restricciones:"
+
+msgid "MatrixItem3Desc"
+msgstr "Coeficientes de las restricciones en el orden original; la columna R es el vector de recursos."
+
+msgid "MatrixItem4Title"
+msgstr "Vector de costes reducidos:"
+
+msgid "MatrixItem4Desc"
+msgstr "También llamado precios sombra: se calcula multiplicando el vector solución por los coeficientes de las restricciones y restando el vector de costes."
+
+msgid "Detail2Summary"
+msgstr "Determinar la solución básica inicial"
+
+msgid "Detail2Description1"
+msgstr "Como habíamos mencionado, el método Simplex parte de un vértice de la región factible, es decir, un punto extremo. Con cada iteración avanzaremos de vértice en vértice hasta llegar a la solución óptima. En nuestro caso, en la matriz elaborada podemos ver la solución básica inicial que sería S₁=35, S₂=18 y S₃=26; cada variable del vector solución se iguala al valor que se encuentra en la columna R. Estas variables se denominan variables básicas. El valor de Z inicial también se muestra en la columna R y es 0."
+
+msgid "Detail2Description2"
+msgstr "Las variables que no se encuentran en la base se denominan variables no básicas y, en este caso, serían X₁ y X₂, ambas con valor 0. ¿Con esta solución tenemos el mejor valor de Z? Para saberlo debemos continuar al siguiente paso:"
+
+msgid "Detail3Summary"
+msgstr "Seleccionar la variable de entrada utilizando la condición de optimalidad"
+
+msgid "Detail3OptimalityTitle"
+msgstr "Condición de Optimalidad"
+
+msgid "Detail3OptimalityDesc"
+msgstr "La condición de optimalidad consiste en verificar si la solución actual en la matriz es la óptima o si se puede mejorar."
+
+msgid "Detail3OptimalityPoint1"
+msgstr "En un problema de maximización, si todos los coeficientes del vector de costes reducidos son ≥ 0, estamos en el punto óptimo y finaliza el problema."
+
+msgid "Detail3OptimalityPoint2"
+msgstr "Si un problema de programación lineal tiene una solución óptima y finita, ésta estará en un vértice del poliedro convexo que representa al problema."
+
+msgid "Detail3OptimalityNote"
+msgstr "Siguiendo con el ejemplo de maximización, existen valores negativos en el vector de costes reducidos; por tanto, debemos iniciar las iteraciones seleccionando la variable de entrada."
+
+msgid "Detail3EntryVarTitle"
+msgstr "Variable de Entrada"
+
+msgid "Detail3EntryVarDesc1"
+msgstr "La variable de entrada es una de las variables no básicas que ingresará a la base y formará parte de la solución."
+
+msgid "Detail3EntryVarDesc2"
+msgstr "Los criterios para seleccionar la variable de entrada dependen de si el problema es de maximización o minimización:" 
+
+msgid "Detail3EntryVarPoint1"
+msgstr "Para maximización, será la variable no básica con el coeficiente más negativo en el vector de costes reducidos."
+
+msgid "Detail3EntryVarPoint2"
+msgstr "Para minimización, será la variable no básica con el coeficiente más positivo en el vector de costes reducidos."
+
+msgid "Detail3PivotNote"
+msgstr "La columna donde está ubicada la variable se denomina columna pivote."
+
+msgid "Detail3ExampleNote"
+msgstr "En el ejemplo, la variable de entrada es X₁, ya que tiene el valor más negativo («-3») en el vector de costes reducidos:"
+
+msgid "Detail4Summary"
+msgstr "Seleccionar la Variable de Salida con la Condición de Factibilidad"
+
+msgid "Detail4FeasibilityTitle"
+msgstr "Condición de Factibilidad"
+
+msgid "Detail4FeasibilityDesc1"
+msgstr "La condición de factibilidad se utiliza para determinar cuál de las variables básicas saldrá de la base y será reemplazada por la variable de entrada. Para esto se utiliza el criterio de la razón mínima."
+
+msgid "Detail4FeasibilityDesc2"
+msgstr "La razón mínima se calcula dividiendo el valor de la columna R entre el valor de la columna pivote. El resultado nos indica cuál es la variable que saldrá de la base; la que tenga el menor resultado será la que salga."
+
+msgid "Detail4FeasibilityDesc3"
+msgstr "Si el resultado de la razón mínima es negativo o cero, significa que no hay variable que salga de la base y el problema no tiene solución."
+
+msgid "Detail4ExitVarTitle"
+msgstr "Variable de Salida"
+
+msgid "Detail4ExitVarDesc1"
+msgstr "Para determinar la variable que sale de la base se divide el valor de la columna R entre su coeficiente en la columna de la variable de entrada, siempre que este coeficiente sea positivo."
+
+msgid "Detail4ExitVarDesc2"
+msgstr "El menor de los resultados corresponde a la fila pivote, que contiene la variable de salida."
+
+msgid "Detail4Example1"
+msgstr "En nuestro ejemplo, la columna pivote es la de la variable de entrada X₁. La fila pivote es la que tiene el menor valor al dividir el valor de R entre el coeficiente de la columna pivote; aquí, S₂ (18/3=6)."
+
+msgid "Detail4Example2"
+msgstr "La variable de salida sería S₂. El número en la intersección de la fila pivote y la columna pivote es el elemento pivote; en este caso es 3."
+
+msgid "Detail5Summary"
+msgstr "Actualizar la Matriz"
+
+msgid "Detail5Intro"
+msgstr "Una vez determinado nuestro elemento pivote, realizaremos las operaciones de Gauss-Jordan para formar nuestra matriz identidad. El nuevo valor de cada fila se calculará de la siguiente manera:"
+
+msgid "Detail5PivotTitle"
+msgstr "Para la fila pivote:"
+
+msgid "Detail5PivotDesc"
+msgstr "El nuevo valor de la fila pivote se obtendrá dividiendo el valor actual entre el elemento pivote."
+
+msgid "Detail5OtherTitle"
+msgstr "Para las otras filas:"
+
+msgid "Detail5OtherDesc"
+msgstr "El nuevo valor de cada fila se calcula restando del valor actual la multiplicación del elemento de la fila que se encuentra en la columna pivote por el nuevo valor calculado de la fila pivote."
+
+msgid "Detail5ExampleIntro"
+msgstr "Para entenderlo mejor, continuaremos resolviendo el ejemplo. Iniciaremos con la fila pivote:"
+
+msgid "Detail5AfterpivotIntro"
+msgstr "En las otras filas realizaremos los cálculos de forma diferente. Iniciaremos con la fila de S₁:"
+
+msgid "Detail5RowS3Intro"
+msgstr "Para la fila S₃ tenemos:"
+
+msgid "Detail5RowZIntro"
+msgstr "Finalmente, para la fila de Z tenemos:"
+
+msgid "Detail5PostOperations"
+msgstr "Una vez que hemos realizado las operaciones de Gauss-Jordan, nuestra matriz queda de la siguiente manera:"
+
+msgid "Detail5MatrixIdentityDesc"
+msgstr "Como puedes ver, la posición donde se encontraba nuestro elemento pivote ahora es 1 y los elementos que lo acompañan en la columna se convierten en 0. Así empezamos a formar nuestra matriz identidad."
+
+msgid "Detail5ReturnStep"
+msgstr "Volver al paso número 3"
+
+msgid "Detail5ReturnDesc"
+msgstr "Con este último resultado, volveremos al paso 3 y repetiremos el proceso. Como existen valores negativos en el vector de costes reducidos, podemos seguir optimizando."
+
+msgid "Detail5NegativeValueDesc"
+msgstr "El único valor negativo es -4, por lo que la variable que ingresará es X₂."
+
+msgid "Detail5ChooseExitVarDesc"
+msgstr "Para elegir la variable que va a salir, dividimos cada valor de la columna R por su contraparte de la columna X₂ (este último valor debe ser positivo)."
+
+msgid "Detail5IgnoreNegative"
+msgstr "El valor de la columna X₂ es negativo, por lo que no se toma en cuenta."
+
+msgid "Detail5SmallestValueDesc"
+msgstr "El menor valor se encuentra en la fila de S₃, por lo que es la variable que saldrá de la base. El elemento pivote es 16/3."
+
+msgid "Detail5NextIterationIntro"
+msgstr "Realizamos nuevamente las iteraciones obteniendo el siguiente resultado:"
+
+msgid "Detail5OptReached"
+msgstr "En esta última matriz vemos que el vector de costes reducidos ya no tiene ningún valor negativo, lo que quiere decir que nos encontramos en el valor óptimo. Obtendremos los valores de las variables básicas y de Z de la siguiente forma:"
+
+msgid "Detail5NonBasisZero"
+msgstr "Las variables que no se encuentran en la base tendrán valor de 0."
+
+msgid "Detail5Solution"
+msgstr "Solución: X₁ = 31/4, X₂ = 21/8, S₁ = 51/8, S₂ = 0, S₃ = 0, Z = 57/2"
+
+msgid "AlertTextPrefix"
+msgstr "Esta teoría ha sido extraída de la siguiente fuente:"
+
+msgid "AlertTextLink"
+msgstr "Plan de Mejora"
+
+msgid "Section3Title"
+msgstr "Manual de Usuario"
+
+msgid "Section3Description"
+msgstr "Aquí encontrarás instrucciones paso a paso para ingresar datos, interpretar resultados y sacar el máximo provecho de la herramienta."
+
+msgid "ManualSectionTitle"
+msgstr "Explicación paso a paso de cómo resolver un ejercicio"
+
+msgid "ManualStep1Title"
+msgstr "Introducir los valores a la calculadora"
+
+msgid "ManualStep1ImageAlt"
+msgstr "Captura de pantalla de la sección de entrada de valores"
+
+msgid "ManualStep1Item1"
+msgstr "Se puede elegir el tipo de problema que se desea resolver, ya sea de Maximización o Minimización. Puedes elegir la cantidad de variables que deseas utilizar, desde 2 hasta X variables."
+
+msgid "ManualStep1Item2"
+msgstr "Puedes asignar nombre a las variables; por defecto vienen x₁, x₂ … xₙ."
+
+msgid "ManualStep1Item3"
+msgstr "Apartado para subir los valores de la Función Objetivo, cada uno siguiendo el orden de las variables."
+
+msgid "ManualStep2ImageAlt"
+msgstr "Captura de pantalla de la sección de restricciones"
+
+msgid "ManualStep2Item4"
+msgstr "El botón de eliminar sirve para eliminar una restricción que ya no se necesite o si has agregado más restricciones."
+
+msgid "ManualStep2Item5"
+msgstr "El cuadro de restricciones es el lugar donde se ingresan las restricciones del problema; cada restricción debe seguir el orden de las variables."
+
+msgid "ManualStep2Item6"
+msgstr "El botón de agregar sirve para añadir una restricción más si se desea. El botón de carga de ejemplo inserta un problema de programación lineal de muestra para que puedas ver cómo funciona la app."
+
+msgid "ManualStep2Item7"
+msgstr "El botón de resolver sirve para resolver el problema una vez que se han ingresado todos los valores necesarios."
+
+msgid "ManualStep2Item8"
+msgstr "El cuadro de previsualización sirve para ver cómo se mostrará el problema ingresado antes de resolverlo."
+
+msgid "ManualResultsTitle"
+msgstr "Muestra de Resultados"
+
+msgid "ManualResultsImageAlt"
+msgstr "Captura de pantalla del cuadro de respuesta rápida"
+
+msgid "ManualResultsItem1"
+msgstr "El cuadro de Respuesta Rápida muestra la solución para quienes no desean ver todo el proceso."
+
+msgid "ManualResultsDetailImageAlt"
+msgstr "Captura de pantalla del cuadro paso a paso"
+
+msgid "ManualResultsItem2"
+msgstr "El cuadro paso a paso muestra cómo se ha resuelto el problema, explicando cada paso detalladamente."
+
+msgid "TeamSectionTitle"
+msgstr "EQUIPO DE DESARROLLO"
+
+msgid "ToolDescription"
+msgstr "Una herramienta avanzada para resolver problemas de programación lineal utilizando el método Simplex."
+
+msgid "ProjectInfoTitle"
+msgstr "Información del Proyecto"
+
+msgid "ProjectInfoDesc"
+msgstr "Proyecto desarrollado como parte de la materia Método de optimización."
+
+msgid "ButtonStart"
+msgstr "Comenzar"
+
+msgid "ButtonProject"
+msgstr "Proyecto"
+
+msgid "UniversityName"
+msgstr "UNIVERSIDAD NACIONAL DE EL SALVADOR"
+
+msgid "FooterCopyright"
+msgstr "Math Solver. Todos los derechos reservados."
+
+############################
+# Fin de la documentación del Método Simplex
+############################
+msgid "Valor"
+msgstr "Valor"
+
+msgid "Acción"
+msgstr "Acción"
+
+msgid "Añadir Restricción"
+msgstr "Añadir Restricción"
+
+msgid "Cargar Ejemplo"
+msgstr "Cargar Ejemplo"
+
+msgid "Limpiar Todo"
+msgstr "Limpiar Todo"
+
+msgid "Resolver con Simplex"
+msgstr "Resolver con Simplex"
+
+msgid "Ingresa los valores de tu ejercicio para visualizarlo"
+msgstr "Ingresa los valores de tu ejercicio para visualizarlo"
+
+msgid "Solución Óptima"
+msgstr "Solución Óptima"
+
+msgid "Variables:"
+msgstr "Variables:"
+
+msgid "Valor óptimo:"
+msgstr "Valor óptimo:"
+
+msgid "Problema de minimización"
+msgstr "Problema de minimización"
+
+msgid "Método utilizado:"
+msgstr "Método utilizado:"
+
+msgid "Método de la Gran M"
+msgstr "Método de la Gran M"
+
+msgid "Simplex Estándar"
+msgstr "Simplex Estándar"
+
+msgid "Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o ="
+msgstr "Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o ="
+
+msgid "Se utilizó el método Simplex estándar (todas las restricciones son ≤)"
+msgstr "Se utilizó el método Simplex estándar (todas las restricciones son ≤)"
+
+msgid "Exportar a PDF"
+msgstr "Exportar a PDF"
+
+msgid "Exportar a Word"
+msgstr "Exportar a Word"
+
+msgid "Exportar a Excel"
+msgstr "Exportar a Excel"
+
+msgid "Proceso Simplex Paso a Paso"
+msgstr "Proceso Simplex Paso a Paso"
+
+msgid "Error en la Solución"
+msgstr "Error en la Solución"
+
+msgid "Interpretación:"
+msgstr "Interpretación:"
+
+msgid "Sugerencia:"
+msgstr "Sugerencia:"
+
+msgid "Proceso hasta el Error"
+msgstr "Proceso hasta el Error"
+
+msgid "Configura tu problema de programación lineal"
+msgstr "Configura tu problema de programación lineal"
+
+msgid "Completa la configuración de la izquierda para resolver usando el método Simplex."
+msgstr "Completa la configuración de la izquierda para resolver usando el método Simplex."
+
+msgid "Pasos para resolver:"
+msgstr "Pasos para resolver:"
+
+msgid "Selecciona el tipo de optimización (maximizar/minimizar)"
+msgstr "Selecciona el tipo de optimización (maximizar/minimizar)"
+
+msgid "Define el número de variables de decisión"
+msgstr "Define el número de variables de decisión"
+
+msgid "Personaliza los nombres de las variables (opcional)"
+msgstr "Personaliza los nombres de las variables (opcional)"
+
+msgid "Ingresa los coeficientes de la función objetivo"
+msgstr "Ingresa los coeficientes de la función objetivo"
+
+msgid "Añade las restricciones del problema"
+msgstr "Añade las restricciones del problema"
+
+msgid "Haz clic en 'Resolver con Simplex'"
+msgstr "Haz clic en 'Resolver con Simplex'"
+
+msgid "Gráfica de Programación Lineal"
+msgstr "Gráfica de Programación Lineal"
+
+msgid "La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables."
+msgstr "La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables."
+
+msgid "Gráfica no disponible"
+msgstr "Gráfica no disponible"
+
+msgid "La visualización gráfica solo está disponible para problemas con 2 variables."
+msgstr "La visualización gráfica solo está disponible para problemas con 2 variables."
+
+# JavaScript translations
+msgid "Variable"
+msgstr "Variable"
+
+msgid "Eliminar restricción"
+msgstr "Eliminar restricción"
+
+msgid "Problema actual Ingresado"
+msgstr "Problema actual Ingresado"
+
+msgid "Problema:"
+msgstr "Problema:"
+
+msgid "Sujeto a:"
+msgstr "Sujeto a:"
+
+msgid "Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones"
+msgstr "Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones"
+
+msgid "Formulario limpiado correctamente"
+msgstr "Formulario limpiado correctamente"
+
+msgid "¿Limpiar formulario?"
+msgstr "¿Limpiar formulario?"
+
+msgid "Se perderán todos los datos ingresados"
+msgstr "Se perderán todos los datos ingresados"
+
+msgid "Sí, limpiar"
+msgstr "Sí, limpiar"
+
+msgid "Cancelar"
+msgstr "Cancelar"
+
+msgid "Debe ser un número válido"
+msgstr "Debe ser un número válido"
+
+msgid "Elemento Pivote:"
+msgstr "Elemento Pivote:"
+
+# Tooltips translations
+msgid "El método Simplex es un algoritmo para resolver problemas de programación lineal. Encuentra la solución óptima moviéndose entre vértices de la región factible hasta encontrar el mejor valor de la función objetivo."
+msgstr "El método Simplex es un algoritmo para resolver problemas de programación lineal. Encuentra la solución óptima moviéndose entre vértices de la región factible hasta encontrar el mejor valor de la función objetivo."
+
+msgid "Aquí defines tu problema de programación lineal: función objetivo, variables y restricciones. Completa todos los campos para obtener la solución óptima."
+msgstr "Aquí defines tu problema de programación lineal: función objetivo, variables y restricciones. Completa todos los campos para obtener la solución óptima."
+
+msgid "Selecciona si quieres encontrar el valor máximo o mínimo de tu función objetivo. Esto determina la dirección de búsqueda del algoritmo."
+msgstr "Selecciona si quieres encontrar el valor máximo o mínimo de tu función objetivo. Esto determina la dirección de búsqueda del algoritmo."
+
+msgid "Busca el mayor valor posible de la función objetivo. Útil para problemas de maximización de ganancias, producción, etc."
+msgstr "Busca el mayor valor posible de la función objetivo. Útil para problemas de maximización de ganancias, producción, etc."
+
+msgid "Busca el menor valor posible de la función objetivo. Útil para problemas de minimización de costos, tiempo, recursos, etc."
+msgstr "Busca el menor valor posible de la función objetivo. Útil para problemas de minimización de costos, tiempo, recursos, etc."
+
+msgid "Las variables de decisión representan las cantidades que puedes controlar en tu problema. Por ejemplo: cantidad a producir, recursos a asignar, etc."
+msgstr "Las variables de decisión representan las cantidades que puedes controlar en tu problema. Por ejemplo: cantidad a producir, recursos a asignar, etc."
+
+msgid "Personaliza los nombres de tus variables para que sean más descriptivos. Por ejemplo: x1, x2 o Producto_A, Producto_B."
+msgstr "Personaliza los nombres de tus variables para que sean más descriptivos. Por ejemplo: x1, x2 o Producto_A, Producto_B."
+
+msgid "La función que quieres optimizar. Los coeficientes representan la contribución de cada variable al objetivo (ganancia por unidad, costo por unidad, etc.)."
+msgstr "La función que quieres optimizar. Los coeficientes representan la contribución de cada variable al objetivo (ganancia por unidad, costo por unidad, etc.)."
+
+msgid "Las limitaciones de tu problema: recursos disponibles, capacidades máximas, requisitos mínimos, etc. Definen la región factible de soluciones."
+msgstr "Las limitaciones de tu problema: recursos disponibles, capacidades máximas, requisitos mínimos, etc. Definen la región factible de soluciones."
+
+msgid "≤ (menor o igual): límites máximos. ≥ (mayor o igual): requisitos mínimos. = (igual): valores exactos requeridos."
+msgstr "≤ (menor o igual): límites máximos. ≥ (mayor o igual): requisitos mínimos. = (igual): valores exactos requeridos."
+
+msgid "Carga un problema de ejemplo para ver cómo funciona el método Simplex. Útil para aprender y probar la herramienta."
+msgstr "Carga un problema de ejemplo para ver cómo funciona el método Simplex. Útil para aprender y probar la herramienta."
+
+msgid "Ejecuta el algoritmo Simplex para encontrar la solución óptima de tu problema. El sistema mostrará el proceso paso a paso."
+msgstr "Ejecuta el algoritmo Simplex para encontrar la solución óptima de tu problema. El sistema mostrará el proceso paso a paso."
+
+msgid "Los valores de las variables que optimizan tu función objetivo, respetando todas las restricciones del problema."
+msgstr "Los valores de las variables que optimizan tu función objetivo, respetando todas las restricciones del problema."
+
+msgid "Los valores óptimos que deben tomar tus variables de decisión para lograr el mejor resultado posible."
+msgstr "Los valores óptimos que deben tomar tus variables de decisión para lograr el mejor resultado posible."
+
+msgid "El mejor valor que puede alcanzar tu función objetivo. Este es el resultado final de la optimización."
+msgstr "El mejor valor que puede alcanzar tu función objetivo. Este es el resultado final de la optimización."
+
+msgid "Simplex Estándar: para restricciones ≤. Gran M: cuando hay restricciones ≥ o =, requiere variables artificiales."
+msgstr "Simplex Estándar: para restricciones ≤. Gran M: cuando hay restricciones ≥ o =, requiere variables artificiales."
+
+msgid "Muestra cada iteración del algoritmo Simplex: tablas, cálculos de pivote, y transformaciones hasta llegar a la solución óptima."
+msgstr "Muestra cada iteración del algoritmo Simplex: tablas, cálculos de pivote, y transformaciones hasta llegar a la solución óptima."
+
+msgid "Visualización geométrica del problema (solo para 2 variables). Muestra la región factible, restricciones y el punto óptimo."
+msgstr "Visualización geométrica del problema (solo para 2 variables). Muestra la región factible, restricciones y el punto óptimo."

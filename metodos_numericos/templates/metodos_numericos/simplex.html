@@ -1,9 +1,11 @@
 {% extends 'metodos_numericos/base.html' %}
+{% load i18n %}
+{% load static %}
 
-{% block title %}Método Simplex - Métodos Numéricos{% endblock %}
+{% block title %}{% trans "Método Simplex - Métodos Numéricos" %}{% endblock %}
 
 {% block content %}
-<button class="theme-toggle bg-secondary-neon" onclick="toggleTheme()" title="Cambiar tema">
+<button class="theme-toggle bg-secondary-neon" onclick="toggleTheme()" title="{% trans 'Cambiar tema' %}">
     <i class="fas fa-moon" id="theme-icon"></i>
 </button>
 
@@ -11,7 +13,10 @@
     <div class="col-12">
         <h2 class="mb-4 text-info">
             <i class="fas fa-chart-bar text-info me-2"></i>
-            Método Simplex - Programación Lineal
+            {% trans "Método Simplex - Programación Lineal" %}
+            <span class="tooltip-trigger ms-2" data-tooltip="method-info">
+                <i class="fas fa-info-circle text-muted"></i>
+            </span>
         </h2>
     </div> 
 </div>
@@ -21,7 +26,10 @@
         <div class="card shadow-sm">
             <div class="card-header bg-info text-white">
                 <h4 class="mb-0">
-                    <i class="fas fa-keyboard me-2"></i>Datos de entrada
+                    <i class="fas fa-keyboard me-2"></i>{% trans "Datos de entrada" %}
+                    <span class="tooltip-trigger ms-2" data-tooltip="input-data">
+                        <i class="fas fa-question-circle"></i>
+                    </span>
                 </h4>
             </div>
             <div class="card-body">
@@ -32,24 +40,40 @@
                     <div class="row mb-4 mt-2">
                         <div class="col-md-6">
                             <label class="form-label fw-bold">
-                                <i class="fas fa-target me-1"></i>Optimización
+                                <i class="fas fa-target me-1"></i>{% trans "Optimización" %}
+                                <span class="tooltip-trigger ms-1" data-tooltip="optimization-type">
+                                    <i class="fas fa-info-circle text-muted small"></i>
+                                </span>
                             </label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="tipo_optimizacion" 
                                        id="maximizar" value="maximizar" 
                                        {% if tipo_optimizacion == 'maximizar' or not tipo_optimizacion %}checked{% endif %}>
-                                <label class="form-check-label" for="maximizar">Maximizar</label>
+                                <label class="form-check-label" for="maximizar">
+                                    {% trans "Maximizar" %}
+                                    <span class="tooltip-trigger ms-1" data-tooltip="maximize">
+                                        <i class="fas fa-arrow-up text-success small"></i>
+                                    </span>
+                                </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="tipo_optimizacion" 
                                        id="minimizar" value="minimizar"
                                        {% if tipo_optimizacion == 'minimizar' %}checked{% endif %}>
-                                <label class="form-check-label" for="minimizar">Minimizar</label>
+                                <label class="form-check-label" for="minimizar">
+                                    {% trans "Minimizar" %}
+                                    <span class="tooltip-trigger ms-1" data-tooltip="minimize">
+                                        <i class="fas fa-arrow-down text-danger small"></i>
+                                    </span>
+                                </label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="num_variables" class="form-label fw-bold">
-                                <i class="fas fa-hashtag me-1"></i>Variables
+                                <i class="fas fa-hashtag me-1"></i>{% trans "Variables" %}
+                                <span class="tooltip-trigger ms-1" data-tooltip="variables-count">
+                                    <i class="fas fa-info-circle text-muted small"></i>
+                                </span>
                             </label>
                             <select class="form-select" id="num_variables" onchange="generarCamposVariables()">
                                 <option value="2" {%if num_variables == 2 or num_variables == None%}selected{%endif%}>2 variables</option>
@@ -66,7 +90,10 @@
                     <!-- Nombres de variables -->
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="fas fa-tag me-1"></i>Nombres de Variables
+                            <i class="fas fa-tag me-1"></i>{% trans "Nombres de Variables" %}
+                            <span class="tooltip-trigger ms-1" data-tooltip="variable-names">
+                                <i class="fas fa-info-circle text-muted small"></i>
+                            </span>
                         </label>
                         <div class="table-responsive table-container">
                             <table class="table table-sm table-bordered" id="variables-table">
@@ -93,13 +120,16 @@
                                 </tbody>
                             </table>
                         </div>
-                        <small class="text-muted">Personaliza los nombres de tus variables</small>
+                        <small class="text-muted">{% trans "Personaliza los nombres de tus variables" %}</small>
                     </div>
                     
                     <!-- Función objetivo -->
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="fas fa-function me-1"></i>Función Objetivo
+                            <i class="fas fa-function me-1"></i>{% trans "Función Objetivo" %}
+                            <span class="tooltip-trigger ms-1" data-tooltip="objective-function">
+                                <i class="fas fa-info-circle text-muted small"></i>
+                            </span>
                         </label>
                         <div class="table-responsive table-container">
                             <table class="table table-sm table-bordered" id="objetivo-table">
@@ -130,13 +160,16 @@
                                 </tbody>
                             </table>
                         </div>
-                        <small class="text-muted">Coeficientes de cada variable en la función objetivo</small>
+                        <small class="text-muted">{% trans "Coeficientes de cada variable en la función objetivo" %}</small>
                     </div>
                     
                     <!-- Restricciones -->
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="fas fa-list me-1"></i>Restricciones
+                            <i class="fas fa-list me-1"></i>{% trans "Restricciones" %}
+                            <span class="tooltip-trigger ms-1" data-tooltip="constraints">
+                                <i class="fas fa-info-circle text-muted small"></i>
+                            </span>
                         </label>
                         <div class="table-responsive table-container force-horizontal-scroll" style="max-height: 400px; overflow-y: auto;">
                             <table class="table table-sm table-bordered" id="restricciones-table">
@@ -151,9 +184,14 @@
                                             </th>
                                             {% endfor %}
                                         {% endif %}
-                                        <th class="text-center" style="min-width: 80px;">Tipo</th>
-                                        <th class="text-center" style="min-width: 100px;">Valor</th>
-                                        <th class="text-center" style="min-width: 80px;">Acción</th>
+                                        <th class="text-center" style="min-width: 80px;">
+                                            {% trans "Tipo" %}
+                                            <span class="tooltip-trigger ms-1" data-tooltip="constraint-types">
+                                                <i class="fas fa-info-circle text-muted small"></i>
+                                            </span>
+                                        </th>
+                                        <th class="text-center" style="min-width: 100px;">{% trans "Valor" %}</th>
+                                        <th class="text-center" style="min-width: 80px;">{% trans "Acción" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody id="restricciones-tbody">
@@ -195,28 +233,29 @@
                         </div>
                         <div class="d-flex gap-2 mt-3">
                             <button type="button" class="btn btn-outline-primary btn-sm" onclick="agregarRestriccion()">
-                                <i class="fas fa-plus me-1"></i>Añadir Restricción
+                                <i class="fas fa-plus me-1"></i>{% trans "Añadir Restricción" %}
                             </button>
-                            <button type="button" class="btn btn-outline-success btn-sm" onclick="cargarEjemplo()">
-                                <i class="fas fa-lightbulb me-1"></i>Cargar Ejemplo
+                            <button type="button" class="btn btn-outline-success btn-sm" onclick="cargarEjemplo()" 
+                                    data-tooltip="example-load">
+                                <i class="fas fa-lightbulb me-1"></i>{% trans "Cargar Ejemplo" %}
                             </button>
                             {% if mantener_datos %}
                             <button type="button" class="btn btn-outline-warning btn-sm" onclick="limpiarFormulario()">
-                                <i class="fas fa-eraser me-1"></i>Limpiar Todo
+                                <i class="fas fa-eraser me-1"></i>{% trans "Limpiar Todo" %}
                             </button>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <button type="submit" class="btn btn-info w-100 btn-lg">
-                        <i class="fas fa-calculator me-2"></i>Resolver con Simplex
+                    <button type="submit" class="btn btn-info w-100 btn-lg" data-tooltip="solve-button">
+                        <i class="fas fa-calculator me-2"></i>{% trans "Resolver con Simplex" %}
                     </button>
                 </form>
                 
                 <!-- Problema actual -->
                 <div class="mt-4 p-3 bg-light rounded" id="problema-actual">
                   <!-- Se actualiza dinámicamente con JS -->
-                  <h5>Ingresa los valores de tu ejercicio para visualizarlo</h5>
+                  <h5>{% trans "Ingresa los valores de tu ejercicio para visualizarlo" %}</h5>
                 </div>
 
             </div>
@@ -228,12 +267,20 @@
         <div class="card shadow-sm">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">
-                    <i class="fas fa-check-circle me-2"></i>Solución Óptima
+                    <i class="fas fa-check-circle me-2"></i>{% trans "Solución Óptima" %}
+                    <span class="tooltip-trigger ms-2" data-tooltip="optimal-solution">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
                 </h4>
             </div>
             <div class="card-body">
                 <div class="alert alert-success ps-2 pb-2 pt-1">
-                    <h5 class="mb-3"><i class="fas fa-bullseye me-2"></i>Variables:</h5>
+                    <h5 class="mb-3">
+                        <i class="fas fa-bullseye me-2"></i>{% trans "Variables:" %}
+                        <span class="tooltip-trigger ms-1" data-tooltip="solution-variables">
+                            <i class="fas fa-info-circle text-muted small"></i>
+                        </span>
+                    </h5>
                     <div class="row">
                         {% if solucion_con_nombres %}
                             {% for nombre, valor in solucion_con_nombres.items %}
@@ -251,11 +298,14 @@
                     </div>
                     <hr>
                     <h4 class="text-center mb-0 text-warning" id="valor-optimo">
-                        <i class="fas fa-trophy me-2 text-warning"></i>Valor óptimo: Z = {{ valor_objetivo|floatformat:6 }}
+                        <i class="fas fa-trophy me-2 text-warning"></i>{% trans "Valor óptimo:" %} Z = {{ valor_objetivo|floatformat:6 }}
+                        <span class="tooltip-trigger ms-2" data-tooltip="optimal-value">
+                            <i class="fas fa-info-circle text-muted"></i>
+                        </span>
                     </h4>
                         {% if tipo_optimizacion == 'minimizar' %}
                             <small class="d-block text-muted mt-1" style="font-size: 0.7em;">
-                                (Problema de minimización)
+                                ({% trans "Problema de minimización" %})
                             </small>
                         {% endif %}
                 </div>
@@ -263,19 +313,19 @@
                 <div class="row text-center mt-3">
                     <div class="col-md-4">
                         <div class="bg-light p-3 rounded">
-                            <small class="text-muted d-block">Tipo</small>
+                            <small class="text-muted d-block">{% trans "Tipo" %}</small>
                             <strong>{{ tipo_optimizacion|title }}</strong>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light p-3 rounded">
-                            <small class="text-muted d-block">Variables</small>
+                            <small class="text-muted d-block">{% trans "Variables" %}</small>
                             <strong>{{ solucion|length }}</strong>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="bg-light p-3 rounded">
-                            <small class="text-muted d-block">Restricciones</small>
+                            <small class="text-muted d-block">{% trans "Restricciones" %}</small>
                             <strong>{{ num_restricciones }}</strong>
                         </div>
                     </div>
@@ -287,20 +337,23 @@
             <div class="alert alert-info d-flex align-items-center mb-3 ps-2 pt-1 bg-light">
                 <i class="fas fa-info-circle me-2"></i>
                 <div>
-                    <strong>Método utilizado:</strong> 
+                    <strong>{% trans "Método utilizado:" %}</strong> 
                     <span class="metodo-indicator {% if metodo_usado == 'Gran M' %}metodo-gran-m{% else %}metodo-simplex{% endif %}">
                         {% if metodo_usado == 'Gran M' %}
-                            🔢 Método de la Gran M
+                            🔢 {% trans "Método de la Gran M" %}
                         {% else %}
-                            📊 Simplex Estándar
+                            📊 {% trans "Simplex Estándar" %}
                         {% endif %}
+                    </span>
+                    <span class="tooltip-trigger ms-2" data-tooltip="method-used">
+                        <i class="fas fa-info-circle text-muted small"></i>
                     </span>
                     <br>
                     <small class="text-muted">
                         {% if metodo_usado == 'Gran M' %}
-                            Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o =
+                            {% trans "Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o =" %}
                         {% else %}
-                            Se utilizó el método Simplex estándar (todas las restricciones son ≤)
+                            {% trans "Se utilizó el método Simplex estándar (todas las restricciones son ≤)" %}
                         {% endif %}
                     </small>
                 </div>
@@ -309,13 +362,13 @@
         
         <div class="mb-3 d-flex justify-content-end">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-export btn-export-pdf" onclick="exportarAPDF()" title="Exportar a PDF">
+                <button type="button" class="btn btn-export btn-export-pdf" onclick="exportarAPDF()" title="{% trans 'Exportar a PDF' %}">
                     <i class="fas fa-file-pdf me-1"></i>PDF
                 </button>
-                <button type="button" class="btn btn-export btn-export-word" onclick="exportarAWord()" title="Exportar a Word">
+                <button type="button" class="btn btn-export btn-export-word" onclick="exportarAWord()" title="{% trans 'Exportar a Word' %}">
                     <i class="fas fa-file-word me-1"></i>Word
                 </button>
-                <button type="button" class="btn btn-export btn-export-excel" onclick="exportarAExcel()" title="Exportar a Excel">
+                <button type="button" class="btn btn-export btn-export-excel" onclick="exportarAExcel()" title="{% trans 'Exportar a Excel' %}">
                     <i class="fas fa-file-excel me-1"></i>Excel
                 </button>
             </div>
@@ -324,7 +377,10 @@
         <div class="card mt-3 shadow-sm">
             <div class="card-header bg-info text-white">
                 <h4 class="mb-0">
-                    <i class="fas fa-table me-2"></i>Proceso Simplex Paso a Paso
+                    <i class="fas fa-table me-2"></i>{% trans "Proceso Simplex Paso a Paso" %}
+                    <span class="tooltip-trigger ms-2" data-tooltip="step-by-step">
+                        <i class="fas fa-info-circle"></i>
+                    </span>
                 </h4>
             </div>
             <div class="card-body">
@@ -427,7 +483,7 @@
         <div class="card shadow-sm">
             <div class="card-header bg-danger text-white">
                 <h4 class="mb-0">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Error en la Solución
+                    <i class="fas fa-exclamation-triangle me-2"></i>{% trans "Error en la Solución" %}
                 </h4>
             </div>
             <div class="card-body">
@@ -435,10 +491,10 @@
                     <h5><i class="fas fa-times-circle me-2"></i>{{ error }}</h5>
                     {% if interpretacion %}
                         <hr>
-                        <p class="mb-1"><strong>Interpretación:</strong> {{ interpretacion }}</p>
+                        <p class="mb-1"><strong>{% trans "Interpretación:" %}</strong> {{ interpretacion }}</p>
                     {% endif %}
                     {% if sugerencia %}
-                        <p class="mb-0"><strong>Sugerencia:</strong> {{ sugerencia }}</p>
+                        <p class="mb-0"><strong>{% trans "Sugerencia:" %}</strong> {{ sugerencia }}</p>
                     {% endif %}
                 </div>
                 
@@ -446,7 +502,7 @@
                 <div class="card mt-3">
                     <div class="card-header bg-info text-white">
                         <h5 class="mb-0">
-                            <i class="fas fa-list me-2"></i>Proceso hasta el Error
+                            <i class="fas fa-list me-2"></i>{% trans "Proceso hasta el Error" %}
                         </h5>
                     </div>
                     <div class="card-body">
@@ -479,18 +535,18 @@
         <div class="card shadow-sm">
             <div class="card-body text-center py-5">
                 <i class="fas fa-arrow-left fa-4x text-muted mb-4"></i>
-                <h4 class="text-muted">Configura tu problema de programación lineal</h4>
-                <p class="text-muted">Completa la configuración de la izquierda para resolver usando el método Simplex.</p>
+                <h4 class="text-muted">{% trans "Configura tu problema de programación lineal" %}</h4>
+                <p class="text-muted">{% trans "Completa la configuración de la izquierda para resolver usando el método Simplex." %}</p>
                 
                 <div class="mt-4">
-                    <h6 class="text-info">Pasos para resolver:</h6>
+                    <h6 class="text-info">{% trans "Pasos para resolver:" %}</h6>
                     <ol class="text-start text-muted">
-                        <li>Selecciona el tipo de optimización (maximizar/minimizar)</li>
-                        <li>Define el número de variables de decisión</li>
-                        <li>Personaliza los nombres de las variables (opcional)</li>
-                        <li>Ingresa los coeficientes de la función objetivo</li>
-                        <li>Añade las restricciones del problema</li>
-                        <li>Haz clic en "Resolver con Simplex"</li>
+                        <li>{% trans "Selecciona el tipo de optimización (maximizar/minimizar)" %}</li>
+                        <li>{% trans "Define el número de variables de decisión" %}</li>
+                        <li>{% trans "Personaliza los nombres de las variables (opcional)" %}</li>
+                        <li>{% trans "Ingresa los coeficientes de la función objetivo" %}</li>
+                        <li>{% trans "Añade las restricciones del problema" %}</li>
+                        <li>{% trans "Haz clic en 'Resolver con Simplex'" %}</li>
                     </ol>
                 </div>
             </div>
@@ -504,7 +560,10 @@
   <div class="card shadow-sm mb-3">
     <div class="card-header bg-warning-neon text-dark">
       <h4 class="mb-0">
-        <i class="fas fa-chart-area me-2"></i>Gráfica de Programación Lineal
+        <i class="fas fa-chart-area me-2"></i>{% trans "Gráfica de Programación Lineal" %}
+        <span class="tooltip-trigger ms-2" data-tooltip="graph-explanation">
+            <i class="fas fa-info-circle text-muted"></i>
+        </span>
       </h4>
     </div>
     <div class="card-body p-2">
@@ -518,23 +577,33 @@
   <div class="card shadow-sm mb-3">
     <div class="card-body text-center py-4">
       <i class="fas fa-chart-area fa-3x text-muted mb-3"></i>
-      <h5 class="text-muted">Gráfica de Programación Lineal</h5>
-      <p class="text-muted">La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables.</p>
+      <h5 class="text-muted">{% trans "Gráfica de Programación Lineal" %}</h5>
+      <p class="text-muted">{% trans "La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables." %}</p>
     </div>
   </div>
   {% elif num_variables > 2 %}
   <div class="card shadow-sm mb-3">
     <div class="card-body text-center py-4">
       <i class="fas fa-cube fa-3x text-muted mb-3"></i>
-      <h5 class="text-muted">Gráfica no disponible</h5>
-      <p class="text-muted">La visualización gráfica solo está disponible para problemas con 2 variables.</p>
-      <small class="text-muted">Tu problema tiene {{ num_variables }} variables.</small>
+      <h5 class="text-muted">{% trans "Gráfica no disponible" %}</h5>
+      <p class="text-muted">{% trans "La visualización gráfica solo está disponible para problemas con 2 variables." %}</p>
+      <small class="text-muted">{% blocktrans with num_variables=num_variables %}Tu problema tiene {{ num_variables }} variables.{% endblocktrans %}</small>
     </div>
   </div>
   {% endif %}
 </div>
 
-{% load static %}
+<!-- Tooltip Container -->
+<div id="tooltip-container" class="custom-tooltip" style="display: none;">
+    <div class="tooltip-content">
+        <div class="tooltip-header">
+            <span class="tooltip-title"></span>
+            <button class="tooltip-close" onclick="hideTooltipContent()">&times;</button>
+        </div>
+        <div class="tooltip-body"></div>
+    </div>
+</div>
+
 {% if mantener_datos %}
 <script>
 // Pasar datos para rellenar
@@ -548,6 +617,109 @@ window.datosSimplexTemplate = {
 </script>
 <div data-mantener-datos="true" style="display: none;"></div>
 {% endif %}
+
+<!-- Pasar traducciones a JavaScript -->
+<script>
+window.translations = {
+    'Variable': '{% trans "Variable" %}',
+    'Eliminar restricción': '{% trans "Eliminar restricción" %}',
+    'Problema actual Ingresado': '{% trans "Problema actual Ingresado" %}',
+    'Problema:': '{% trans "Problema:" %}',
+    'Sujeto a:': '{% trans "Sujeto a:" %}',
+    'Maximizar': '{% trans "Maximizar" %}',
+    'Minimizar': '{% trans "Minimizar" %}',
+    'Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones': '{% trans "Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones" %}',
+    'Formulario limpiado correctamente': '{% trans "Formulario limpiado correctamente" %}',
+    '¿Limpiar formulario?': '{% trans "¿Limpiar formulario?" %}',
+    'Se perderán todos los datos ingresados': '{% trans "Se perderán todos los datos ingresados" %}',
+    'Sí, limpiar': '{% trans "Sí, limpiar" %}',
+    'Cancelar': '{% trans "Cancelar" %}',
+    'Debe ser un número válido': '{% trans "Debe ser un número válido" %}',
+    'Elemento Pivote:': '{% trans "Elemento Pivote:" %}',
+    'Ingresa los valores de tu ejercicio para visualizarlo': '{% trans "Ingresa los valores de tu ejercicio para visualizarlo" %}'
+};
+
+// Tooltips content con traducciones
+window.tooltipsContent = {
+    'method-info': {
+        title: '{% trans "Método Simplex" %}',
+        content: '{% trans "El método Simplex es un algoritmo para resolver problemas de programación lineal. Encuentra la solución óptima moviéndose entre vértices de la región factible hasta encontrar el mejor valor de la función objetivo." %}'
+    },
+    'input-data': {
+        title: '{% trans "Datos de entrada" %}',
+        content: '{% trans "Aquí defines tu problema de programación lineal: función objetivo, variables y restricciones. Completa todos los campos para obtener la solución óptima." %}'
+    },
+    'optimization-type': {
+        title: '{% trans "Optimización" %}',
+        content: '{% trans "Selecciona si quieres encontrar el valor máximo o mínimo de tu función objetivo. Esto determina la dirección de búsqueda del algoritmo." %}'
+    },
+    'maximize': {
+        title: '{% trans "Maximizar" %}',
+        content: '{% trans "Busca el mayor valor posible de la función objetivo. Útil para problemas de maximización de ganancias, producción, etc." %}'
+    },
+    'minimize': {
+        title: '{% trans "Minimizar" %}',
+        content: '{% trans "Busca el menor valor posible de la función objetivo. Útil para problemas de minimización de costos, tiempo, recursos, etc." %}'
+    },
+    'variables-count': {
+        title: '{% trans "Variables" %}',
+        content: '{% trans "Las variables de decisión representan las cantidades que puedes controlar en tu problema. Por ejemplo: cantidad a producir, recursos a asignar, etc." %}'
+    },
+    'variable-names': {
+        title: '{% trans "Nombres de Variables" %}',
+        content: '{% trans "Personaliza los nombres de tus variables para que sean más descriptivos. Por ejemplo: x1, x2 o Producto_A, Producto_B." %}'
+    },
+    'objective-function': {
+        title: '{% trans "Función Objetivo" %}',
+        content: '{% trans "La función que quieres optimizar. Los coeficientes representan la contribución de cada variable al objetivo (ganancia por unidad, costo por unidad, etc.)." %}'
+    },
+    'constraints': {
+        title: '{% trans "Restricciones" %}',
+        content: '{% trans "Las limitaciones de tu problema: recursos disponibles, capacidades máximas, requisitos mínimos, etc. Definen la región factible de soluciones." %}'
+    },
+    'constraint-types': {
+        title: '{% trans "Tipo" %}',
+        content: '{% trans "≤ (menor o igual): límites máximos. ≥ (mayor o igual): requisitos mínimos. = (igual): valores exactos requeridos." %}'
+    },
+    'example-load': {
+        title: '{% trans "Cargar Ejemplo" %}',
+        content: '{% trans "Carga un problema de ejemplo para ver cómo funciona el método Simplex. Útil para aprender y probar la herramienta." %}'
+    },
+    'solve-button': {
+        title: '{% trans "Resolver con Simplex" %}',
+        content: '{% trans "Ejecuta el algoritmo Simplex para encontrar la solución óptima de tu problema. El sistema mostrará el proceso paso a paso." %}'
+    },
+    'optimal-solution': {
+        title: '{% trans "Solución Óptima" %}',
+        content: '{% trans "Los valores de las variables que optimizan tu función objetivo, respetando todas las restricciones del problema." %}'
+    },
+    'solution-variables': {
+        title: '{% trans "Variables:" %}',
+        content: '{% trans "Los valores óptimos que deben tomar tus variables de decisión para lograr el mejor resultado posible." %}'
+    },
+    'optimal-value': {
+        title: '{% trans "Valor óptimo:" %}',
+        content: '{% trans "El mejor valor que puede alcanzar tu función objetivo. Este es el resultado final de la optimización." %}'
+    },
+    'method-used': {
+        title: '{% trans "Método utilizado:" %}',
+        content: '{% trans "Simplex Estándar: para restricciones ≤. Gran M: cuando hay restricciones ≥ o =, requiere variables artificiales." %}'
+    },
+    'step-by-step': {
+        title: '{% trans "Proceso Simplex Paso a Paso" %}',
+        content: '{% trans "Muestra cada iteración del algoritmo Simplex: tablas, cálculos de pivote, y transformaciones hasta llegar a la solución óptima." %}'
+    },
+    'graph-explanation': {
+        title: '{% trans "Gráfica de Programación Lineal" %}',
+        
+    },
+    'graph-explanation': {
+        title: '{% trans "Gráfica de Programación Lineal" %}',
+        content: '{% trans "Visualización geométrica del problema (solo para 2 variables). Muestra la región factible, restricciones y el punto óptimo." %}'
+    }
+};
+</script>
+
 <script src="{% static 'metodos_numericos/js/simplex.js' %}"></script>
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -3,6 +3,12 @@
 let contadorRestricciones = 0
 let numVariables = 2
 let nombresVariables = ["x", "x"]
+let tooltipsEnabled = true
+
+// Función para obtener traducciones
+function getTranslation(key) {
+  return window.translations && window.translations[key] ? window.translations[key] : key
+}
 
 // Función para alternar tema
 function toggleTheme() {
@@ -69,6 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
   enhanceSimplexTables()
   updateValorOptimoTheme(savedTheme)
 
+  // Cargar estado de tooltips
+  const tooltipsState = localStorage.getItem("tooltipsEnabled")
+  if (tooltipsState !== null) {
+    tooltipsEnabled = tooltipsState === "true"
+  }
+
+  // Inicializar tooltips
+  initializeTooltips()
+
   // Inicializar campos
   if(window.cargaDB){
     if(window.numRestricciones > 0){
@@ -81,6 +96,105 @@ document.addEventListener("DOMContentLoaded", () => {
   generarCamposVariables()
   agregarRestriccion()
 })
+
+// Funciones para tooltips
+function initializeTooltips() {
+  // Agregar event listeners a todos los elementos con tooltip
+  const tooltipTriggers = document.querySelectorAll(".tooltip-trigger")
+
+  tooltipTriggers.forEach((trigger) => {
+    trigger.addEventListener("mouseenter", (e) => {
+      if (tooltipsEnabled) {
+        showTooltipContent(e.target.closest(".tooltip-trigger"))
+      }
+    })
+
+    trigger.addEventListener("mouseleave", () => {
+      if (tooltipsEnabled) {
+        hideTooltipContent()
+      }
+    })
+
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault()
+      if (tooltipsEnabled) {
+        const trigger = e.target.closest(".tooltip-trigger")
+        toggleTooltipContent(trigger)
+      }
+    })
+  })
+}
+
+function showTooltipContent(trigger) {
+  if (!tooltipsEnabled) return
+
+  const tooltipId = trigger.getAttribute("data-tooltip")
+  // Buscar traducción según idioma
+  let tooltipData = null
+  if (window.tooltipsContent && window.tooltipsContent[tooltipId]) {
+    tooltipData = window.tooltipsContent[tooltipId]
+    // Si es un objeto con title/content por idioma
+    if (typeof tooltipData.title === 'object') {
+      const lang = document.documentElement.lang || navigator.language || 'es'
+      tooltipData = {
+        title: tooltipData.title[lang] || tooltipData.title['es'] || '',
+        content: tooltipData.content[lang] || tooltipData.content['es'] || ''
+      }
+    }
+  }
+
+  if (!tooltipData) return
+
+  const tooltip = document.getElementById("tooltip-container")
+  const title = tooltip.querySelector(".tooltip-title")
+  const body = tooltip.querySelector(".tooltip-body")
+
+  title.textContent = tooltipData.title
+  body.textContent = tooltipData.content
+
+  // Posicionar tooltip
+  const rect = trigger.getBoundingClientRect()
+  let left = rect.left + rect.width / 2 - 300 / 2
+  let top = rect.bottom + 10
+  if (left < 10) left = 10
+  if (left + 300 > window.innerWidth - 10) left = window.innerWidth - 310
+  if (top + 150 > window.innerHeight - 10) top = rect.top - 160
+  tooltip.style.left = left + "px"
+  tooltip.style.top = top + "px"
+  tooltip.style.display = "block"
+
+  // Auto-hide después de 5 segundos
+  clearTimeout(window.tooltipTimeout)
+  window.tooltipTimeout = setTimeout(() => {
+    tooltip.style.display = "none"
+  }, 5000)
+}
+
+function hideTooltipContent() {
+  const tooltip = document.getElementById("tooltip-container")
+  tooltip.style.display = "none"
+  clearTimeout(window.tooltipTimeout)
+}
+
+function toggleTooltipContent(trigger) {
+  const tooltip = document.getElementById("tooltip-container")
+  if (tooltip.style.display === "block") {
+    hideTooltipContent()
+  } else {
+    showTooltipContent(trigger)
+  }
+}
+
+// Función para actualizar el estado de tooltips desde el perfil
+function updateTooltipsState(enabled) {
+  tooltipsEnabled = enabled
+  if (!enabled) {
+    hideTooltipContent()
+  }
+}
+
+// Hacer la función disponible globalmente
+window.updateTooltipsState = updateTooltipsState
 
 function generarCamposVariables() {
   numVariables = Number.parseInt(document.getElementById("num_variables").value)
@@ -112,7 +226,7 @@ function generarTablaVariables() {
     const th = document.createElement("th")
     th.className = "text-center"
     th.style.minWidth = "120px"
-    th.innerHTML = `Variable ${i + 1}`
+    th.innerHTML = `${getTranslation("Variable")} ${i + 1}`
     header.appendChild(th)
 
     // Input
@@ -187,22 +301,30 @@ function generarHeaderRestricciones() {
   const thTipo = document.createElement("th")
   thTipo.className = "text-center"
   thTipo.style.minWidth = "80px"
-  thTipo.textContent = "Tipo"
+  thTipo.innerHTML = `
+    ${getTranslation("Tipo")}
+    <span class="tooltip-trigger ms-1" data-tooltip="constraint-types">
+        <i class="fas fa-info-circle text-muted small"></i>
+    </span>
+  `
   header.appendChild(thTipo)
 
   // Valor
   const thValor = document.createElement("th")
   thValor.className = "text-center"
   thValor.style.minWidth = "100px"
-  thValor.textContent = "Valor"
+  thValor.textContent = getTranslation("Valor")
   header.appendChild(thValor)
 
   // Acción
   const thAccion = document.createElement("th")
   thAccion.className = "text-center"
   thAccion.style.minWidth = "80px"
-  thAccion.textContent = "Acción"
+  thAccion.textContent = getTranslation("Acción")
   header.appendChild(thAccion)
+
+  // Re-inicializar tooltips para los nuevos elementos
+  setTimeout(initializeTooltips, 100)
 }
 
 function actualizarNombreVariable(indice, nuevoNombre) {
@@ -281,7 +403,7 @@ function agregarRestriccion() {
         <td class="text-center">
             <button type="button" class="btn btn-outline-danger btn-sm" 
                     onclick="eliminarRestriccion(${contadorRestricciones})"
-                    title="Eliminar restricción">
+                    title="${getTranslation("Eliminar restricción")}">
                 <i class="fas fa-trash"></i>
             </button>
         </td>
@@ -361,7 +483,7 @@ function cargarEjemplo() {
   if (rest2_tipo) rest2_tipo.value = "<="
   if (rest2_valor) rest2_valor.value = "6"
 
-  showNotification("Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones", "success")
+  showNotification(getTranslation("Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones"), "success")
   // Actualizar la sección de problema actual
   setTimeout(actualizarProblemaActual, 20)
 }
@@ -370,22 +492,22 @@ function limpiarFormulario() {
   // Confirmar antes de limpiar
   if (window.Swal) {
     window.Swal.fire({
-      title: "¿Limpiar formulario?",
-      text: "Se perderán todos los datos ingresados",
+      title: getTranslation("¿Limpiar formulario?"),
+      text: getTranslation("Se perderán todos los datos ingresados"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, limpiar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText: getTranslation("Sí, limpiar"),
+      cancelButtonText: getTranslation("Cancelar"),
     }).then((result) => {
       if (result.isConfirmed) {
         ejecutarLimpiezaFormulario()
-        showNotification("Formulario limpiado correctamente", "info")
+        showNotification(getTranslation("Formulario limpiado correctamente"), "info")
       }
     })
   } else {
-    if (confirm("¿Está seguro de que desea limpiar todo el formulario?")) {
+    if (confirm(getTranslation("¿Está seguro de que desea limpiar todo el formulario?"))) {
       ejecutarLimpiezaFormulario()
     }
   }
@@ -432,6 +554,10 @@ function showNotification(message, type = "info") {
     timerProgressBar: true,
     customClass: {
       popup: "swal2-shadow",
+    },
+    didOpen: (toast) => {
+      toast.style.zIndex = 10000
+      toast.style.top = "90px"
     },
   })
 }
@@ -518,7 +644,7 @@ function actualizarProblemaActual() {
     coefs.push(Number.parseFloat(input?.value) || 0)
   }
   // Construir función objetivo
-  let objStr = (tipoOpt === "maximizar" ? "Maximizar" : "Minimizar") + " "
+  let objStr = (tipoOpt === "maximizar" ? getTranslation("Maximizar") : getTranslation("Minimizar")) + " "
   objStr += coefs
     .map((c, i) => {
       const sign = c >= 0 && i > 0 ? " + " : c < 0 ? " - " : ""
@@ -550,11 +676,11 @@ function actualizarProblemaActual() {
   if (cont) {
     cont.innerHTML = `
       <h6 class="text-primary mb-2">
-        <i class="fas fa-lightbulb me-1"></i>Problema actual Ingresado
+        <i class="fas fa-lightbulb me-1"></i>${getTranslation("Problema actual Ingresado")}
       </h6>
       <div class="small">
-        <p class="mb-2"><strong>Problema:</strong> ${objStr}</p>
-        <p class="mb-2"><strong>Sujeto a:</strong></p>
+        <p class="mb-2"><strong>${getTranslation("Problema:")}:</strong> ${objStr}</p>
+        <p class="mb-2"><strong>${getTranslation("Sujeto a:")}:</strong></p>
         <ul class="mb-2 ps-3">
           ${restricciones.map((r) => `<li>${r}</li>`).join("")}
           <li>${varsNoNeg}</li>
@@ -656,7 +782,7 @@ function highlightPivotElements(table, pivotRow, pivotCol) {
     pivotCell.classList.add("pivot-cell")
 
     // Agregar tooltip con información del pivote
-    pivotCell.title = `Elemento Pivote: ${pivotCell.textContent.trim()}`
+    pivotCell.title = `${getTranslation("Elemento Pivote:")} ${pivotCell.textContent.trim()}`
   }
 
   // Resaltar encabezados de columna y fila pivote
@@ -728,7 +854,7 @@ function validateNumber(input) {
   const value = input.value.trim()
   if (value && isNaN(Number.parseFloat(value))) {
     input.classList.add("is-invalid")
-    showTooltip(input, "Debe ser un número válido")
+    showTooltip(input, getTranslation("Debe ser un número válido"))
   } else {
     input.classList.remove("is-invalid")
     input.classList.add("is-valid")
@@ -844,4 +970,12 @@ function repoblarCampos() {
 document.addEventListener("DOMContentLoaded", () => {
   // Delay para asegurar que todos los elementos estén listos
   setTimeout(repoblarCampos, 200)
+})
+
+// Actualizar el placeholder del problema actual
+document.addEventListener("DOMContentLoaded", () => {
+  const problemaActual = document.getElementById("problema-actual")
+  if (problemaActual && problemaActual.innerHTML.includes("Ingresa los valores")) {
+    problemaActual.innerHTML = `<h5>${getTranslation("Ingresa los valores de tu ejercicio para visualizarlo")}</h5>`
+  }
 })

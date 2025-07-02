@@ -293,7 +293,6 @@ code {
   }
 }
 
-
 /* Estilos para alertas de variables */
 .alert-info {
   border-left: 4px solid #007bff;
@@ -419,4 +418,148 @@ code {
   .d-md-inline {
     display: inline !important;
   }
+}
+
+/* Estilos para tooltips personalizados */
+.tooltip-trigger {
+  cursor: help;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.tooltip-trigger:hover {
+  transform: scale(1.1);
+  color: #007bff !important;
+}
+
+.custom-tooltip {
+  position: fixed;
+  z-index: 10000;
+  max-width: 350px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.tooltip-content {
+  padding: 0;
+}
+
+.tooltip-header {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.tooltip-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.tooltip-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tooltip-body {
+  padding: 16px;
+  color: #333;
+  text-align: justify;
+}
+
+/* Estilos para tooltips en modo oscuro */
+[data-theme="dark"] .custom-tooltip {
+  background: #2d3748;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .tooltip-body {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .tooltip-header {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+}
+
+/* Animación de entrada para tooltips */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-tooltip {
+  animation: tooltipFadeIn 0.2s ease-out;
+}
+
+/* Responsive para tooltips */
+@media (max-width: 768px) {
+  .custom-tooltip {
+    max-width: 280px;
+    font-size: 0.85rem;
+  }
+
+  .tooltip-header {
+    padding: 10px 12px;
+  }
+
+  .tooltip-title {
+    font-size: 0.9rem;
+  }
+
+  .tooltip-body {
+    padding: 12px;
+  }
+}
+
+/* Estilos para el switch de tooltips en el perfil */
+.form-check-input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.form-check-input:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Indicador visual para elementos con tooltip */
+.tooltip-trigger i {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.tooltip-trigger:hover i {
+  opacity: 1;
 }
