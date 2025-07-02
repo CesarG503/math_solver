@@ -139,3 +139,18 @@ msgstr "Editar"
 
 msgid "Eliminar"
 msgstr "Eliminar"
+
+msgid "Guardar cambios"
+msgstr "Guardar Cambios"
+
+msgid "Cambiar contraseña"
+msgstr "Cambiar contraseña"
+
+msgid "Editar foto"
+msgstr "Editar foto"
+
+msgid "Cerrar sesion"
+msgstr "Cerrar Sesión"
+
+msgid "Cerrar panel"
+msgstr "Cerrar Panel"

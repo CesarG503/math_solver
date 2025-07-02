@@ -190,6 +190,7 @@ def history_view(request):
         variables = ejercicio.ecuacion.split("!")[2].split(',')
         terminos_funcion = ejercicio.ecuacion.split("!")[0].split(',')
         resultados = ejercicio.solucion.split(',')
+        resultados = [f"{float(r):.4f}" for r in resultados]
         ejercicio_base['solucion'] = ", ".join([f"{variables[i]}={resultados[i]}" for i in range(len(resultados))])
         ejercicio_base['ecuacion'] = f"{tipo_simplex}(Z) = " + " + ".join([f"{terminos_funcion[i]}{variables[i]}" for i in range(len(terminos_funcion))])
 
@@ -362,9 +363,9 @@ def simplex_view(request, id_ejercicio=None):
                 'funcion_objetivo_valores': funcion_objetivo,  # Valores numéricos para repoblar
                 'nombres_variables_str': nombres_variables_str  # String original
             })
-
-            if(request.user.is_authenticated):
-                guardar_simplex(request.user.id, "S", f"{','.join(str(numero) for numero in funcion_objetivo)}!{tipo_optimizacion}!{','.join(nombres_variables)}",restricciones, ','.join (str(numero)for numero in resultado['solucion']))
+            clone = request.get_full_path().startswith('/simplex/clone/')
+            if(request.user.is_authenticated ):
+                guardar_simplex(request.user.id, "S", f"{','.join(str(numero) for numero in funcion_objetivo)}!{tipo_optimizacion}!{','.join(nombres_variables)}",restricciones, ','.join (str(numero)for numero in resultado['solucion']), clone)
             
         except ValueError as e:
             messages.error(request, f'Error en los datos de entrada: {str(e)}')
@@ -586,8 +587,10 @@ def guardar_integracion(uid, tipo, ecuacion, polinomio_solucion):
         return True
 
 # Para Simplex
-def guardar_simplex(uid, tipo, ecuacion, restricciones, solucion):
+def guardar_simplex(uid, tipo, ecuacion, restricciones, solucion, clone=False):
     if(uid and tipo and ecuacion and restricciones and solucion):
+        if Ejercicio.objects.filter(user_id=uid, tipo=tipo, ecuacion=ecuacion, solucion=solucion).exists() and not clone:
+            return False
         current_date = timezone.now()
         ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, restricciones=json.dumps(restricciones), solucion=solucion, fecha_creacion=current_date)
         ejercicio.save()

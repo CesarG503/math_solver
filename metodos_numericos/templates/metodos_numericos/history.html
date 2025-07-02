@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col-12 mt-2">
-        <div class="bg-secondary-neon text-white rounded p-5 mb-4">
+        <div class="bg-secondary-neon text-white text-center rounded p-5 mb-4">
             <h1>
                 <i class="fas fa-history me-3"></i> {%trans "Historial"%}
             </h1>
@@ -16,17 +16,16 @@
     </div>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-12">
-        <table class="table table-success table-striped table-hover">
-            <thead>
-                <tr>
-                    <th><i class="fa fa-calendar"></i> {%trans "Fecha"%}</th>
-                    <th>{%trans "Ecuacion"%}</th>
-                    <th>{%trans "Resultado"%}</th>
-                    <th>{%trans "Editar"%}</th>
-                    <th>{%trans "Eliminar"%}</th>
-                </tr>
+<div class="container-fluid p-0" style="overflow: auto;">
+    <table class="table table-success table-striped table-hover">
+        <thead>
+            <tr>
+                <th><i class="fa fa-calendar"></i> {%trans "Fecha"%}</th>
+                <th>{%trans "Ecuacion"%}</th>
+                <th>{%trans "Resultado"%}</th>
+                <th>{%trans "Editar"%}</th>
+                <th>{%trans "Eliminar"%}</th>
+            </tr>
             </thead>
             <tbody>
                 {% for ejercicio in ejercicios %}
@@ -47,7 +46,7 @@
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+    </table>
     </div>
 </div>
 {% endblock %}

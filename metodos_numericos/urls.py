@@ -11,6 +11,7 @@ urlpatterns = [
     path('integracion/', views.integracion_view, name='integracion'),
     path('simplex/', views.simplex_view, name='simplex'),
     path('simplex/<int:id_ejercicio>/', views.simplex_view, name='simplex_id'),
+    path('simplex/clone/<int:id_ejercicio>/', views.simplex_view, name='simplex_id'),
     path('history/', views.history_view, name='history'),
     #Authentication URLs
     path('login/', views.login_view, name='login'),
