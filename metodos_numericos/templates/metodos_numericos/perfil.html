@@ -19,10 +19,20 @@
                     <img src="{{ request.user.usuarios.image.url }}" alt="Imagen de Perfil" class="profile-img border border-4 border-warning border-neon hover-neon"
                         id="imagenPerfil">
                 </div>
+                <div class="row g-2 justify-content-center">
                 <div class="text-center" style="padding-top: 5px;">
                     <input type="file" id="image" name="image" class="form-item px-4 py-2" style="display:none;">
                     <label for="image" class="btn edit-button bg-light"><i class="fa fa-pencil me-2"></i>{% trans "Editar foto" %}</label>
                 </div>
+                <div class="info-section mb-3">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'metodos_numericos:history' %}" class="btn btn-warning rounded-pill">
+                        {%trans "Historial"%}
+                        <i id="icon-password" class="fa fa-history"></i>
+                    </a>
+                </div>
+                </div>
+            </div>
             </div>
 
             <div class="info-section">
