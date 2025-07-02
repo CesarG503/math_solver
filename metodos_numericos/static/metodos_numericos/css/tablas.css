@@ -1544,3 +1544,73 @@ footer {
     color: #fff3cd;
     border: 1px solid #4d3900;
 }
+
+/* Estilos para botones de exportación */
+.btn-group .btn-export {
+  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,114,255,0.12);
+  padding: 0.5rem 1.25rem;
+  margin: 0 0.25rem;
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-group .btn-export:hover {
+  background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%);
+  box-shadow: 0 4px 16px rgba(0,114,255,0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.btn-group .btn-export:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0,114,255,0.10);
+}
+
+.btn-group .btn-export .fa {
+  margin-right: 0.5em;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+}
+
+.btn-group .btn-export-pdf .fa {
+  color: #ff1744;
+}
+.btn-group .btn-export-word .fa {
+  color: #2979ff;
+}
+.btn-group .btn-export-excel .fa {
+  color: #00c853;
+}
+
+/* Efecto de brillo animado al pasar el mouse */
+.btn-group .btn-export::after {
+  content: "";
+  position: absolute;
+  left: -75%;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.45) 100%);
+  transform: skewX(-25deg);
+  transition: left 0.5s;
+  pointer-events: none;
+}
+
+.btn-group .btn-export:hover::after {
+  left: 120%;
+}
+
+/* Animación para los botones de exportación al éxito */
+@keyframes exportSuccess {
+  0% { box-shadow: 0 0 0 0 #00c6ff44; }
+  70% { box-shadow: 0 0 0 10px #00c6ff00; }
+  100% { box-shadow: 0 0 0 0 #00c6ff00; }
+}
+
+.btn-export-success {
+  animation: exportSuccess 0.6s;
+}
