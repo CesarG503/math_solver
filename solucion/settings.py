@@ -27,6 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-y%f*nlnj&&2rfetv7$yt&4qn6&w-0yj@+@hj!8utrnrkr$0lnb'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # PERSONALIZAR MESSAGES
 MESSAGE_TAGS = {
@@ -137,6 +139,13 @@ LANGUAGES = [
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "https://solver.mixgyt.com",
+    "https://www.solver.mixgyt.com",  # si aplica
+    "https://*.mixgyt.com",  # wildcard para subdominios (Django 4.0+)
 ]
 
 # Static files (CSS, JavaScript, Images)

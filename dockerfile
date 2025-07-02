@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     gcc \
     libssl-dev \
     pkg-config \
+    libpq-dev \
+    gettext \
+    locales \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -19,6 +22,9 @@ COPY requirements.txt .
 # Instala las dependencias
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
+
+RUN echo "es_ES.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
 
 # Copia el resto del proyecto
 COPY . .
