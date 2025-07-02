@@ -7,7 +7,7 @@ from .forms import FormCrearUsuario
 from .models import Ejercicio
 from .utils import interpolacion_hermite, integracion_compuesta, metodo_simplex
 import json
-import datetime
+from django.utils import timezone
 
 def docs(request):
     return render(request, 'metodos_numericos/docs.html')
@@ -190,10 +190,10 @@ def history_view(request):
         variables = ejercicio.ecuacion.split("!")[2].split(',')
         terminos_funcion = ejercicio.ecuacion.split("!")[0].split(',')
         resultados = ejercicio.solucion.split(',')
-        ejercicio_base['solucion'] = ", ".join([f"{variables[i]}={resultados[i]}" for i in range(len(variables))])
-        ejercicio_base['ecuacion'] = f"{tipo_simplex}(Z) = " + " + ".join([f"{terminos_funcion[i]}{variables[i]}" for i in range(len(variables))])
+        ejercicio_base['solucion'] = ", ".join([f"{variables[i]}={resultados[i]}" for i in range(len(resultados))])
+        ejercicio_base['ecuacion'] = f"{tipo_simplex}(Z) = " + " + ".join([f"{terminos_funcion[i]}{variables[i]}" for i in range(len(terminos_funcion))])
 
-        ejercicio_base['fecha_creacion'] = ejercicio.fecha_creacion.strftime('%H:%M | %Y-%m-%d')
+        ejercicio_base['fecha_creacion'] = ejercicio.fecha_creacion
         ejercicios.append(ejercicio_base)
     
     context = {
@@ -255,8 +255,8 @@ def simplex_view(request, id_ejercicio=None):
             nombres_variables_str = request.POST.get('nombres_variables', '')
             
             # Debug: imprimir los datos recibidos
-            print(f"Función objetivo recibida: '{funcion_objetivo_str}'")
-            print(f"Nombres variables: '{nombres_variables_str}'")
+            #print(f"Función objetivo recibida: '{funcion_objetivo_str}'")
+            #print(f"Nombres variables: '{nombres_variables_str}'")
             
             # Parsear función objetivo
             funcion_objetivo = []
@@ -299,7 +299,7 @@ def simplex_view(request, id_ejercicio=None):
                 tipo_rest = request.POST.get(tipo_key, '<=')
                 valor_str = request.POST.get(valor_key, '0')
                 
-                print(f"Restricción {i}: coef='{coef_str}', tipo='{tipo_rest}', valor='{valor_str}'")
+                #print(f"Restricción {i}: coef='{coef_str}', tipo='{tipo_rest}', valor='{valor_str}'")
                 
                 if coef_str.strip():
                     coeficientes = []
@@ -333,7 +333,7 @@ def simplex_view(request, id_ejercicio=None):
                 messages.error(request, 'Debe ingresar al menos una restricción.')
                 return render(request, 'metodos_numericos/simplex.html', context)
             
-            print(f"Función objetivo final: {funcion_objetivo}")
+            #print(f"Función objetivo final: {funcion_objetivo}")
             
             # Resolver usando Simplex
             resultado = resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
@@ -399,6 +399,7 @@ def simplex_view(request, id_ejercicio=None):
                 valores_restricciones.append(float(restriccion.get('valor', 0)))
                 coeficientes_restricciones.append(coeficientes)
             
+            context['mantener_datos'] = False
             context['funcion_objetivo_input_db'] = funcion_objetivo_input
             context['tipo_optimizacion'] = tipo_optimizacion_input
             context['nombres_variables_db'] = nombres_variables_input
@@ -567,7 +568,7 @@ def guardar_ejercicio(uid, tipo, puntos, polinomio_solucion):
         if Ejercicio.objects.filter(user_id=uid, tipo=tipo, puntos=puntos).exists():
             # Si ya existe un ejercicio con esos parámetros, no lo guardamos de nuevo
             return False
-        current_date = datetime.datetime.now()
+        current_date = timezone.now()
         ejercicio = Ejercicio(user_id=uid, tipo=tipo, puntos=puntos, solucion=polinomio_solucion, fecha_creacion=current_date)
         ejercicio.save()
         return True
@@ -577,7 +578,7 @@ def guardar_integracion(uid, tipo, ecuacion, polinomio_solucion):
     if(uid and tipo and ecuacion and polinomio_solucion):
         if Ejercicio.objects.filter(user_id=uid, tipo=tipo, ecuacion=ecuacion).exists():
             return False
-        current_date = datetime.datetime.now()
+        current_date = timezone.now()
         ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, solucion=polinomio_solucion, fecha_creacion=current_date)
         ejercicio.save()
         return True
@@ -585,7 +586,7 @@ def guardar_integracion(uid, tipo, ecuacion, polinomio_solucion):
 # Para Simplex
 def guardar_simplex(uid, tipo, ecuacion, restricciones, solucion):
     if(uid and tipo and ecuacion and restricciones and solucion):
-        current_date = datetime.datetime.now()
+        current_date = timezone.now()
         ejercicio = Ejercicio(user_id=uid, tipo=tipo, ecuacion=ecuacion, restricciones=json.dumps(restricciones), solucion=solucion, fecha_creacion=current_date)
         ejercicio.save()
         return True

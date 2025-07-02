@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
       contadorRestricciones = window.numRestricciones;
     }
     nombresVariables = window.nombresVariables || ["x", "x"]
+    numVariables = window.numVariables || 2;
     return;
   }
   generarCamposVariables()

@@ -116,6 +116,9 @@ msgstr "Instrucciones de Uso"
 msgid "Cambiar idioma"
 msgstr "Cambiar idioma"
 
+msgid "Historial"
+msgstr "Historial"
+
 msgid "Descripcion Historial"
 msgstr "El historial de ejercicios que has realizado en el solucionador"
 

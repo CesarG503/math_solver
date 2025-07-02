@@ -52,18 +52,13 @@
                                 <i class="fas fa-hashtag me-1"></i>Variables
                             </label>
                             <select class="form-select" id="num_variables" onchange="generarCamposVariables()">
-                                {%if ejercicio_db %}
-                                    <option value="{{num_variables}}" selected>{{num_variables}} variables</option>
-                                    <option value="2">2 variables</option>
-                                {% else %}
-                                    <option value="2" selected>2 variables</option>
-                                {% endif %}
-                                <option value="3">3 variables</option>
-                                <option value="4">4 variables</option>
-                                <option value="5">5 variables</option>
-                                <option value="6">6 variables</option>
-                                <option value="7">7 variables</option>
-                                <option value="8">8 variables</option>
+                                <option value="2" {%if num_variables == 2 or num_variables == None%}selected{%endif%}>2 variables</option>
+                                <option value="3" {%if num_variables == 3%}selected{%endif%}>3 variables</option>
+                                <option value="4" {%if num_variables == 4%}selected{%endif%}>4 variables</option>
+                                <option value="5" {%if num_variables == 5%}selected{%endif%}>5 variables</option>
+                                <option value="6" {%if num_variables == 6%}selected{%endif%}>6 variables</option>
+                                <option value="7" {%if num_variables == 7%}selected{%endif%}>7 variables</option>
+                                <option value="8" {%if num_variables == 8%}selected{%endif%}>8 variables</option>
                             </select>
                         </div>
                     </div>
@@ -165,10 +160,10 @@
                                     <!-- Las restricciones se añaden dinámicamente -->
                                      {% load index_filters %}
                                     {%if ejercicio_db %}
-                                        {% for fila in coeficientes_restricciones %}
+                                        {% for _ in ""|center:num_restricciones %}
                                             <tr class="restriccion-row" id="restriccion_{{forloop.counter|add:"-1"}}" style="opacity: 1; transform: translateY(0px); transition: 0.3s;">
                                                 <td class="text-center fw-bold">{{forloop.counter}}</td>
-                                                {% for coef in fila %}
+                                                {% for coef in coeficientes_restricciones|index:forloop.counter0 %}
                                                     <td>
                                                         <input class="form-control form-control-sm text-center restriccion-input" type="number" value="{{coef}}" name="restriccion_{{forloop.parentloop.counter|add:"-1"}}_coef_{{forloop.counter|add:"-1"}}"
                                                          step="any" placeholder="{{forloop.parentloop.counter|add:"-1"}}">
@@ -543,6 +538,7 @@ window.datosSimplexTemplate = {
 <script>
     window.cargaDB = true;
     window.numRestricciones = {{ num_restricciones }};
+    window.numVariables = {{ num_variables }};
     window.nombresVariables = {{ nombres_variables_db|safe }};
 </script>
 {%endif%}

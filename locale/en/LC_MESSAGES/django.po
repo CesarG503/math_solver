@@ -89,6 +89,9 @@ msgstr "Instructions for Use"
 msgid "Cambiar idioma"
 msgstr "Change language"
 
+msgid "Historial"
+msgstr "History of exercises"
+
 msgid "Descripcion Historial"
 msgstr "The history of exercises you have completed in the solver"
 

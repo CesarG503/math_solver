@@ -31,7 +31,8 @@
             <tbody>
                 {% for ejercicio in ejercicios %}
                 <tr>
-                    <td style="vertical-align: middle;">{{ ejercicio.fecha_creacion }}</td>
+                    {% load tz %}
+                    <td style="vertical-align: middle;">{{ ejercicio.fecha_creacion|localtime|date:"H:i | d/m/Y" }}</td>
                     <td class="math-display">$${{ ejercicio.ecuacion }}$$</td>
                     <td class="math-display">$${{ ejercicio.solucion }}$$</td>
                     <td><a class="btn btn-white" href="/simplex/{{ejercicio.id}}"><i class="fa fa-pencil"></i> {%trans "Editar"%}</a></td>
@@ -49,10 +50,4 @@
         </table>
     </div>
 </div>
-
-{% if ejercicios %}
-    <script>
-        MathJax.typeset();
-    </script>
-{% endif %}
 {% endblock %}
