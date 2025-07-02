@@ -1,90 +1,234 @@
-#: .\metodos_numericos\templates\metodos_numericos\base.html:42
-msgid "Materia"
-msgstr "Optimization Methods"
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 12:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:52
-#: .\metodos_numericos\templates\metodos_numericos\index.html:3
-msgid "Inicio"
-msgstr "Home"
+# Simplex page translations
+msgid "Método Simplex - Métodos Numéricos"
+msgstr "Simplex Method - Numerical Methods"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:53
-msgid "Hermite"
-msgstr "Hermite"
+msgid "Cambiar tema"
+msgstr "Change theme"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:54
-msgid "Integracion"
-msgstr "Integration"
+msgid "Método Simplex - Programación Lineal"
+msgstr "Simplex Method - Linear Programming"
 
-#: .\metodos_numericos\templates\metodos_numericos\base.html:59
-msgid "Login"
-msgstr "Login"
+msgid "Datos de entrada"
+msgstr "Input Data"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:3
-#: .\metodos_numericos\templates\metodos_numericos\index.html:11
-msgid "AppTitle"
-msgstr "Numerical Methods"
+msgid "Optimización"
+msgstr "Optimization"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:14
-msgid "Descripcion"
-msgstr "Web application to solve interpolation and numerical integration problems with detailed step-by-step solutions."
+msgid "Maximizar"
+msgstr "Maximize"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:27
-msgid "Interpolacion Hermite"
-msgstr "Hermite Interpolation"
+msgid "Minimizar"
+msgstr "Minimize"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:29
-msgid "Descripcion Hermite"
-msgstr "Find the interpolating polynomial that passes through given points considering both the function values and their derivatives."
+msgid "Variables"
+msgstr "Variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:32
-msgid "EntradaPuntos"
-msgstr "Input: Points (x, f(x), f'(x))"
+msgid "2 variables"
+msgstr "2 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:33
-msgid "TablaDD"
-msgstr "Divided differences table"
+msgid "3 variables"
+msgstr "3 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:34
-msgid "PolResultante"
-msgstr "Resulting Polynomial"
+msgid "4 variables"
+msgstr "4 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:35
-msgid "EvalPEspecifico"
-msgstr "Evaluation at a specific point"
+msgid "5 variables"
+msgstr "5 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:38
-#: .\metodos_numericos\templates\metodos_numericos\index.html:61
-msgid "Comenzar"
-msgstr "Start"
+msgid "6 variables"
+msgstr "6 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:50
-msgid "Integracion Numerica"
-msgstr "Numeric Integration"
+msgid "7 variables"
+msgstr "7 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:52
-msgid "Descripcion Integracion"
-msgstr "Calculate approximations of definite integrals using composite methods with detailed explanation of each step."
+msgid "8 variables"
+msgstr "8 variables"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:55
-msgid "Trapecio"
-msgstr "Trapezoidal Rule"
+msgid "Nombres de Variables"
+msgstr "Variable Names"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:56
-msgid "Simpson1/3"
-msgstr "Simpson 1/3"
+msgid "Personaliza los nombres de tus variables"
+msgstr "Customize your variable names"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:57
-msgid "Simpson3/8"
-msgstr "Simpson 3/8"
+msgid "Función Objetivo"
+msgstr "Objective Function"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:58
-msgid "CalculoPAP"
-msgstr "Step-by-step Calculation"
+msgid "Coeficientes de cada variable en la función objetivo"
+msgstr "Coefficients of each variable in the objective function"
 
-#: .\metodos_numericos\templates\metodos_numericos\index.html:74
-msgid "InstruccionesUso"
-msgstr "Instructions for Use"
+msgid "Restricciones"
+msgstr "Constraints"
 
-#: .\metodos_numericos\templates\metodos_numericos\perfil.html:76
-msgid "Cambiar idioma"
-msgstr "Change language"
+msgid "Tipo"
+msgstr "Type"
+
+msgid "Valor"
+msgstr "Value"
+
+msgid "Acción"
+msgstr "Action"
+
+msgid "Añadir Restricción"
+msgstr "Add Constraint"
+
+msgid "Cargar Ejemplo"
+msgstr "Load Example"
+
+msgid "Limpiar Todo"
+msgstr "Clear All"
+
+msgid "Resolver con Simplex"
+msgstr "Solve with Simplex"
+
+msgid "Ingresa los valores de tu ejercicio para visualizarlo"
+msgstr "Enter your exercise values to visualize it"
+
+msgid "Solución Óptima"
+msgstr "Optimal Solution"
+
+msgid "Variables:"
+msgstr "Variables:"
+
+msgid "Valor óptimo:"
+msgstr "Optimal value:"
+
+msgid "Problema de minimización"
+msgstr "Minimization problem"
+
+msgid "Método utilizado:"
+msgstr "Method used:"
+
+msgid "Método de la Gran M"
+msgstr "Big M Method"
+
+msgid "Simplex Estándar"
+msgstr "Standard Simplex"
+
+msgid "Se utilizó el método de la Gran M debido a restricciones de tipo ≥ o ="
+msgstr "The Big M method was used due to constraints of type ≥ or ="
+
+msgid "Se utilizó el método Simplex estándar (todas las restricciones son ≤)"
+msgstr "The standard Simplex method was used (all constraints are ≤)"
+
+msgid "Exportar a PDF"
+msgstr "Export to PDF"
+
+msgid "Exportar a Word"
+msgstr "Export to Word"
+
+msgid "Exportar a Excel"
+msgstr "Export to Excel"
+
+msgid "Proceso Simplex Paso a Paso"
+msgstr "Step-by-Step Simplex Process"
+
+msgid "Error en la Solución"
+msgstr "Solution Error"
+
+msgid "Interpretación:"
+msgstr "Interpretation:"
+
+msgid "Sugerencia:"
+msgstr "Suggestion:"
+
+msgid "Proceso hasta el Error"
+msgstr "Process until Error"
+
+msgid "Configura tu problema de programación lineal"
+msgstr "Configure your linear programming problem"
+
+msgid "Completa la configuración de la izquierda para resolver usando el método Simplex."
+msgstr "Complete the configuration on the left to solve using the Simplex method."
+
+msgid "Pasos para resolver:"
+msgstr "Steps to solve:"
+
+msgid "Selecciona el tipo de optimización (maximizar/minimizar)"
+msgstr "Select the optimization type (maximize/minimize)"
+
+msgid "Define el número de variables de decisión"
+msgstr "Define the number of decision variables"
+
+msgid "Personaliza los nombres de las variables (opcional)"
+msgstr "Customize variable names (optional)"
+
+msgid "Ingresa los coeficientes de la función objetivo"
+msgstr "Enter the objective function coefficients"
+
+msgid "Añade las restricciones del problema"
+msgstr "Add the problem constraints"
+
+msgid "Haz clic en 'Resolver con Simplex'"
+msgstr "Click 'Solve with Simplex'"
+
+msgid "Gráfica de Programación Lineal"
+msgstr "Linear Programming Graph"
+
+msgid "La gráfica se mostrará aquí una vez que resuelvas el problema con 2 variables."
+msgstr "The graph will be displayed here once you solve the problem with 2 variables."
+
+msgid "Gráfica no disponible"
+msgstr "Graph not available"
+
+msgid "La visualización gráfica solo está disponible para problemas con 2 variables."
+msgstr "Graphical visualization is only available for problems with 2 variables."
+
+# JavaScript translations
+msgid "Variable"
+msgstr "Variable"
+
+msgid "Eliminar restricción"
+msgstr "Remove constraint"
+
+msgid "Problema actual Ingresado"
+msgstr "Current Problem Entered"
+
+msgid "Problema:"
+msgstr "Problem:"
+
+msgid "Sujeto a:"
+msgstr "Subject to:"
+
+msgid "Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones"
+msgstr "Example loaded: Maximize 3x₁ + 2x₂ with 2 constraints"
+
+msgid "Formulario limpiado correctamente"
+msgstr "Form cleared successfully"
+
+msgid "¿Limpiar formulario?"
+msgstr "Clear form?"
+
+msgid "Se perderán todos los datos ingresados"
+msgstr "All entered data will be lost"
+
+msgid "Sí, limpiar"
+msgstr "Yes, clear"
+
+msgid "Cancelar"
+msgstr "Cancel"
+
+msgid "Debe ser un número válido"
+msgstr "Must be a valid number"
+
+msgid "Elemento Pivote:"
+msgstr "Pivot Element:"

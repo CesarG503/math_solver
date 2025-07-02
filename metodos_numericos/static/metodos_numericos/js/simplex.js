@@ -3,6 +3,11 @@ let contadorRestricciones = 0
 let numVariables = 2
 let nombresVariables = ["x", "x"]
 
+// Función para obtener traducciones
+function getTranslation(key) {
+  return window.translations && window.translations[key] ? window.translations[key] : key
+}
+
 // Función para alternar tema
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute("data-theme")
@@ -97,7 +102,7 @@ function generarTablaVariables() {
     const th = document.createElement("th")
     th.className = "text-center"
     th.style.minWidth = "120px"
-    th.innerHTML = `Variable ${i + 1}`
+    th.innerHTML = `${getTranslation("Variable")} ${i + 1}`
     header.appendChild(th)
 
     // Input
@@ -164,21 +169,21 @@ function generarHeaderRestricciones() {
   const thTipo = document.createElement("th")
   thTipo.className = "text-center"
   thTipo.style.minWidth = "80px"
-  thTipo.textContent = "Tipo"
+  thTipo.textContent = getTranslation("Tipo")
   header.appendChild(thTipo)
 
   // Valor
   const thValor = document.createElement("th")
   thValor.className = "text-center"
   thValor.style.minWidth = "100px"
-  thValor.textContent = "Valor"
+  thValor.textContent = getTranslation("Valor")
   header.appendChild(thValor)
 
   // Acción
   const thAccion = document.createElement("th")
   thAccion.className = "text-center"
   thAccion.style.minWidth = "80px"
-  thAccion.textContent = "Acción"
+  thAccion.textContent = getTranslation("Acción")
   header.appendChild(thAccion)
 }
 
@@ -255,7 +260,7 @@ function agregarRestriccion() {
         <td class="text-center">
             <button type="button" class="btn btn-outline-danger btn-sm" 
                     onclick="eliminarRestriccion(${contadorRestricciones})"
-                    title="Eliminar restricción">
+                    title="${getTranslation("Eliminar restricción")}">
                 <i class="fas fa-trash"></i>
             </button>
         </td>
@@ -335,7 +340,7 @@ function cargarEjemplo() {
   if (rest2_tipo) rest2_tipo.value = "<="
   if (rest2_valor) rest2_valor.value = "6"
 
-  showNotification("Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones", "success")
+  showNotification(getTranslation("Ejemplo cargado: Maximizar 3x₁ + 2x₂ con 2 restricciones"), "success")
   // Actualizar la sección de problema actual
   setTimeout(actualizarProblemaActual, 20)
 }
@@ -344,22 +349,22 @@ function limpiarFormulario() {
   // Confirmar antes de limpiar
   if (window.Swal) {
     window.Swal.fire({
-      title: "¿Limpiar formulario?",
-      text: "Se perderán todos los datos ingresados",
+      title: getTranslation("¿Limpiar formulario?"),
+      text: getTranslation("Se perderán todos los datos ingresados"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, limpiar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText: getTranslation("Sí, limpiar"),
+      cancelButtonText: getTranslation("Cancelar"),
     }).then((result) => {
       if (result.isConfirmed) {
         ejecutarLimpiezaFormulario()
-        showNotification("Formulario limpiado correctamente", "info")
+        showNotification(getTranslation("Formulario limpiado correctamente"), "info")
       }
     })
   } else {
-    if (confirm("¿Está seguro de que desea limpiar todo el formulario?")) {
+    if (confirm(getTranslation("¿Está seguro de que desea limpiar todo el formulario?"))) {
       ejecutarLimpiezaFormulario()
     }
   }
@@ -492,7 +497,7 @@ function actualizarProblemaActual() {
     coefs.push(Number.parseFloat(input?.value) || 0)
   }
   // Construir función objetivo
-  let objStr = (tipoOpt === "maximizar" ? "Maximizar" : "Minimizar") + " "
+  let objStr = (tipoOpt === "maximizar" ? getTranslation("Maximizar") : getTranslation("Minimizar")) + " "
   objStr += coefs
     .map((c, i) => {
       const sign = c >= 0 && i > 0 ? " + " : c < 0 ? " - " : ""
@@ -524,11 +529,11 @@ function actualizarProblemaActual() {
   if (cont) {
     cont.innerHTML = `
       <h6 class="text-primary mb-2">
-        <i class="fas fa-lightbulb me-1"></i>Problema actual Ingresado
+        <i class="fas fa-lightbulb me-1"></i>${getTranslation("Problema actual Ingresado")}
       </h6>
       <div class="small">
-        <p class="mb-2"><strong>Problema:</strong> ${objStr}</p>
-        <p class="mb-2"><strong>Sujeto a:</strong></p>
+        <p class="mb-2"><strong>${getTranslation("Problema:")}:</strong> ${objStr}</p>
+        <p class="mb-2"><strong>${getTranslation("Sujeto a:")}:</strong></p>
         <ul class="mb-2 ps-3">
           ${restricciones.map((r) => `<li>${r}</li>`).join("")}
           <li>${varsNoNeg}</li>
@@ -630,7 +635,7 @@ function highlightPivotElements(table, pivotRow, pivotCol) {
     pivotCell.classList.add("pivot-cell")
 
     // Agregar tooltip con información del pivote
-    pivotCell.title = `Elemento Pivote: ${pivotCell.textContent.trim()}`
+    pivotCell.title = `${getTranslation("Elemento Pivote:")} ${pivotCell.textContent.trim()}`
   }
 
   // Resaltar encabezados de columna y fila pivote
@@ -702,7 +707,7 @@ function validateNumber(input) {
   const value = input.value.trim()
   if (value && isNaN(Number.parseFloat(value))) {
     input.classList.add("is-invalid")
-    showTooltip(input, "Debe ser un número válido")
+    showTooltip(input, getTranslation("Debe ser un número válido"))
   } else {
     input.classList.remove("is-invalid")
     input.classList.add("is-valid")
@@ -802,4 +807,12 @@ function repoblarCampos() {
 document.addEventListener("DOMContentLoaded", () => {
   // Delay para asegurar que todos los elementos estén listos
   setTimeout(repoblarCampos, 200)
+})
+
+// Actualizar el placeholder del problema actual
+document.addEventListener("DOMContentLoaded", () => {
+  const problemaActual = document.getElementById("problema-actual")
+  if (problemaActual && problemaActual.innerHTML.includes("Ingresa los valores")) {
+    problemaActual.innerHTML = `<h5>${getTranslation("Ingresa los valores de tu ejercicio para visualizarlo")}</h5>`
+  }
 })
