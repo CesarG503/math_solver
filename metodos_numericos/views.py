@@ -365,7 +365,6 @@ def simplex_view(request, id_ejercicio=None):
             })
             clone = request.get_full_path().startswith('/simplex/clone/')
             if(request.user.is_authenticated ):
-                print(resultado['solucion'])
                 guardar_simplex(request.user.id, "S", f"{','.join(str(numero) for numero in funcion_objetivo)}!{tipo_optimizacion}!{','.join(nombres_variables)}",restricciones, ','.join (str(numero)for numero in resultado['solucion']), clone)
             
         except ValueError as e:
@@ -396,7 +395,7 @@ def simplex_view(request, id_ejercicio=None):
             for restriccion in restricciones_input:
                 coeficientes = []
                 for coeficiente in restriccion.get('coeficientes', []):
-                    coeficientes.append(float(coeficiente))
+                    coeficientes.append(coeficiente)
                 tipo_restricciones.append(restriccion.get('tipo', '<='))
                 valores_restricciones.append(float(restriccion.get('valor', 0)))
                 coeficientes_restricciones.append(coeficientes)

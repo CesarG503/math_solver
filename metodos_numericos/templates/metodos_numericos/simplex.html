@@ -203,9 +203,11 @@
                                                 <td class="text-center fw-bold">{{forloop.counter}}</td>
                                                 {% for coef in coeficientes_restricciones|index:forloop.counter0 %}
                                                     <td>
-                                                        <input class="form-control form-control-sm text-center restriccion-input" type="number" value="{{coef}}" name="restriccion_{{forloop.parentloop.counter|add:"-1"}}_coef_{{forloop.counter|add:"-1"}}"
-                                                         step="any" placeholder="{{forloop.parentloop.counter|add:"-1"}}">
-                                                    </td>
+                                                        {% with coef_float=coef|floatformat:"-6" %}
+                                                            <input class="form-control form-control-sm text-center restriccion-input" type="number" value="{{ coef_float }}" name="restriccion_{{forloop.parentloop.counter|add:"-1"}}_coef_{{forloop.counter|add:"-1"}}"
+                                                             step="any" placeholder="{{forloop.parentloop.counter|add:"-1"}}">
+                                                        </td>
+                                                        {% endwith %}
                                                 {% endfor %}
                                                 <td style="min-width:80px">
                                                     <select class="form-select form-select-sm" 
@@ -216,7 +218,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control form-control-sm text-center restriccion-valor" name="restriccion_{{forloop.counter|add:"-1"}}_valor" placeholder="0" step="any" required="" value="{{valores_restricciones|index:forloop.counter0}}">
+                                                    <input type="number" class="form-control form-control-sm text-center restriccion-valor" name="restriccion_{{forloop.counter|add:"-1"}}_valor" placeholder="0" step="any" required="" value="{{ valores_restricciones|index:forloop.counter0|floatformat:"-6" }}">
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-outline-danger btn-sm" 
