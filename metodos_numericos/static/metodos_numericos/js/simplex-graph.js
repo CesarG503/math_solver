@@ -291,7 +291,7 @@ function showSimplexInfo(datosGrafica) {
       // Forzar z-index alto para el modal y el fondo
       const swalPopup = document.querySelector(".swal2-container")
       if (swalPopup) {
-        swalPopup.style.zIndex = "3000"
+        swalPopup.style.zIndex = "20000"
       }
     },
   })
