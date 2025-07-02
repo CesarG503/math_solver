@@ -410,8 +410,12 @@ function showNotification(message, type = "info") {
     timer: 3000,
     timerProgressBar: true,
     customClass: {
-      popup: "swal2-shadow",
+      popup: "swal2-shadow"
     },
+    didOpen: (toast) => {
+      toast.style.zIndex = 10000
+      toast.style.top = '90px'
+    }
   })
 }
 
