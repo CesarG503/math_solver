@@ -317,17 +317,19 @@ def simplex_view(request):
     return render(request, 'metodos_numericos/simplex.html', context)
 
 def resolver_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables):
-    """Función auxiliar para resolver el problema Simplex"""
-    from .utils import preparar_problema_simplex, metodo_simplex
-    
+    """Función auxiliar para resolver el problema Simplex usando la nueva estructura orientada a objetos"""
+    from .utils import SimplexEstandar, GranMSimplex
     pasos = []
-    
-    # Preparar el problema para el método Simplex
-    problema = preparar_problema_simplex(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables, pasos)
-    
-    # Resolver usando el método Simplex
-    resultado = metodo_simplex(problema, pasos)
-    
+    # Detectar si se requiere Gran M
+    necesita_gran_m = any(r['tipo'] in ['>=', '='] for r in restricciones)
+    if necesita_gran_m:
+        solver = GranMSimplex()
+        resultado = solver.resolver(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
+        resultado['metodo_usado'] = 'Gran M'
+    else:
+        solver = SimplexEstandar()
+        resultado = solver.resolver(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
+        resultado['metodo_usado'] = 'Simplex Estándar'
     return resultado
 
 def guardar_ejercicio(uid, tipo, puntos, polinomio_solucion):
