@@ -3,12 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load i18n %}
+    {% load i18n static %}
     <title>{% block title %}Metodos Numericos{% endblock %}</title>
-    
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="{% static 'metodos_numericos/img/char.svg' %}" type="image/png">
     <!-- MathJax para renderizado de ecuaciones -->
+
+    <!-- CDN animete.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Link de font awesome-->  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+    <link rel="stylesheet" href="{% static 'metodos_numericos/css/docs.css' %}">
+    <link rel="stylesheet" href="{% static 'metodos_numericos/css/perfil.css' %}">
+
     <script>
     MathJax = {
       tex: {
@@ -32,29 +44,25 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/css/sci-fi.css">
     
-    {% load static %}
     <link rel="stylesheet" href="{% static 'metodos_numericos/css/style.css' %}">
-    {% if request.resolver_match.url_name == 'simplex' %}
+    {% if request.resolver_match and request.resolver_match.url_name == 'simplex' %}
         <link rel="stylesheet" href="{% static 'metodos_numericos/css/tablas.css' %}">
     {% endif %}
     <link rel="stylesheet" href="{% static 'metodos_numericos/css/perfil.css' %}">
 </head>
 <body>
     <nav class="navbar bg-secondary estilo-brillo border border-secondary hover-neon  position-sticky top-0 p-1">
-        <div class="navbar-header">
-        <div class="navbar-brand">{%trans "Materia"%}
-        </div>
-        <button class="navbar-toggle">
+    <div class="navbar-header justify-content-between ">
+        <div class="navbar-brand fst-italic fs-sm-3"> <i class="fa-solid fa-chart-simple fst-italic text-primary "></i> SimpleX</div>
+            <button class="navbar-toggle">
             <div class="img-menu-white"></div>
-        </button>
+            </button>
         {% if request.user.is_authenticated %}
             <button id="button-small" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
         {% endif %}
         </div>
         <div class="navbar-nav">
-            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:index' %}">Inicio</a>
-            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:hermite' %}"> Hermite</a>
-            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:integracion' %}">Integracion</a>
+            <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:docs' %}">Inicio</a>
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:simplex' %}">Simplex</a>
         {% if request.user.is_authenticated %}
         </div>

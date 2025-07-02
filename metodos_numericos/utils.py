@@ -2,6 +2,7 @@ import numpy as np
 import sympy as sp
 from sympy import symbols, lambdify, sympify
 import math
+from fractions import Fraction
 
 def interpolacion_hermite(puntos, x_eval):
     """
@@ -671,625 +672,1113 @@ def generar_datos_grafica_simplex(funcion_objetivo, restricciones, solucion, nom
         print(f"Error generando datos de gráfica: {e}")
         return None
 
+# ==================== CLASES PARA MÉTODOS SIMPLEX ====================
+
+class SimplexEstandar:
+    """Clase para resolver problemas de programación lineal usando el método Simplex estándar"""
+    
+    def __init__(self):
+        self.iteracion = 0
+        self.pasos = []
+        self.tablas = []
+        
+    def resolver(self, funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables):
+        """Resuelve un problema usando el método Simplex estándar (solo restricciones <=)"""
+        
+        self.pasos = []
+        self.tablas = []
+        self.iteracion = 0
+        
+        # Verificar que todas las restricciones sean <=
+        for rest in restricciones:
+            if rest['tipo'] != '<=':
+                raise ValueError("El método Simplex estándar solo acepta restricciones <=")
+        
+        # Preparar problema
+        problema = self._preparar_problema_estandar(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
+        
+        # Resolver
+        return self._resolver_simplex_estandar(problema)
+    
+    def _preparar_problema_estandar(self, c, restricciones, tipo, nombres_variables):
+        """Prepara el problema para el método Simplex estándar"""
+        
+        self.pasos.append("1. PREPARACIÓN DEL PROBLEMA - MÉTODO SIMPLEX ESTÁNDAR")
+        self.pasos.append("")
+        self.pasos.append("📋 PROBLEMA ORIGINAL:")
+        
+        # Mostrar función objetivo
+        if tipo == 'maximizar':
+            self.pasos.append(f"   Maximizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
+        else:
+            self.pasos.append(f"   Minimizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
+        
+        self.pasos.append("   Sujeto a:")
+        for i, rest in enumerate(restricciones):
+            coef_str = " + ".join([f"{rest['coeficientes'][j]:.3f}·{nombres_variables[j]}" for j in range(len(rest['coeficientes']))])
+            self.pasos.append(f"      {coef_str} ≤ {rest['valor']:.3f}")
+        
+        self.pasos.append(f"      {', '.join(nombres_variables)} ≥ 0")
+        self.pasos.append("")
+        
+        self.pasos.append("🔍 DETECCIÓN DEL MÉTODO:")
+        self.pasos.append("   Todas las restricciones son de tipo ≤")
+        self.pasos.append("   ➡️ Se aplicará el MÉTODO SIMPLEX ESTÁNDAR")
+        self.pasos.append("")
+        
+        # Convertir a forma estándar
+        self.pasos.append("🔄 CONVERSIÓN A FORMA ESTÁNDAR:")
+        self.pasos.append("")
+        
+        A = []
+        b = []
+        variables_basicas = []
+        num_vars_originales = len(c)
+        contador_slack = 1
+        
+        # Procesar restricciones (agregar variables de holgura)
+        for i, rest in enumerate(restricciones):
+            fila = rest['coeficientes'][:]
+            var_slack = f"s{contador_slack}"
+            variables_basicas.append(var_slack)
+            contador_slack += 1
+            self.pasos.append(f"   Restricción {i+1}: Agregar variable de holgura {var_slack}")
+            
+            A.append(fila)
+            b.append(rest['valor'])
+        
+        # Completar matriz A con variables de holgura
+        num_restricciones = len(restricciones)
+        num_vars_slack = contador_slack - 1
+        total_vars = num_vars_originales + num_vars_slack
+        
+        # Expandir matriz A
+        for i in range(num_restricciones):
+            while len(A[i]) < total_vars:
+                A[i].append(0.0)
+        
+        # Llenar las columnas de variables de holgura
+        for i in range(num_restricciones):
+            A[i][num_vars_originales + i] = 1.0  # Variable de holgura
+        
+        # Extender función objetivo
+        c_extendida = c[:]
+        for _ in range(num_vars_slack):
+            c_extendida.append(0.0)  # Variables de holgura tienen coeficiente 0
+        
+        self.pasos.append("")
+        self.pasos.append("✅ FORMA ESTÁNDAR OBTENIDA:")
+        
+        # Mostrar función objetivo extendida
+        obj_str_parts = []
+        for i in range(len(c_extendida)):
+            coef = c_extendida[i]
+            if i < num_vars_originales:
+                var_name = nombres_variables[i]
+            else:
+                var_name = f"s{i - num_vars_originales + 1}"
+            
+            if coef != 0:
+                if coef > 0 and obj_str_parts:
+                    obj_str_parts.append(f"+{coef:.3f}·{var_name}")
+                else:
+                    obj_str_parts.append(f"{coef:.3f}·{var_name}")
+        
+        if tipo == 'maximizar':
+            self.pasos.append("   Maximizar: Z = " + "".join(obj_str_parts))
+        else:
+            self.pasos.append("   Minimizar: Z = " + "".join(obj_str_parts))
+        
+        self.pasos.append("   Sujeto a:")
+        for i in range(len(A)):
+            coef_parts = []
+            for j in range(len(A[i])):
+                coef = A[i][j]
+                if j < num_vars_originales:
+                    var_name = nombres_variables[j]
+                else:
+                    var_name = f"s{j - num_vars_originales + 1}"
+                
+                if coef != 0:
+                    if coef > 0 and coef_parts:
+                        coef_parts.append(f"+{coef:.3f}·{var_name}")
+                    else:
+                        coef_parts.append(f"{coef:.3f}·{var_name}")
+            
+            self.pasos.append(f"      {''.join(coef_parts)} = {b[i]:.3f}")
+        self.pasos.append("")
+        
+        return {
+            'A': A,
+            'b': b,
+            'c': c_extendida,
+            'variables_basicas': variables_basicas,
+            'num_vars_originales': num_vars_originales,
+            'tipo_original': tipo,
+            'nombres_variables': nombres_variables,
+            'necesita_gran_m': False
+        }
+    
+    def _resolver_simplex_estandar(self, problema):
+        """Resuelve usando el algoritmo Simplex estándar"""
+        
+        A = problema['A']
+        b = problema['b']
+        c = problema['c']
+        variables_basicas = problema['variables_basicas']
+        num_vars_originales = problema['num_vars_originales']
+        tipo_original = problema['tipo_original']
+        nombres_variables = problema['nombres_variables']
+        
+        m = len(A)  # número de restricciones
+        n = len(c)  # número de variables
+        
+        self.pasos.append("2. APLICACIÓN DEL MÉTODO SIMPLEX ESTÁNDAR")
+        self.pasos.append("")
+        
+        # Crear tabla inicial
+        tabla = []
+        for i in range(m):
+            fila = A[i] + [b[i]]
+            tabla.append(fila)
+        
+        # Fila de la función objetivo
+        if tipo_original == 'maximizar':
+            fila_obj = [-coef for coef in c] + [0]  # Negativa para maximización
+        else:
+            fila_obj = [coef for coef in c] + [0]   # Positiva para minimización
+        tabla.append(fila_obj)
+        
+        self.iteracion = 0
+        max_iterations = 50
+        
+        while self.iteracion < max_iterations:
+            self.iteracion += 1
+            self.pasos.append(f"ITERACIÓN {self.iteracion}")
+            self.pasos.append("")
+            
+            # Mostrar tabla actual
+            tabla_info = self._mostrar_tabla_simplex_estandar(tabla, variables_basicas, nombres_variables, num_vars_originales)
+            self.tablas.append(tabla_info)
+            
+            # Verificar optimalidad
+            fila_obj_actual = tabla[-1][:-1]
+            if all(coef >= -1e-10 for coef in fila_obj_actual):
+                self.pasos.append("✓ Todos los coeficientes en la fila objetivo son ≥ 0")
+                self.pasos.append("¡SOLUCIÓN ÓPTIMA ENCONTRADA!")
+                break
+            
+            # Encontrar variable entrante (columna pivote)
+            col_pivote = min(range(len(fila_obj_actual)), key=lambda i: fila_obj_actual[i])
+            coef_entrante = fila_obj_actual[col_pivote]
+            
+            # Determinar nombre de variable entrante
+            if col_pivote < num_vars_originales:
+                var_entrante = nombres_variables[col_pivote]
+            else:
+                var_entrante = f"s{col_pivote - num_vars_originales + 1}"
+            
+            self.pasos.append(f"🔵 VARIABLE ENTRANTE: {var_entrante} (columna {col_pivote + 1})")
+            self.pasos.append(f"   Coeficiente más negativo: {coef_entrante:.6f}")
+            self.pasos.append("")
+            
+            # Encontrar variable saliente (fila pivote) usando prueba de razón mínima
+            self.pasos.append("📊 PRUEBA DE RAZÓN MÍNIMA:")
+            self.pasos.append("   Fila | Variable Base | b(i) | Coef. Columna | Razón")
+            self.pasos.append("   " + "-" * 55)
+            
+            razones = []
+            razones_validas = []
+            
+            for i in range(m):
+                coef_col = tabla[i][col_pivote]
+                rhs = tabla[i][-1]
+                
+                if coef_col > 1e-10:
+                    razon = rhs / coef_col
+                    razones.append((razon, i))
+                    razones_validas.append(razon)
+                    self.pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | {razon:7.3f}")
+                else:
+                    razones.append((float('inf'), i))
+                    if coef_col <= -1e-10:
+                        self.pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | No válida (≤0)")
+                    else:
+                        self.pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | No válida (≈0)")
+            
+            self.pasos.append("")
+            
+            if not razones_validas or all(r == float('inf') for r, _ in razones):
+                self.pasos.append("❌ SOLUCIÓN NO ACOTADA")
+                self.pasos.append("   Todos los coeficientes de la columna entrante son ≤ 0")
+                return {
+                    'error': 'Solución no acotada - La función objetivo puede crecer indefinidamente',
+                    'pasos': self.pasos,
+                    'tablas': self.tablas,
+                    'metodo_usado': 'Simplex Estándar'
+                }
+            
+            razon_min, fila_pivote = min(razones)
+            var_saliente = variables_basicas[fila_pivote]
+            
+            self.pasos.append(f"🔴 VARIABLE SALIENTE: {var_saliente} (fila {fila_pivote + 1})")
+            self.pasos.append(f"   Razón mínima: {razon_min:.6f}")
+            self.pasos.append("")
+            
+            # Elemento pivote
+            pivote = tabla[fila_pivote][col_pivote]
+            self.pasos.append(f"⚡ ELEMENTO PIVOTE: {pivote:.6f}")
+            self.pasos.append(f"   Posición: Fila {fila_pivote + 1}, Columna {col_pivote + 1}")
+            self.pasos.append("")
+            
+            # Actualizar la tabla anterior con información de pivote
+            if self.tablas:
+                self.tablas[-1]['fila_pivote'] = fila_pivote
+                self.tablas[-1]['col_pivote'] = col_pivote
+                self.tablas[-1]['var_entrante'] = var_entrante
+                self.tablas[-1]['var_saliente'] = var_saliente
+                self.tablas[-1]['elemento_pivote'] = pivote
+            
+            # Operaciones de pivoteo
+            self.pasos.append("🔧 OPERACIONES DE PIVOTEO:")
+            self.pasos.append("")
+            
+            # Normalizar fila pivote
+            self.pasos.append(f"1️⃣ NORMALIZAR FILA PIVOTE (Fila {fila_pivote + 1}):")
+            self.pasos.append(f"   Nueva Fila {fila_pivote + 1} = Fila {fila_pivote + 1} ÷ {pivote:.6f}")
+            self.pasos.append("")
+            
+            for j in range(len(tabla[fila_pivote])):
+                tabla[fila_pivote][j] /= pivote
+            
+            # Eliminar en otras filas
+            self.pasos.append("2️⃣ ELIMINAR EN OTRAS FILAS:")
+            for i in range(len(tabla)):
+                if i != fila_pivote and abs(tabla[i][col_pivote]) > 1e-10:
+                    factor = tabla[i][col_pivote]
+                    self.pasos.append(f"   Fila {i+1}: Factor = {factor:.6f}")
+                    self.pasos.append(f"   Nueva Fila {i+1} = Fila {i+1} - ({factor:.6f}) × Nueva Fila {fila_pivote+1}")
+                    
+                    for j in range(len(tabla[i])):
+                        tabla[i][j] -= factor * tabla[fila_pivote][j]
+                    self.pasos.append("")
+            
+            # Actualizar variable básica
+            variables_basicas[fila_pivote] = var_entrante
+            self.pasos.append(f"3️⃣ ACTUALIZAR BASE:")
+            self.pasos.append(f"   {var_saliente} sale de la base")
+            self.pasos.append(f"   {var_entrante} entra a la base")
+            self.pasos.append("")
+        
+        # Extraer solución
+        solucion = [0.0] * num_vars_originales
+        solucion_con_nombres = {}
+        
+        for i, var in enumerate(variables_basicas):
+            # Buscar si es una variable original
+            for j, nombre_var in enumerate(nombres_variables):
+                if var == nombre_var:
+                    solucion[j] = tabla[i][-1]
+                    solucion_con_nombres[nombre_var] = tabla[i][-1]
+                    break
+        
+        valor_objetivo = tabla[-1][-1]
+        if tipo_original == 'minimizar':
+            valor_objetivo = -valor_objetivo
+        valor_objetivo_mostrar = abs(valor_objetivo)
+        
+        self.pasos.append("")
+        self.pasos.append("3. SOLUCIÓN ÓPTIMA - MÉTODO SIMPLEX ESTÁNDAR")
+        self.pasos.append("")
+        
+        self.pasos.append("📋 VARIABLES DE DECISIÓN:")
+        for i, (nombre, val) in enumerate(zip(nombres_variables, solucion)):
+            self.pasos.append(f"   {nombre} = {val:.6f}")
+        
+        self.pasos.append("")
+        self.pasos.append("📊 VARIABLES DE HOLGURA:")
+        for i, var in enumerate(variables_basicas):
+            if var not in nombres_variables and var.startswith('s'):
+                self.pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
+        
+        self.pasos.append("")
+        self.pasos.append(f"🎯 VALOR ÓPTIMO: Z = {valor_objetivo_mostrar:.6f}")
+        
+        return {
+            'solucion': solucion,
+            'solucion_con_nombres': solucion_con_nombres,
+            'nombres_variables': nombres_variables,
+            'valor_objetivo': valor_objetivo_mostrar,
+            'pasos': self.pasos,
+            'tablas': self.tablas,
+            'variables_basicas': variables_basicas,
+            'tipo_optimizacion': tipo_original,
+            'metodo_usado': 'Simplex Estándar'
+        }
+    
+    def _mostrar_tabla_simplex_estandar(self, tabla, variables_basicas, nombres_variables, num_vars_originales):
+        """Muestra la tabla Simplex estándar de manera formateada"""
+        
+        m = len(tabla) - 1  # número de restricciones
+        n = len(tabla[0]) - 1  # número de variables
+        
+        self.pasos.append("📋 TABLA SIMPLEX:")
+        self.pasos.append("")
+        
+        # Crear tabla HTML
+        tabla_html = '<div class="simplex-table-container">'
+        tabla_html += f'<div class="table-title">Iteración {self.iteracion}</div>'
+        tabla_html += '<table class="simplex-table table table-bordered table-hover">'
+        
+        # Encabezado
+        tabla_html += '<thead class="table-dark"><tr>'
+        tabla_html += '<th class="base-header text-center">Base</th>'
+        for j in range(n):
+            if j < num_vars_originales:
+                tabla_html += f'<th class="var-header text-center">{nombres_variables[j]}</th>'
+            else:
+                tabla_html += f'<th class="slack-header text-center">s<sub>{j-num_vars_originales+1}</sub></th>'
+        tabla_html += '<th class="rhs-header text-center">b(i)</th>'
+        tabla_html += '</tr></thead>'
+        
+        # Cuerpo de la tabla
+        tabla_html += '<tbody>'
+        
+        # Filas de restricciones
+        for i in range(m):
+            tabla_html += f'<tr class="constraint-row" data-row="{i}">'
+            tabla_html += f'<td class="base-column text-center fw-bold">{variables_basicas[i]}</td>'
+            for j in range(len(tabla[i])):
+                valor = tabla[i][j]
+                clase_celda = f'data-cell text-center data-row-{i} data-col-{j}'
+                if j == len(tabla[i]) - 1:  # RHS column
+                    clase_celda += ' rhs-cell fw-bold'
+                tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
+            tabla_html += '</tr>'
+        
+        # Fila objetivo
+        tabla_html += '<tr class="objective-row table-info">'
+        tabla_html += '<td class="base-column objective-label text-center fw-bold">Z</td>'
+        for j in range(len(tabla[-1])):
+            valor = tabla[-1][j]
+            clase_celda = f'objective-cell text-center data-col-{j}'
+            if j == len(tabla[-1]) - 1:  # RHS column (valor de Z)
+                clase_celda += ' objective-value fw-bold'
+            tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
+        tabla_html += '</tr>'
+        
+        tabla_html += '</tbody></table>'
+        tabla_html += '</div>'
+        
+        self.pasos.append(tabla_html)
+        self.pasos.append("")
+        
+        return {
+            'iteracion': self.iteracion,
+            'tabla': [fila[:] for fila in tabla],
+            'variables_basicas': variables_basicas[:],
+            'tabla_html': tabla_html
+        }
+
+
+class MixedValue:
+    """Clase para manejar valores de la forma a + bM donde M es la Gran M"""
+    def __init__(self, coefficient=0, M_coefficient=0):
+        self.coefficient = float(coefficient)
+        self.M_coefficient = float(M_coefficient)
+    
+    def __add__(self, other):
+        if isinstance(other, MixedValue):
+            return MixedValue(
+                self.coefficient + other.coefficient,
+                self.M_coefficient + other.M_coefficient
+            )
+        else:
+            return MixedValue(
+                self.coefficient + float(other),
+                self.M_coefficient
+            )
+    
+    def __sub__(self, other):
+        if isinstance(other, MixedValue):
+            return MixedValue(
+                self.coefficient - other.coefficient,
+                self.M_coefficient - other.M_coefficient
+            )
+        else:
+            return MixedValue(
+                self.coefficient - float(other),
+                self.M_coefficient
+            )
+    
+    def __mul__(self, other):
+        if isinstance(other, MixedValue):
+            # (a + bM) * (c + dM) = ac + (ad + bc)M + bdM²
+            # Como M es muy grande, M² se ignora en la práctica
+            return MixedValue(
+                self.coefficient * other.coefficient,
+                self.coefficient * other.M_coefficient + self.M_coefficient * other.coefficient
+            )
+        else:
+            other_val = float(other)
+            return MixedValue(
+                self.coefficient * other_val,
+                self.M_coefficient * other_val
+            )
+    
+    def __truediv__(self, other):
+        if isinstance(other, MixedValue):
+            if other.M_coefficient == 0:
+                return MixedValue(
+                    self.coefficient / other.coefficient,
+                    self.M_coefficient / other.coefficient
+                )
+            else:
+                raise ValueError("División por expresión con M no soportada")
+        else:
+            other_val = float(other)
+            return MixedValue(
+                self.coefficient / other_val,
+                self.M_coefficient / other_val
+            )
+    
+    def __neg__(self):
+        return MixedValue(-self.coefficient, -self.M_coefficient)
+    
+    def is_negative(self):
+        """Determina si el valor es negativo considerando M como muy grande"""
+        if abs(self.M_coefficient) > 1e-10:
+            return self.M_coefficient < 0
+        else:
+            return self.coefficient < -1e-10
+    
+    def is_zero(self):
+        """Determina si el valor es cero"""
+        return abs(self.coefficient) < 1e-10 and abs(self.M_coefficient) < 1e-10
+    
+    def to_display_string(self):
+        """Convierte a string para mostrar"""
+        if abs(self.coefficient) < 1e-10 and abs(self.M_coefficient) < 1e-10:
+            return "0"
+        elif abs(self.M_coefficient) < 1e-10:
+            return f"{self.coefficient:.4f}"
+        elif abs(self.coefficient) < 1e-10:
+            if abs(self.M_coefficient - 1) < 1e-10:
+                return "M"
+            elif abs(self.M_coefficient + 1) < 1e-10:
+                return "-M"
+            else:
+                return f"{self.M_coefficient:.4f}M"
+        else:
+            m_part = ""
+            if abs(self.M_coefficient - 1) < 1e-10:
+                m_part = "M"
+            elif abs(self.M_coefficient + 1) < 1e-10:
+                m_part = "-M"
+            elif abs(self.M_coefficient) > 1e-10:
+                m_part = f"{self.M_coefficient:.4f}M"
+            
+            if m_part:
+                if self.M_coefficient > 0:
+                    return f"{self.coefficient:.4f} + {m_part}"
+                else:
+                    return f"{self.coefficient:.4f} {m_part}"
+            else:
+                return f"{self.coefficient:.4f}"
+    
+    def __str__(self):
+        return self.to_display_string()
+
+
+class GranMSimplex:
+    """Clase mejorada para resolver problemas de programación lineal usando el método de la Gran M"""
+    
+    def __init__(self):
+        self.iteracion = 0
+        self.pasos = []
+        self.tablas = []
+        self.M_value = 1000000  # Valor numérico de M para cálculos
+        
+    def resolver(self, funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables):
+        """Resuelve un problema usando el método de la Gran M mejorado"""
+        
+        self.pasos = []
+        self.tablas = []
+        self.iteracion = 0
+        
+        # Preparar problema
+        problema = self._preparar_problema_gran_m(funcion_objetivo, restricciones, tipo_optimizacion, nombres_variables)
+        
+        # Resolver
+        return self._resolver_gran_m_mejorado(problema)
+    
+    def _preparar_problema_gran_m(self, c, restricciones, tipo, nombres_variables):
+        """Prepara el problema para el método de la Gran M"""
+        
+        self.pasos.append("1. PREPARACIÓN DEL PROBLEMA - MÉTODO DE LA GRAN M MEJORADO")
+        self.pasos.append("")
+        self.pasos.append("📋 PROBLEMA ORIGINAL:")
+        
+        # Mostrar función objetivo
+        if tipo == 'maximizar':
+            self.pasos.append(f"   Maximizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
+        else:
+            self.pasos.append(f"   Minimizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
+        
+        self.pasos.append("   Sujeto a:")
+        for i, rest in enumerate(restricciones):
+            coef_str = " + ".join([f"{rest['coeficientes'][j]:.3f}·{nombres_variables[j]}" for j in range(len(rest['coeficientes']))])
+            self.pasos.append(f"      {coef_str} {rest['tipo']} {rest['valor']:.3f}")
+        
+        self.pasos.append(f"      {', '.join(nombres_variables)} ≥ 0")
+        self.pasos.append("")
+        
+        self.pasos.append("🔍 ANÁLISIS DE RESTRICCIONES:")
+        necesita_artificial = []
+        for i, rest in enumerate(restricciones):
+            if rest['tipo'] == '>=':
+                self.pasos.append(f"   Restricción {i+1}: Tipo ≥ → Requiere variable de exceso (-) y artificial (+)")
+                necesita_artificial.append(i)
+            elif rest['tipo'] == '=':
+                self.pasos.append(f"   Restricción {i+1}: Tipo = → Requiere variable artificial (+)")
+                necesita_artificial.append(i)
+            else:
+                self.pasos.append(f"   Restricción {i+1}: Tipo ≤ → Requiere variable de holgura (+)")
+        
+        self.pasos.append(f"   ➡️ Se aplicará el MÉTODO DE LA GRAN M")
+        self.pasos.append("")
+        
+        # Configurar variables auxiliares
+        num_vars_originales = len(c)
+        variables_basicas = []
+        variables_artificiales = []
+        all_var_names = nombres_variables[:]
+        
+        # Contadores para variables auxiliares
+        slack_count = 0
+        surplus_count = 0
+        artificial_count = 0
+        
+        # Crear matriz extendida con MixedValue
+        A_extended = []
+        b_extended = []
+        
+        for i, rest in enumerate(restricciones):
+            fila = [MixedValue(coef, 0) for coef in rest['coeficientes']]
+            b_val = MixedValue(rest['valor'], 0)
+            
+            if rest['tipo'] == '<=':
+                # Variable de holgura
+                slack_count += 1
+                var_name = f"s{slack_count}"
+                all_var_names.append(var_name)
+                variables_basicas.append(var_name)
+                
+            elif rest['tipo'] == '>=':
+                # Variable de exceso y artificial
+                surplus_count += 1
+                artificial_count += 1
+                surplus_name = f"e{surplus_count}"
+                artificial_name = f"a{artificial_count}"
+                all_var_names.extend([surplus_name, artificial_name])
+                variables_basicas.append(artificial_name)
+                variables_artificiales.append(artificial_name)
+                
+            else:  # '='
+                # Variable artificial
+                artificial_count += 1
+                artificial_name = f"a{artificial_count}"
+                all_var_names.append(artificial_name)
+                variables_basicas.append(artificial_name)
+                variables_artificiales.append(artificial_name)
+            
+            A_extended.append(fila)
+            b_extended.append(b_val)
+        
+        # Completar matriz A con variables auxiliares
+        total_vars = len(all_var_names)
+        
+        # Expandir filas para incluir todas las variables
+        for i, rest in enumerate(restricciones):
+            while len(A_extended[i]) < total_vars:
+                A_extended[i].append(MixedValue(0, 0))
+        
+        # Llenar columnas de variables auxiliares
+        col_idx = num_vars_originales
+        slack_idx = 0
+        surplus_idx = 0
+        artificial_idx = 0
+        
+        for i, rest in enumerate(restricciones):
+            if rest['tipo'] == '<=':
+                A_extended[i][col_idx] = MixedValue(1, 0)
+                col_idx += 1
+                
+            elif rest['tipo'] == '>=':
+                A_extended[i][col_idx] = MixedValue(-1, 0)  # Variable de exceso
+                A_extended[i][col_idx + 1] = MixedValue(1, 0)  # Variable artificial
+                col_idx += 2
+                
+            else:  # '='
+                A_extended[i][col_idx] = MixedValue(1, 0)  # Variable artificial
+                col_idx += 1
+        
+        # Crear función objetivo extendida
+        c_extended = [MixedValue(coef, 0) for coef in c]
+        
+        # Agregar coeficientes para variables auxiliares
+        for var_name in all_var_names[num_vars_originales:]:
+            if var_name in variables_artificiales:
+                # Variables artificiales tienen penalización M
+                if tipo == 'maximizar':
+                    c_extended.append(MixedValue(0, -1))  # -M para maximización
+                else:
+                    c_extended.append(MixedValue(0, 1))   # +M para minimización
+            else:
+                # Variables de holgura y exceso tienen coeficiente 0
+                c_extended.append(MixedValue(0, 0))
+        
+        self.pasos.append("🔄 MODELO EXTENDIDO CON GRAN M:")
+        self.pasos.append("")
+        
+        # Mostrar función objetivo extendida
+        obj_parts = []
+        for i, coef in enumerate(c_extended):
+            var_name = all_var_names[i]
+            if not coef.is_zero():
+                coef_str = coef.to_display_string()
+                if coef_str.startswith('-'):
+                    obj_parts.append(f" {coef_str}·{var_name}")
+                elif obj_parts:
+                    obj_parts.append(f" + {coef_str}·{var_name}")
+                else:
+                    obj_parts.append(f"{coef_str}·{var_name}")
+        
+        obj_str = "Maximizar" if tipo == 'maximizar' else "Minimizar"
+        obj_str += " Z = " + "".join(obj_parts)
+        self.pasos.append(f"   {obj_str}")
+        
+        self.pasos.append("   Sujeto a:")
+        for i, fila in enumerate(A_extended):
+            constraint_parts = []
+            for j, coef in enumerate(fila):
+                if not coef.is_zero():
+                    var_name = all_var_names[j]
+                    coef_str = coef.to_display_string()
+                    if coef_str.startswith('-'):
+                        constraint_parts.append(f" {coef_str}·{var_name}")
+                    elif constraint_parts:
+                        constraint_parts.append(f" + {coef_str}·{var_name}")
+                    else:
+                        constraint_parts.append(f"{coef_str}·{var_name}")
+            
+            constraint_str = "".join(constraint_parts)
+            rhs_str = b_extended[i].to_display_string()
+            self.pasos.append(f"      {constraint_str} = {rhs_str}")
+        
+        self.pasos.append("")
+        
+        return {
+            'A': A_extended,
+            'b': b_extended,
+            'c': c_extended,
+            'variables_basicas': variables_basicas,
+            'variables_artificiales': variables_artificiales,
+            'all_var_names': all_var_names,
+            'num_vars_originales': num_vars_originales,
+            'tipo_original': tipo,
+            'nombres_variables': nombres_variables
+        }
+    
+    def _resolver_gran_m_mejorado(self, problema):
+        """Resuelve usando el algoritmo de la Gran M mejorado"""
+        
+        A = problema['A']
+        b = problema['b']
+        c = problema['c']
+        variables_basicas = problema['variables_basicas']
+        variables_artificiales = problema['variables_artificiales']
+        all_var_names = problema['all_var_names']
+        num_vars_originales = problema['num_vars_originales']
+        tipo_original = problema['tipo_original']
+        nombres_variables = problema['nombres_variables']
+        
+        m = len(A)  # número de restricciones
+        n = len(c)  # número de variables
+        
+        self.pasos.append("2. CONSTRUCCIÓN DE LA TABLA INICIAL")
+        self.pasos.append("")
+        
+        # Crear tabla inicial con MixedValue
+        tabla = []
+        for i in range(m):
+            fila = A[i][:] + [b[i]]
+            tabla.append(fila)
+        
+        # Fila de la función objetivo
+        if tipo_original == 'maximizar':
+            fila_obj = [MixedValue(-coef.coefficient, -coef.M_coefficient) for coef in c] + [MixedValue(0, 0)]
+        else:
+            fila_obj = [MixedValue(coef.coefficient, coef.M_coefficient) for coef in c] + [MixedValue(0, 0)]
+        tabla.append(fila_obj)
+        
+        # Eliminar variables artificiales de la función objetivo
+        self.pasos.append("🔧 ELIMINACIÓN DE VARIABLES ARTIFICIALES DE LA FUNCIÓN OBJETIVO:")
+        self.pasos.append("")
+        
+        for i, var_basica in enumerate(variables_basicas):
+            if var_basica in variables_artificiales:
+                # Encontrar la columna de esta variable artificial
+                col_idx = all_var_names.index(var_basica)
+                
+                if not tabla[-1][col_idx].is_zero():
+                    coef_obj = tabla[-1][col_idx]
+                    self.pasos.append(f"   Eliminando {var_basica} (columna {col_idx + 1}):")
+                    self.pasos.append(f"   Fila Z = Fila Z - ({coef_obj.to_display_string()}) × Fila {i + 1}")
+                    
+                    # Realizar la eliminación
+                    for j in range(len(tabla[-1])):
+                        tabla[-1][j] = tabla[-1][j] - coef_obj * tabla[i][j]
+                    
+                    self.pasos.append("")
+        
+        self.pasos.append("3. APLICACIÓN DEL ALGORITMO SIMPLEX")
+        self.pasos.append("")
+        
+        self.iteracion = 0
+        max_iterations = 50
+        
+        while self.iteracion < max_iterations:
+            self.iteracion += 1
+            self.pasos.append(f"ITERACIÓN {self.iteracion}")
+            self.pasos.append("")
+            
+            # Mostrar tabla actual
+            tabla_info = self._mostrar_tabla_gran_m_mejorada(tabla, variables_basicas, all_var_names)
+            self.tablas.append(tabla_info)
+            
+            # Verificar optimalidad
+            fila_obj_actual = tabla[-1][:-1]
+            es_optimo = True
+            for coef in fila_obj_actual:
+                if coef.is_negative():
+                    es_optimo = False
+                    break
+            
+            if es_optimo:
+                self.pasos.append("✓ CRITERIO DE OPTIMALIDAD CUMPLIDO")
+                self.pasos.append("   Todos los coeficientes en la fila Z son ≥ 0")
+                
+                # Verificar factibilidad (variables artificiales deben ser cero)
+                variables_artificiales_no_cero = []
+                for i, var in enumerate(variables_basicas):
+                    if var in variables_artificiales and not tabla[i][-1].is_zero():
+                        variables_artificiales_no_cero.append((var, tabla[i][-1]))
+                
+                if variables_artificiales_no_cero:
+                    self.pasos.append("")
+                    self.pasos.append("❌ PROBLEMA SIN SOLUCIÓN FACTIBLE")
+                    self.pasos.append("   Variables artificiales con valor no cero:")
+                    for var, valor in variables_artificiales_no_cero:
+                        self.pasos.append(f"      {var} = {valor.to_display_string()}")
+                    
+                    return {
+                        'error': 'Problema sin solución factible - Las restricciones son inconsistentes',
+                        'pasos': self.pasos,
+                        'tablas': self.tablas,
+                        'metodo_usado': 'Gran M Mejorado'
+                    }
+                
+                self.pasos.append("✓ SOLUCIÓN FACTIBLE ENCONTRADA")
+                self.pasos.append("¡SOLUCIÓN ÓPTIMA ALCANZADA!")
+                break
+            
+            # Encontrar variable entrante (más negativa)
+            col_pivote = -1
+            valor_mas_negativo = None
+            
+            for j, coef in enumerate(fila_obj_actual):
+                if coef.is_negative():
+                    if valor_mas_negativo is None or self._es_mas_negativo(coef, valor_mas_negativo):
+                        valor_mas_negativo = coef
+                        col_pivote = j
+            
+            if col_pivote == -1:
+                break
+            
+            var_entrante = all_var_names[col_pivote]
+            self.pasos.append(f"🔵 VARIABLE ENTRANTE: {var_entrante} (columna {col_pivote + 1})")
+            self.pasos.append(f"   Coeficiente: {valor_mas_negativo.to_display_string()}")
+            self.pasos.append("")
+            
+            # Prueba de la razón mínima
+            self.pasos.append("📊 PRUEBA DE RAZÓN MÍNIMA:")
+            self.pasos.append("   Fila | Variable Base | b(i) | Coef. Columna | Razón")
+            self.pasos.append("   " + "-" * 60)
+            
+            razones_validas = []
+            
+            for i in range(m):
+                coef_col = tabla[i][col_pivote]
+                rhs = tabla[i][-1]
+                
+                # Solo considerar coeficientes positivos sin componente M
+                if coef_col.coefficient > 1e-10 and abs(coef_col.M_coefficient) < 1e-10:
+                    if abs(rhs.M_coefficient) < 1e-10 and rhs.coefficient >= 0:
+                        razon = rhs.coefficient / coef_col.coefficient
+                        razones_validas.append((razon, i))
+                        self.pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs.to_display_string():>8s} | {coef_col.to_display_string():>11s} | {razon:7.3f}")
+                    else:
+                        self.pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs.to_display_string():>8s} | {coef_col.to_display_string():>11s} | No válida")
+                else:
+                    self.pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs.to_display_string():>8s} | {coef_col.to_display_string():>11s} | No válida")
+            
+            if not razones_validas:
+                self.pasos.append("")
+                self.pasos.append("❌ SOLUCIÓN NO ACOTADA")
+                self.pasos.append("   No hay razones válidas para la prueba de razón mínima")
+                return {
+                    'error': 'Solución no acotada - La función objetivo puede crecer indefinidamente',
+                    'pasos': self.pasos,
+                    'tablas': self.tablas,
+                    'metodo_usado': 'Gran M Mejorado'
+                }
+            
+            # Encontrar razón mínima
+            razon_min, fila_pivote = min(razones_validas)
+            var_saliente = variables_basicas[fila_pivote]
+            
+            self.pasos.append("")
+            self.pasos.append(f"🔴 VARIABLE SALIENTE: {var_saliente} (fila {fila_pivote + 1})")
+            self.pasos.append(f"   Razón mínima: {razon_min:.6f}")
+            self.pasos.append("")
+            
+            # Elemento pivote
+            pivote = tabla[fila_pivote][col_pivote]
+            self.pasos.append(f"⚡ ELEMENTO PIVOTE: {pivote.to_display_string()}")
+            self.pasos.append(f"   Posición: Fila {fila_pivote + 1}, Columna {col_pivote + 1}")
+            self.pasos.append("")
+            
+            # Actualizar información de pivote en la tabla
+            if self.tablas:
+                self.tablas[-1]['fila_pivote'] = fila_pivote
+                self.tablas[-1]['col_pivote'] = col_pivote
+                self.tablas[-1]['var_entrante'] = var_entrante
+                self.tablas[-1]['var_saliente'] = var_saliente
+                self.tablas[-1]['elemento_pivote'] = pivote.to_display_string()
+            
+            # Operaciones de pivoteo
+            self.pasos.append("🔧 OPERACIONES DE PIVOTEO:")
+            self.pasos.append("")
+            
+            # Normalizar fila pivote
+            self.pasos.append(f"1️⃣ NORMALIZAR FILA PIVOTE (Fila {fila_pivote + 1}):")
+            self.pasos.append(f"   Nueva Fila {fila_pivote + 1} = Fila {fila_pivote + 1} ÷ {pivote.to_display_string()}")
+            
+            for j in range(len(tabla[fila_pivote])):
+                tabla[fila_pivote][j] = tabla[fila_pivote][j] / pivote
+            
+            self.pasos.append("")
+            
+            # Eliminar en otras filas
+            self.pasos.append("2️⃣ ELIMINAR EN OTRAS FILAS:")
+            for i in range(len(tabla)):
+                if i != fila_pivote and not tabla[i][col_pivote].is_zero():
+                    factor = tabla[i][col_pivote]
+                    self.pasos.append(f"   Fila {i+1}: Factor = {factor.to_display_string()}")
+                    self.pasos.append(f"   Nueva Fila {i+1} = Fila {i+1} - ({factor.to_display_string()}) × Nueva Fila {fila_pivote+1}")
+                    
+                    for j in range(len(tabla[i])):
+                        tabla[i][j] = tabla[i][j] - factor * tabla[fila_pivote][j]
+                    self.pasos.append("")
+            
+            # Actualizar variable básica
+            variables_basicas[fila_pivote] = var_entrante
+            self.pasos.append(f"3️⃣ ACTUALIZAR BASE:")
+            self.pasos.append(f"   {var_saliente} sale de la base")
+            self.pasos.append(f"   {var_entrante} entra a la base")
+            self.pasos.append("")
+        
+        # Extraer solución final
+        return self._extraer_solucion_final(tabla, variables_basicas, variables_artificiales, 
+                                          all_var_names, num_vars_originales, nombres_variables, tipo_original)
+    
+    def _es_mas_negativo(self, val1, val2):
+        """Compara si val1 es más negativo que val2 considerando M"""
+        if abs(val1.M_coefficient - val2.M_coefficient) > 1e-10:
+            return val1.M_coefficient < val2.M_coefficient
+        else:
+            return val1.coefficient < val2.coefficient
+    
+    def _mostrar_tabla_gran_m_mejorada(self, tabla, variables_basicas, all_var_names):
+        """Muestra la tabla de la Gran M mejorada"""
+        
+        m = len(tabla) - 1  # número de restricciones
+        n = len(tabla[0]) - 1  # número de variables
+        
+        self.pasos.append("📋 TABLA SIMPLEX (GRAN M):")
+        self.pasos.append("")
+        
+        # Crear tabla HTML
+        tabla_html = '<div class="simplex-table-container">'
+        tabla_html += f'<div class="table-title">Iteración {self.iteracion} - Método Gran M</div>'
+        tabla_html += '<table class="simplex-table table table-bordered table-hover">'
+        
+        # Encabezado
+        tabla_html += '<thead class="table-dark"><tr>'
+        tabla_html += '<th class="base-header text-center">Base</th>'
+        for j in range(n):
+            var_name = all_var_names[j]
+            if var_name.startswith('a'):
+                tabla_html += f'<th class="artificial-header text-center">{var_name}</th>'
+            elif var_name.startswith('s'):
+                tabla_html += f'<th class="slack-header text-center">{var_name}</th>'
+            elif var_name.startswith('e'):
+                tabla_html += f'<th class="surplus-header text-center">{var_name}</th>'
+            else:
+                tabla_html += f'<th class="var-header text-center">{var_name}</th>'
+        tabla_html += '<th class="rhs-header text-center">b(i)</th>'
+        tabla_html += '</tr></thead>'
+        
+        # Cuerpo de la tabla
+        tabla_html += '<tbody>'
+        
+        # Filas de restricciones
+        for i in range(m):
+            tabla_html += f'<tr class="constraint-row" data-row="{i}">'
+            tabla_html += f'<td class="base-column text-center fw-bold">{variables_basicas[i]}</td>'
+            for j in range(len(tabla[i])):
+                valor = tabla[i][j]
+                clase_celda = f'data-cell text-center data-row-{i} data-col-{j}'
+                if j == len(tabla[i]) - 1:  # RHS column
+                    clase_celda += ' rhs-cell fw-bold'
+                tabla_html += f'<td class="{clase_celda}">{valor.to_display_string()}</td>'
+            tabla_html += '</tr>'
+        
+        # Fila objetivo
+        tabla_html += '<tr class="objective-row table-info">'
+        tabla_html += '<td class="base-column objective-label text-center fw-bold">Z</td>'
+        for j in range(len(tabla[-1])):
+            valor = tabla[-1][j]
+            clase_celda = f'objective-cell text-center data-col-{j}'
+            if j == len(tabla[-1]) - 1:  # RHS column (valor de Z)
+                clase_celda += ' objective-value fw-bold'
+            tabla_html += f'<td class="{clase_celda}">{valor.to_display_string()}</td>'
+        tabla_html += '</tr>'
+        
+        tabla_html += '</tbody></table>'
+        tabla_html += '</div>'
+        
+        self.pasos.append(tabla_html)
+        self.pasos.append("")
+        
+        return {
+            'iteracion': self.iteracion,
+            'tabla': [[valor.to_display_string() for valor in fila] for fila in tabla],
+            'variables_basicas': variables_basicas[:],
+            'tabla_html': tabla_html
+        }
+    
+    def _extraer_solucion_final(self, tabla, variables_basicas, variables_artificiales, 
+                               all_var_names, num_vars_originales, nombres_variables, tipo_original):
+        """Extrae la solución final del problema"""
+        
+        # Extraer solución
+        solucion = [0.0] * num_vars_originales
+        solucion_con_nombres = {}
+        
+        for i, var in enumerate(variables_basicas):
+            if var in nombres_variables:
+                idx = nombres_variables.index(var)
+                valor = tabla[i][-1]
+                # Convertir MixedValue a float (debe ser solo coeficiente, sin M)
+                if abs(valor.M_coefficient) < 1e-10:
+                    solucion[idx] = valor.coefficient
+                    solucion_con_nombres[var] = valor.coefficient
+                else:
+                    # Si hay componente M, el problema no es factible
+                    return {
+                        'error': 'Problema sin solución factible - Variables con componente M en la solución',
+                        'pasos': self.pasos,
+                        'tablas': self.tablas,
+                        'metodo_usado': 'Gran M Mejorado'
+                    }
+        
+        # Valor objetivo
+        valor_z = tabla[-1][-1]
+        if abs(valor_z.M_coefficient) > 1e-10:
+            return {
+                'error': 'Problema sin solución factible - Valor objetivo contiene M',
+                'pasos': self.pasos,
+                'tablas': self.tablas,
+                'metodo_usado': 'Gran M Mejorado'
+            }
+        
+        valor_objetivo = valor_z.coefficient
+        if tipo_original == 'maximizar':
+            valor_objetivo = -valor_objetivo
+        
+        self.pasos.append("")
+        self.pasos.append("4. SOLUCIÓN ÓPTIMA - MÉTODO DE LA GRAN M")
+        self.pasos.append("")
+        
+        self.pasos.append("🎯 SOLUCIÓN FINAL OBTENIDA:")
+        self.pasos.append("")
+        
+        self.pasos.append("📋 VARIABLES DE DECISIÓN:")
+        for i, (nombre, val) in enumerate(zip(nombres_variables, solucion)):
+            self.pasos.append(f"   {nombre} = {val:.6f}")
+        
+        self.pasos.append("")
+        self.pasos.append("📊 VARIABLES AUXILIARES:")
+        for i, var in enumerate(variables_basicas):
+            if var not in nombres_variables:
+                valor = tabla[i][-1]
+                if var in variables_artificiales:
+                    self.pasos.append(f"   {var} = {valor.to_display_string()} (artificial - debe ser 0)")
+                else:
+                    self.pasos.append(f"   {var} = {valor.to_display_string()}")
+        
+        self.pasos.append("")
+        self.pasos.append(f"🎯 VALOR ÓPTIMO: Z = {abs(valor_objetivo):.6f}")
+        
+        return {
+            'solucion': solucion,
+            'solucion_con_nombres': solucion_con_nombres,
+            'nombres_variables': nombres_variables,
+            'valor_objetivo': abs(valor_objetivo),
+            'pasos': self.pasos,
+            'tablas': self.tablas,
+            'variables_basicas': variables_basicas,
+            'tipo_optimizacion': tipo_original,
+            'metodo_usado': 'Gran M Mejorado'
+        }
+
+# ==================== FUNCIÓN PRINCIPAL PARA RESOLVER SIMPLEX ====================
+
 def preparar_problema_simplex(c, restricciones, tipo, nombres_variables, pasos):
-    """Convierte el problema a forma estándar para el método Simplex"""
-    
-    pasos.append("1. PREPARACIÓN DEL PROBLEMA")
-    pasos.append("")
-    pasos.append("📋 PROBLEMA ORIGINAL:")
-    
-    # Mostrar función objetivo
-    if tipo == 'maximizar':
-        pasos.append(f"   Maximizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
-    else:
-        pasos.append(f"   Minimizar: Z = " + " + ".join([f"{c[i]:.3f}·{nombres_variables[i]}" for i in range(len(c))]))
-    
-    pasos.append("   Sujeto a:")
-    for i, rest in enumerate(restricciones):
-        coef_str = " + ".join([f"{rest['coeficientes'][j]:.3f}·{nombres_variables[j]}" for j in range(len(rest['coeficientes']))])
-        pasos.append(f"      {coef_str} {rest['tipo']} {rest['valor']:.3f}")
-    
-    pasos.append(f"      {', '.join(nombres_variables)} ≥ 0")
-    pasos.append("")
+    """Detecta qué método usar y prepara el problema"""
     
     # Detectar si necesitamos el método de la Gran M
     necesita_gran_m = any(rest['tipo'] in ['>=', '='] for rest in restricciones)
     
     if necesita_gran_m:
-        pasos.append("🔍 DETECCIÓN DEL MÉTODO:")
-        pasos.append("   Se detectaron restricciones de tipo ≥ o =")
-        pasos.append("   ➡️ Se aplicará el MÉTODO DE LA GRAN M")
-        pasos.append("")
+        # Usar método de la Gran MF
+        solver = GranMSimplex()
+        return solver.resolver(c, restricciones, tipo, nombres_variables)
     else:
-        pasos.append("🔍 DETECCIÓN DEL MÉTODO:")
-        pasos.append("   Todas las restricciones son de tipo ≤")
-        pasos.append("   ➡️ Se aplicará el MÉTODO SIMPLEX ESTÁNDAR")
-        pasos.append("")
-    
-    # Convertir a forma estándar
-    pasos.append("🔄 CONVERSIÓN A FORMA ESTÁNDAR:")
-    pasos.append("")
-    
-    A = []
-    b = []
-    variables_basicas = []
-    variables_artificiales = []
-    num_vars_originales = len(c)
-    contador_slack = 1
-    contador_surplus = 1
-    contador_artificial = 1
-    
-    # Procesar restricciones
-    for i, rest in enumerate(restricciones):
-        fila = rest['coeficientes'][:]
-        
-        if rest['tipo'] == '<=':
-            # Agregar variable de holgura
-            var_slack = f"s{contador_slack}"
-            variables_basicas.append(var_slack)
-            contador_slack += 1
-            pasos.append(f"   Restricción {i+1}: Agregar variable de holgura {var_slack}")
-            
-        elif rest['tipo'] == '>=':
-            # Agregar variable de exceso y artificial
-            var_surplus = f"e{contador_surplus}"
-            var_artificial = f"a{contador_artificial}"
-            variables_basicas.append(var_artificial)
-            variables_artificiales.append(var_artificial)
-            contador_surplus += 1
-            contador_artificial += 1
-            pasos.append(f"   Restricción {i+1}: Agregar variable de exceso {var_surplus} y artificial {var_artificial}")
-            
-        else:  # '='
-            # Agregar variable artificial
-            var_artificial = f"a{contador_artificial}"
-            variables_basicas.append(var_artificial)
-            variables_artificiales.append(var_artificial)
-            contador_artificial += 1
-            pasos.append(f"   Restricción {i+1}: Agregar variable artificial {var_artificial}")
-        
-        A.append(fila)
-        b.append(rest['valor'])
-    
-    # Completar matriz A con variables de holgura/exceso/artificiales
-    num_restricciones = len(restricciones)
-    num_vars_slack = contador_slack - 1
-    num_vars_surplus = contador_surplus - 1
-    num_vars_artificial = contador_artificial - 1
-    
-    total_vars = num_vars_originales + num_vars_slack + num_vars_surplus + num_vars_artificial
-    
-    # Expandir matriz A
-    for i in range(num_restricciones):
-        # Agregar ceros para las variables adicionales
-        while len(A[i]) < total_vars:
-            A[i].append(0.0)
-    
-    # Llenar las columnas de variables de holgura/exceso/artificiales
-    col_actual = num_vars_originales
-    contador_slack = 1
-    contador_surplus = 1
-    contador_artificial = 1
-    
-    for i, rest in enumerate(restricciones):
-        if rest['tipo'] == '<=':
-            A[i][col_actual] = 1.0  # Variable de holgura
-            col_actual += 1
-            
-        elif rest['tipo'] == '>=':
-            A[i][col_actual] = -1.0  # Variable de exceso
-            A[i][col_actual + 1] = 1.0  # Variable artificial
-            col_actual += 2
-            
-        else:  # '='
-            A[i][col_actual] = 1.0  # Variable artificial
-            col_actual += 1
-    
-    # Extender función objetivo
-    c_extendida = c[:]
-    
-    # Agregar ceros para variables de holgura y exceso
-    for _ in range(num_vars_slack + num_vars_surplus):
-        c_extendida.append(0.0)
-    
-    # Valor de la Gran M
-    M = 1000000
-    
-    # Agregar penalización para variables artificiales (Gran M)
-    for _ in range(num_vars_artificial):
-        if tipo == 'maximizar':
-            c_extendida.append(-M)  # Gran penalización negativa para maximización
-        else:
-            c_extendida.append(M)   # Gran penalización positiva para minimización
-    
-    if necesita_gran_m:
-        pasos.append("")
-        pasos.append("📊 MÉTODO DE LA GRAN M:")
-        pasos.append(f"   Valor de M utilizado: {M:,}")
-        pasos.append("   Variables artificiales penalizadas:")
-        for var_art in variables_artificiales:
-            if tipo == 'maximizar':
-                pasos.append(f"      {var_art}: coeficiente = -M = -{M:,}")
-            else:
-                pasos.append(f"      {var_art}: coeficiente = +M = +{M:,}")
-    
-    pasos.append("")
-    pasos.append("✅ FORMA ESTÁNDAR OBTENIDA:")
-    
-    # Mostrar función objetivo con M simbólica para mejor comprensión
-    obj_str_parts = []
-    for i in range(len(c_extendida)):
-        coef = c_extendida[i]
-        if i < num_vars_originales:
-            var_name = nombres_variables[i]
-        elif i < num_vars_originales + num_vars_slack:
-            var_name = f"s{i - num_vars_originales + 1}"
-        elif i < num_vars_originales + num_vars_slack + num_vars_surplus:
-            var_name = f"e{i - num_vars_originales - num_vars_slack + 1}"
-        else:
-            var_name = f"a{i - num_vars_originales - num_vars_slack - num_vars_surplus + 1}"
-            # Mostrar M simbólicamente
-            if abs(coef) == M:
-                if coef > 0:
-                    obj_str_parts.append(f"+M·{var_name}")
-                else:
-                    obj_str_parts.append(f"-M·{var_name}")
-                continue
-        
-        if coef != 0:
-            if coef > 0 and obj_str_parts:
-                obj_str_parts.append(f"+{coef:.3f}·{var_name}")
-            else:
-                obj_str_parts.append(f"{coef:.3f}·{var_name}")
-    
-    if tipo == 'maximizar':
-        pasos.append("   Maximizar: Z = " + "".join(obj_str_parts))
-    else:
-        pasos.append("   Minimizar: Z = " + "".join(obj_str_parts))
-    
-    pasos.append("   Sujeto a:")
-    for i in range(len(A)):
-        coef_parts = []
-        for j in range(len(A[i])):
-            coef = A[i][j]
-            if j < num_vars_originales:
-                var_name = nombres_variables[j]
-            elif j < num_vars_originales + num_vars_slack:
-                var_name = f"s{j - num_vars_originales + 1}"
-            elif j < num_vars_originales + num_vars_slack + num_vars_surplus:
-                var_name = f"e{j - num_vars_originales - num_vars_slack + 1}"
-            else:
-                var_name = f"a{j - num_vars_originales - num_vars_slack - num_vars_surplus + 1}"
-            
-            if coef != 0:
-                if coef > 0 and coef_parts:
-                    coef_parts.append(f"+{coef:.3f}·{var_name}")
-                else:
-                    coef_parts.append(f"{coef:.3f}·{var_name}")
-        
-        pasos.append(f"      {''.join(coef_parts)} = {b[i]:.3f}")
-    pasos.append("")
-    
-    return {
-        'A': A,
-        'b': b,
-        'c': c_extendida,
-        'variables_basicas': variables_basicas,
-        'variables_artificiales': variables_artificiales,
-        'num_vars_originales': num_vars_originales,
-        'tipo_original': tipo,
-        'nombres_variables': nombres_variables,
-        'necesita_gran_m': necesita_gran_m,
-        'M': M
-    }
+        # Usar método Simplex estándar
+        solver = SimplexEstandar()
+        return solver.resolver(c, restricciones, tipo, nombres_variables)
 
 def metodo_simplex(problema, pasos):
-    """Resuelve el problema usando el algoritmo Simplex con soporte para Gran M"""
-    
-    A = problema['A']
-    b = problema['b']
-    c = problema['c']
-    variables_basicas = problema['variables_basicas']
-    variables_artificiales = problema.get('variables_artificiales', [])
-    num_vars_originales = problema['num_vars_originales']
-    tipo_original = problema['tipo_original']
-    nombres_variables = problema['nombres_variables']
-    necesita_gran_m = problema.get('necesita_gran_m', False)
-    M = problema.get('M', 1000000)
-    
-    m = len(A)  # número de restricciones
-    n = len(c)  # número de variables
-    
-    pasos.append("2. APLICACIÓN DEL MÉTODO SIMPLEX")
-    if necesita_gran_m:
-        pasos.append("   (Utilizando el Método de la Gran M)")
-    pasos.append("")
-    
-    # Crear tabla inicial
-    tabla = []
-    for i in range(m):
-        fila = A[i] + [b[i]]
-        tabla.append(fila)
-    
-    # Fila de la función objetivo
-    if tipo_original == 'maximizar':
-        fila_obj = [-coef for coef in c] + [0]  # Negativa para maximización
-    else:
-        fila_obj = [coef for coef in c] + [0]   # Positiva para minimización
-    tabla.append(fila_obj)
-    
-    # Si usamos Gran M, necesitamos eliminar las variables artificiales de la función objetivo
-    if necesita_gran_m and variables_artificiales:
-        pasos.append("🔧 ELIMINACIÓN DE VARIABLES ARTIFICIALES DE LA FUNCIÓN OBJETIVO:")
-        pasos.append("   (Operaciones iniciales para el método de la Gran M)")
-        pasos.append("")
-        
-        # Para cada variable artificial en la base, eliminarla de la función objetivo
-        for i, var_basica in enumerate(variables_basicas):
-            if var_basica in variables_artificiales:
-                # Encontrar la columna de esta variable artificial
-                col_artificial = -1
-                
-                # Buscar la columna que corresponde a esta variable artificial
-                for j in range(n):
-                    # Verificar si esta columna tiene 1 en la fila i y 0 en las demás filas de restricción
-                    es_columna_basica = True
-                    for k in range(m):
-                        if k == i and abs(tabla[k][j] - 1.0) > 1e-10:
-                            es_columna_basica = False
-                            break
-                        elif k != i and abs(tabla[k][j]) > 1e-10:
-                            es_columna_basica = False
-                            break
-                    
-                    if es_columna_basica and abs(tabla[-1][j]) > 1e-10:
-                        col_artificial = j
-                        break
-                
-                if col_artificial >= 0:
-                    # Eliminar la variable artificial de la función objetivo
-                    coef_obj = tabla[-1][col_artificial]
-                    pasos.append(f"   Eliminando {var_basica} de la función objetivo:")
-                    pasos.append(f"   Fila objetivo = Fila objetivo - ({coef_obj:.6f}) × Fila {i+1}")
-                    
-                    for j in range(len(tabla[-1])):
-                        tabla[-1][j] -= coef_obj * tabla[i][j]
-    
-    iteracion = 0
-    tablas_simplex = []
-    
-    # Variables para rastrear pivotes
-    historial_pivotes = []
-    
-    while True:
-        iteracion += 1
-        pasos.append(f"ITERACIÓN {iteracion}")
-        pasos.append("")
-        
-        # Mostrar tabla actual
-        tabla_info = _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos, nombres_variables, num_vars_originales)
-        tablas_simplex.append(tabla_info)
-        
-        # Verificar optimalidad
-        fila_obj_actual = tabla[-1][:-1]
-        if all(coef >= -1e-10 for coef in fila_obj_actual):  # Usar tolerancia numérica
-            pasos.append("✓ Todos los coeficientes en la fila objetivo son ≥ 0")
-            
-            # Verificar si hay variables artificiales en la solución final
-            if necesita_gran_m:
-                variables_artificiales_en_solucion = []
-                for i, var in enumerate(variables_basicas):
-                    if var in variables_artificiales and abs(tabla[i][-1]) > 1e-10:
-                        variables_artificiales_en_solucion.append((var, tabla[i][-1]))
-                
-                if variables_artificiales_en_solucion:
-                    pasos.append("")
-                    pasos.append("❌ PROBLEMA SIN SOLUCIÓN FACTIBLE")
-                    pasos.append("   Variables artificiales con valor no cero en la solución:")
-                    for var, valor in variables_artificiales_en_solucion:
-                        pasos.append(f"      {var} = {valor:.6f}")
-                    pasos.append("")
-                    pasos.append("🔍 INTERPRETACIÓN:")
-                    pasos.append("   - El problema original no tiene solución factible")
-                    pasos.append("   - Las restricciones son inconsistentes")
-                    pasos.append("   - No existe ningún punto que satisfaga todas las restricciones")
-                    
-                    return {
-                        'error': 'Problema sin solución factible - Las restricciones son inconsistentes',
-                        'pasos': pasos,
-                        'tablas': tablas_simplex,
-                        'interpretacion': 'Las restricciones del problema son inconsistentes',
-                        'sugerencia': 'Revise las restricciones del problema para asegurar que sean consistentes'
-                    }
-                else:
-                    pasos.append("✓ Todas las variables artificiales tienen valor cero")
-            
-            pasos.append("¡SOLUCIÓN ÓPTIMA ENCONTRADA!")
-            break
-        
-        # Encontrar variable entrante (columna pivote)
-        col_pivote = min(range(len(fila_obj_actual)), key=lambda i: fila_obj_actual[i])
-        coef_entrante = fila_obj_actual[col_pivote]
-        
-        # Determinar nombre de variable entrante
-        if col_pivote < num_vars_originales:
-            var_entrante = nombres_variables[col_pivote]
-        else:
-            # Determinar el tipo de variable no original
-            idx_no_original = col_pivote - num_vars_originales
-            var_entrante = f"var_{col_pivote + 1}"
-        
-        pasos.append(f"🔵 VARIABLE ENTRANTE: {var_entrante} (columna {col_pivote + 1})")
-        pasos.append(f"   Coeficiente más negativo: {coef_entrante:.6f}")
-        pasos.append("")
-        
-        # Encontrar variable saliente (fila pivote) usando prueba de razón mínima
-        pasos.append("📊 PRUEBA DE RAZÓN MÍNIMA:")
-        pasos.append("   Fila | Variable Base | b(i) | Coef. Columna | Razón")
-        pasos.append("   " + "-" * 55)
-        
-        razones = []
-        razones_validas = []
-        
-        for i in range(m):
-            coef_col = tabla[i][col_pivote]
-            rhs = tabla[i][-1]
-            
-            if coef_col > 1e-10:  # Usar tolerancia numérica
-                razon = rhs / coef_col
-                razones.append((razon, i))
-                razones_validas.append(razon)
-                pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | {razon:7.3f}")
-            else:
-                razones.append((float('inf'), i))
-                if coef_col <= -1e-10:
-                    pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | No válida (≤0)")
-                else:
-                    pasos.append(f"   {i+1:2d}   | {variables_basicas[i]:11s} | {rhs:7.3f} | {coef_col:11.6f} | No válida (≈0)")
-        
-        pasos.append("")
-        
-        if not razones_validas or all(r == float('inf') for r, _ in razones):
-            pasos.append("❌ SOLUCIÓN NO ACOTADA")
-            pasos.append("   Todos los coeficientes de la columna entrante son ≤ 0")
-            pasos.append("   Esto significa que la función objetivo puede crecer indefinidamente")
-            pasos.append("   en la dirección de la variable entrante.")
-            pasos.append("")
-            pasos.append("🔍 INTERPRETACIÓN:")
-            pasos.append("   - El problema no tiene solución óptima finita")
-            pasos.append("   - La región factible es no acotada en la dirección de optimización")
-            pasos.append("   - Verifique las restricciones del problema original")
-            
-            return {
-                'error': 'Solución no acotada - La función objetivo puede crecer indefinidamente',
-                'pasos': pasos,
-                'tablas': tablas_simplex,
-                'interpretacion': 'La región factible es no acotada en la dirección de optimización',
-                'sugerencia': 'Revise las restricciones del problema para asegurar que la región factible esté acotada'
-            }
-        
-        razon_min, fila_pivote = min(razones)
-        var_saliente = variables_basicas[fila_pivote]
-        
-        pasos.append(f"🔴 VARIABLE SALIENTE: {var_saliente} (fila {fila_pivote + 1})")
-        pasos.append(f"   Razón mínima: {razon_min:.6f}")
-        pasos.append("")
-        
-        # Elemento pivote
-        pivote = tabla[fila_pivote][col_pivote]
-        pasos.append(f"⚡ ELEMENTO PIVOTE: {pivote:.6f}")
-        pasos.append(f"   Posición: Fila {fila_pivote + 1}, Columna {col_pivote + 1}")
-        pasos.append("")
-        
-        # Guardar información del pivote para resaltado
-        historial_pivotes.append({
-            'iteracion': iteracion,
-            'fila_pivote': fila_pivote,
-            'col_pivote': col_pivote,
-            'var_entrante': var_entrante,
-            'var_saliente': var_saliente,
-            'pivote': pivote
-        })
-        
-        # Actualizar la tabla anterior con información de pivote
-        if tablas_simplex:
-            tablas_simplex[-1]['fila_pivote'] = fila_pivote
-            tablas_simplex[-1]['col_pivote'] = col_pivote
-            tablas_simplex[-1]['var_entrante'] = var_entrante
-            tablas_simplex[-1]['var_saliente'] = var_saliente
-            tablas_simplex[-1]['elemento_pivote'] = pivote
-        
-        # Operaciones de pivoteo
-        pasos.append("🔧 OPERACIONES DE PIVOTEO:")
-        pasos.append("")
-        
-        # Crear copia de la tabla para mostrar cambios
-        tabla_anterior = [fila[:] for fila in tabla]
-        
-        # Normalizar fila pivote
-        pasos.append(f"1️⃣ NORMALIZAR FILA PIVOTE (Fila {fila_pivote + 1}):")
-        pasos.append(f"   Nueva Fila {fila_pivote + 1} = Fila {fila_pivote + 1} ÷ {pivote:.6f}")
-        pasos.append("")
-        pasos.append("   Antes:")
-        fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[fila_pivote]]) + "]"
-        pasos.append(fila_str)
-        
-        for j in range(len(tabla[fila_pivote])):
-            tabla[fila_pivote][j] /= pivote
-        
-        pasos.append("   Después:")
-        fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[fila_pivote]]) + "]"
-        pasos.append(fila_str)
-        pasos.append("")
-        
-        # Eliminar en otras filas
-        pasos.append("2️⃣ ELIMINAR EN OTRAS FILAS:")
-        for i in range(len(tabla)):
-            if i != fila_pivote and abs(tabla[i][col_pivote]) > 1e-10:
-                factor = tabla[i][col_pivote]
-                pasos.append(f"   Fila {i+1}: Factor = {factor:.6f}")
-                pasos.append(f"   Nueva Fila {i+1} = Fila {i+1} - ({factor:.6f}) × Nueva Fila {fila_pivote+1}")
-                
-                pasos.append("   Antes:")
-                fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[i]]) + "]"
-                pasos.append(fila_str)
-                
-                for j in range(len(tabla[i])):
-                    tabla[i][j] -= factor * tabla[fila_pivote][j]
-                
-                pasos.append("   Después:")
-                fila_str = "   [" + ", ".join([f"{val:8.4f}" for val in tabla[i]]) + "]"
-                pasos.append(fila_str)
-                pasos.append("")
-        
-        # Actualizar variable básica
-        variables_basicas[fila_pivote] = var_entrante
-        pasos.append(f"3️⃣ ACTUALIZAR BASE:")
-        pasos.append(f"   {var_saliente} sale de la base")
-        pasos.append(f"   {var_entrante} entra a la base")
-        pasos.append("")
-        
-        if iteracion > 50:  # Prevenir bucles infinitos
-            pasos.append("❌ DEMASIADAS ITERACIONES")
-            pasos.append("   Se ha alcanzado el límite máximo de iteraciones (50)")
-            pasos.append("   Esto puede indicar:")
-            pasos.append("   - Ciclado en el algoritmo Simplex")
-            pasos.append("   - Problema mal formulado")
-            pasos.append("   - Errores numéricos acumulados")
-            return {
-                'error': 'Demasiadas iteraciones - Posible ciclado o problema mal formulado',
-                'pasos': pasos,
-                'tablas': tablas_simplex,
-                'sugerencia': 'Revise la formulación del problema o use técnicas anti-ciclado'
-            }
-    
-    # Extraer solución
-    solucion = [0.0] * num_vars_originales
-    solucion_con_nombres = {}
-    
-    for i, var in enumerate(variables_basicas):
-        # Buscar si es una variable original
-        for j, nombre_var in enumerate(nombres_variables):
-            if var == nombre_var:
-                solucion[j] = tabla[i][-1]
-                solucion_con_nombres[nombre_var] = tabla[i][-1]
-                break
-    
-    valor_objetivo = tabla[-1][-1]
-    # Mostrar siempre el valor óptimo como positivo
-    valor_objetivo_mostrar = abs(valor_objetivo)
-    if tipo_original == 'minimizar':
-        valor_objetivo = -valor_objetivo
-        valor_objetivo_mostrar = abs(valor_objetivo)
-
-    pasos.append("")
-    pasos.append("3. SOLUCIÓN ÓPTIMA")
-    pasos.append("")
-    
-    if necesita_gran_m:
-        pasos.append("🎯 MÉTODO DE LA GRAN M - SOLUCIÓN FINAL:")
-        pasos.append("")
-    
-    pasos.append("📋 VARIABLES DE DECISIÓN:")
-    for i, (nombre, val) in enumerate(zip(nombres_variables, solucion)):
-        pasos.append(f"   {nombre} = {val:.6f}")
-    
-    pasos.append("")
-    pasos.append("📊 VARIABLES DE HOLGURA/EXCESO:")
-    for i, var in enumerate(variables_basicas):
-        if var not in nombres_variables and var not in variables_artificiales:
-            pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
-    
-    if necesita_gran_m and variables_artificiales:
-        pasos.append("")
-        pasos.append("🚫 VARIABLES ARTIFICIALES (deben ser cero):")
-        for i, var in enumerate(variables_basicas):
-            if var in variables_artificiales:
-                pasos.append(f"   {var} = {tabla[i][-1]:.6f}")
-    
-    pasos.append("")
-    # Mostrar valor óptimo siempre positivo en los pasos
-    pasos.append(f"🎯 VALOR ÓPTIMO: Z = {abs(valor_objetivo_mostrar):.6f}")
-    
-    # Verificación de la solución
-    pasos.append("")
-    pasos.append("✅ VERIFICACIÓN DE LA SOLUCIÓN:")
-    pasos.append("   (Sustituyendo en las restricciones originales)")
-    
-    return {
-        'solucion': solucion,
-        'solucion_con_nombres': solucion_con_nombres,
-        'nombres_variables': nombres_variables,
-        'valor_objetivo': valor_objetivo_mostrar,
-        'pasos': pasos,
-        'tablas': tablas_simplex,
-        'variables_basicas': variables_basicas,
-        'tipo_optimizacion': tipo_original,
-        'historial_pivotes': historial_pivotes,
-        'metodo_usado': 'Gran M' if necesita_gran_m else 'Simplex Estándar'
-    }
-
-def _mostrar_tabla_simplex(tabla, variables_basicas, iteracion, pasos, nombres_variables, num_vars_originales):
-    """Muestra la tabla Simplex de manera formateada con HTML"""
-    
-    m = len(tabla) - 1  # número de restricciones
-    n = len(tabla[0]) - 1  # número de variables
-    
-    pasos.append("📋 TABLA SIMPLEX:")
-    pasos.append("")
-    
-    # Crear tabla HTML con estilos mejorados
-    tabla_html = '<div class="simplex-table-container">'
-    tabla_html += f'<div class="table-title">Iteración {iteracion}</div>'
-    tabla_html += '<table class="simplex-table table table-bordered table-hover">'
-    
-    # Encabezado
-    tabla_html += '<thead class="table-dark"><tr>'
-    tabla_html += '<th class="base-header text-center">Base</th>'
-    for j in range(n):
-        if j < num_vars_originales:
-            tabla_html += f'<th class="var-header text-center">{nombres_variables[j]}</th>'
-        else:
-            tabla_html += f'<th class="slack-header text-center">s<sub>{j-num_vars_originales+1}</sub></th>'
-    tabla_html += '<th class="rhs-header text-center">b(i)</th>'
-    tabla_html += '</tr></thead>'
-    
-    # Cuerpo de la tabla
-    tabla_html += '<tbody>'
-    
-    # Filas de restricciones
-    for i in range(m):
-        tabla_html += f'<tr class="constraint-row" data-row="{i}">'
-        tabla_html += f'<td class="base-column text-center fw-bold">{variables_basicas[i]}</td>'
-        for j in range(len(tabla[i])):
-            valor = tabla[i][j]
-            clase_celda = f'data-cell text-center data-row-{i} data-col-{j}'
-            if j == len(tabla[i]) - 1:  # RHS column
-                clase_celda += ' rhs-cell fw-bold'
-            tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
-        tabla_html += '</tr>'
-    
-    # Fila objetivo
-    tabla_html += '<tr class="objective-row table-info">'
-    tabla_html += '<td class="base-column objective-label text-center fw-bold">Z</td>'
-    for j in range(len(tabla[-1])):
-        valor = tabla[-1][j]
-        clase_celda = f'objective-cell text-center data-col-{j}'
-        if j == len(tabla[-1]) - 1:  # RHS column (valor de Z)
-            clase_celda += ' objective-value fw-bold'
-        tabla_html += f'<td class="{clase_celda}">{valor:.4f}</td>'
-    tabla_html += '</tr>'
-    
-    tabla_html += '</tbody></table>'
-    
-    tabla_html += '</div>'
-    
-    pasos.append(tabla_html)
-    pasos.append("")
-    
-    return {
-        'iteracion': iteracion,
-        'tabla': [fila[:] for fila in tabla],  # Copia profunda
-        'variables_basicas': variables_basicas[:],
-        'tabla_html': tabla_html
-    }
+    """Función de compatibilidad - redirige al método apropiado"""
+    # Esta función se mantiene para compatibilidad con el código existente
+    # pero ahora redirige a la función principal
+    return preparar_problema_simplex(
+        problema['c'], 
+        [{'coeficientes': problema['A'][i], 'tipo': '<=', 'valor': problema['b'][i]} for i in range(len(problema['A']))],
+        problema['tipo_original'],
+        problema['nombres_variables'],
+        pasos
+    )
