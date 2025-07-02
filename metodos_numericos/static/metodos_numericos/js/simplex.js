@@ -117,7 +117,19 @@ function showTooltipContent(trigger) {
   if (!tooltipsEnabled) return
 
   const tooltipId = trigger.getAttribute("data-tooltip")
-  const tooltipData = window.tooltipsContent[tooltipId]
+  // Buscar traducción según idioma
+  let tooltipData = null
+  if (window.tooltipsContent && window.tooltipsContent[tooltipId]) {
+    tooltipData = window.tooltipsContent[tooltipId]
+    // Si es un objeto con title/content por idioma
+    if (typeof tooltipData.title === 'object') {
+      const lang = document.documentElement.lang || navigator.language || 'es'
+      tooltipData = {
+        title: tooltipData.title[lang] || tooltipData.title['es'] || '',
+        content: tooltipData.content[lang] || tooltipData.content['es'] || ''
+      }
+    }
+  }
 
   if (!tooltipData) return
 
@@ -130,16 +142,11 @@ function showTooltipContent(trigger) {
 
   // Posicionar tooltip
   const rect = trigger.getBoundingClientRect()
-  const tooltipRect = tooltip.getBoundingClientRect()
-
-  let left = rect.left + rect.width / 2 - 300 / 2 // 300px es el ancho aproximado del tooltip
+  let left = rect.left + rect.width / 2 - 300 / 2
   let top = rect.bottom + 10
-
-  // Ajustar si se sale de la pantalla
   if (left < 10) left = 10
   if (left + 300 > window.innerWidth - 10) left = window.innerWidth - 310
-  if (top + 150 > window.innerHeight - 10) top = rect.top - 160 // 150px altura aproximada
-
+  if (top + 150 > window.innerHeight - 10) top = rect.top - 160
   tooltip.style.left = left + "px"
   tooltip.style.top = top + "px"
   tooltip.style.display = "block"
@@ -147,7 +154,7 @@ function showTooltipContent(trigger) {
   // Auto-hide después de 5 segundos
   clearTimeout(window.tooltipTimeout)
   window.tooltipTimeout = setTimeout(() => {
-    hideTooltipContent()
+    tooltip.style.display = "none"
   }, 5000)
 }
 

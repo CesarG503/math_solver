@@ -533,7 +533,7 @@
     <div class="tooltip-content">
         <div class="tooltip-header">
             <span class="tooltip-title"></span>
-            <button class="tooltip-close" onclick="hideTooltip()">&times;</button>
+            <button class="tooltip-close" onclick="hideTooltipContent()">&times;</button>
         </div>
         <div class="tooltip-body"></div>
     </div>
@@ -574,18 +574,18 @@ window.translations = {
     'Ingresa los valores de tu ejercicio para visualizarlo': '{% trans "Ingresa los valores de tu ejercicio para visualizarlo" %}'
 };
 
-// Tooltips content
+// Tooltips content con traducciones
 window.tooltipsContent = {
     'method-info': {
         title: '{% trans "Método Simplex" %}',
         content: '{% trans "El método Simplex es un algoritmo para resolver problemas de programación lineal. Encuentra la solución óptima moviéndose entre vértices de la región factible hasta encontrar el mejor valor de la función objetivo." %}'
     },
     'input-data': {
-        title: '{% trans "Datos de Entrada" %}',
+        title: '{% trans "Datos de entrada" %}',
         content: '{% trans "Aquí defines tu problema de programación lineal: función objetivo, variables y restricciones. Completa todos los campos para obtener la solución óptima." %}'
     },
     'optimization-type': {
-        title: '{% trans "Tipo de Optimización" %}',
+        title: '{% trans "Optimización" %}',
         content: '{% trans "Selecciona si quieres encontrar el valor máximo o mínimo de tu función objetivo. Esto determina la dirección de búsqueda del algoritmo." %}'
     },
     'maximize': {
@@ -597,7 +597,7 @@ window.tooltipsContent = {
         content: '{% trans "Busca el menor valor posible de la función objetivo. Útil para problemas de minimización de costos, tiempo, recursos, etc." %}'
     },
     'variables-count': {
-        title: '{% trans "Número de Variables" %}',
+        title: '{% trans "Variables" %}',
         content: '{% trans "Las variables de decisión representan las cantidades que puedes controlar en tu problema. Por ejemplo: cantidad a producir, recursos a asignar, etc." %}'
     },
     'variable-names': {
@@ -613,7 +613,7 @@ window.tooltipsContent = {
         content: '{% trans "Las limitaciones de tu problema: recursos disponibles, capacidades máximas, requisitos mínimos, etc. Definen la región factible de soluciones." %}'
     },
     'constraint-types': {
-        title: '{% trans "Tipos de Restricciones" %}',
+        title: '{% trans "Tipo" %}',
         content: '{% trans "≤ (menor o igual): límites máximos. ≥ (mayor o igual): requisitos mínimos. = (igual): valores exactos requeridos." %}'
     },
     'example-load': {
@@ -621,7 +621,7 @@ window.tooltipsContent = {
         content: '{% trans "Carga un problema de ejemplo para ver cómo funciona el método Simplex. Útil para aprender y probar la herramienta." %}'
     },
     'solve-button': {
-        title: '{% trans "Resolver Problema" %}',
+        title: '{% trans "Resolver con Simplex" %}',
         content: '{% trans "Ejecuta el algoritmo Simplex para encontrar la solución óptima de tu problema. El sistema mostrará el proceso paso a paso." %}'
     },
     'optimal-solution': {
@@ -629,20 +629,24 @@ window.tooltipsContent = {
         content: '{% trans "Los valores de las variables que optimizan tu función objetivo, respetando todas las restricciones del problema." %}'
     },
     'solution-variables': {
-        title: '{% trans "Valores de Variables" %}',
+        title: '{% trans "Variables:" %}',
         content: '{% trans "Los valores óptimos que deben tomar tus variables de decisión para lograr el mejor resultado posible." %}'
     },
     'optimal-value': {
-        title: '{% trans "Valor Óptimo" %}',
+        title: '{% trans "Valor óptimo:" %}',
         content: '{% trans "El mejor valor que puede alcanzar tu función objetivo. Este es el resultado final de la optimización." %}'
     },
     'method-used': {
-        title: '{% trans "Método Utilizado" %}',
+        title: '{% trans "Método utilizado:" %}',
         content: '{% trans "Simplex Estándar: para restricciones ≤. Gran M: cuando hay restricciones ≥ o =, requiere variables artificiales." %}'
     },
     'step-by-step': {
-        title: '{% trans "Proceso Paso a Paso" %}',
+        title: '{% trans "Proceso Simplex Paso a Paso" %}',
         content: '{% trans "Muestra cada iteración del algoritmo Simplex: tablas, cálculos de pivote, y transformaciones hasta llegar a la solución óptima." %}'
+    },
+    'graph-explanation': {
+        title: '{% trans "Gráfica de Programación Lineal" %}',
+        
     },
     'graph-explanation': {
         title: '{% trans "Gráfica de Programación Lineal" %}',

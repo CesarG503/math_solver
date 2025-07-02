@@ -232,3 +232,61 @@ msgstr "Must be a valid number"
 
 msgid "Elemento Pivote:"
 msgstr "Pivot Element:"
+
+# Tooltips translations
+msgid "El método Simplex es un algoritmo para resolver problemas de programación lineal. Encuentra la solución óptima moviéndose entre vértices de la región factible hasta encontrar el mejor valor de la función objetivo."
+msgstr "The Simplex method is an algorithm for solving linear programming problems. It finds the optimal solution by moving between vertices of the feasible region until finding the best value of the objective function."
+
+msgid "Aquí defines tu problema de programación lineal: función objetivo, variables y restricciones. Completa todos los campos para obtener la solución óptima."
+msgstr "Here you define your linear programming problem: objective function, variables and constraints. Complete all fields to get the optimal solution."
+
+msgid "Selecciona si quieres encontrar el valor máximo o mínimo de tu función objetivo. Esto determina la dirección de búsqueda del algoritmo."
+msgstr "Select whether you want to find the maximum or minimum value of your objective function. This determines the search direction of the algorithm."
+
+msgid "Busca el mayor valor posible de la función objetivo. Útil para problemas de maximización de ganancias, producción, etc."
+msgstr "Seeks the highest possible value of the objective function. Useful for profit maximization, production, etc. problems."
+
+msgid "Busca el menor valor posible de la función objetivo. Útil para problemas de minimización de costos, tiempo, recursos, etc."
+msgstr "Seeks the lowest possible value of the objective function. Useful for cost, time, resource minimization problems, etc."
+
+msgid "Las variables de decisión representan las cantidades que puedes controlar en tu problema. Por ejemplo: cantidad a producir, recursos a asignar, etc."
+msgstr "Decision variables represent the quantities you can control in your problem. For example: quantity to produce, resources to allocate, etc."
+
+msgid "Personaliza los nombres de tus variables para que sean más descriptivos. Por ejemplo: x1, x2 o Producto_A, Producto_B."
+msgstr "Customize your variable names to be more descriptive. For example: x1, x2 or Product_A, Product_B."
+
+msgid "La función que quieres optimizar. Los coeficientes representan la contribución de cada variable al objetivo (ganancia por unidad, costo por unidad, etc.)."
+msgstr "The function you want to optimize. Coefficients represent each variable's contribution to the objective (profit per unit, cost per unit, etc.)."
+
+msgid "Las limitaciones de tu problema: recursos disponibles, capacidades máximas, requisitos mínimos, etc. Definen la región factible de soluciones."
+msgstr "Your problem's limitations: available resources, maximum capacities, minimum requirements, etc. They define the feasible region of solutions."
+
+msgid "≤ (menor o igual): límites máximos. ≥ (mayor o igual): requisitos mínimos. = (igual): valores exactos requeridos."
+msgstr "≤ (less than or equal): maximum limits. ≥ (greater than or equal): minimum requirements. = (equal): exact values required."
+
+msgid "Carga un problema de ejemplo para ver cómo funciona el método Simplex. Útil para aprender y probar la herramienta."
+msgstr "Load an example problem to see how the Simplex method works. Useful for learning and testing the tool."
+
+msgid "Ejecuta el algoritmo Simplex para encontrar la solución óptima de tu problema. El sistema mostrará el proceso paso a paso."
+msgstr "Execute the Simplex algorithm to find the optimal solution to your problem. The system will show the step-by-step process."
+
+msgid "Los valores de las variables que optimizan tu función objetivo, respetando todas las restricciones del problema."
+msgstr "The variable values that optimize your objective function, respecting all problem constraints."
+
+msgid "Los valores óptimos que deben tomar tus variables de decisión para lograr el mejor resultado posible."
+msgstr "The optimal values your decision variables should take to achieve the best possible result."
+
+msgid "El mejor valor que puede alcanzar tu función objetivo. Este es el resultado final de la optimización."
+msgstr "The best value your objective function can achieve. This is the final result of the optimization."
+
+msgid "Simplex Estándar: para restricciones ≤. Gran M: cuando hay restricciones ≥ o =, requiere variables artificiales."
+msgstr "Standard Simplex: for ≤ constraints. Big M: when there are ≥ or = constraints, requires artificial variables."
+
+msgid "Muestra cada iteración del algoritmo Simplex: tablas, cálculos de pivote, y transformaciones hasta llegar a la solución óptima."
+msgstr "Shows each iteration of the Simplex algorithm: tables, pivot calculations, and transformations until reaching the optimal solution."
+
+msgid "Visualización geométrica del problema (solo para 2 variables). Muestra la región factible, restricciones y el punto óptimo."
+msgstr "Geometric visualization of the problem (only for 2 variables). Shows the feasible region, constraints and the optimal point."
+
+msgid "Cambiar idioma"
+msgstr "Change language"
