@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<div class="container-fluid p-0" style="overflow: auto;">
+<div class="container-fluid p-0 darkmode-ignore" style="overflow: auto;">
     <table class="table table-success table-striped table-hover">
         <thead>
             <tr>
@@ -49,4 +49,14 @@
     </table>
     </div>
 </div>
+
+<script src="https://unpkg.com/darkmode-js/lib/darkmode-js.min.js"></script>
+<script>
+   new Darkmode({
+    bottom: '32px', // Botón flotante
+    right: '32px',
+    label: '🌓',
+    autoMatchOsTheme: true
+  }).showWidget();
+</script>
 {% endblock %}

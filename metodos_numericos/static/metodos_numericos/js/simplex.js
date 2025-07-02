@@ -1,3 +1,4 @@
+
 // Variables globales
 let contadorRestricciones = 0
 let numVariables = 2
@@ -7,8 +8,9 @@ let nombresVariables = ["x", "x"]
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute("data-theme")
   const newTheme = currentTheme === "dark" ? "light" : "dark"
+  const darkMode = newTheme === "dark"
   document.documentElement.setAttribute("data-theme", newTheme)
-  localStorage.setItem("theme", newTheme)
+  localStorage.setItem("darkmode", darkMode)
   updateThemeButton(newTheme)
   updateValorOptimoTheme(newTheme)
 }
@@ -59,7 +61,9 @@ function updateThemeButton(theme) {
 
 // Cargar tema guardado
 document.addEventListener("DOMContentLoaded", () => {
-  const savedTheme = localStorage.getItem("theme") || "light"
+  const darkmode = localStorage.getItem("darkmode")
+  let savedTheme = "light"
+  if (darkmode === "true") savedTheme = "dark"
   document.documentElement.setAttribute("data-theme", savedTheme)
   updateThemeButton(savedTheme)
   enhanceSimplexTables()

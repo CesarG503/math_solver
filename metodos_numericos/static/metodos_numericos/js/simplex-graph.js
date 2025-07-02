@@ -228,9 +228,10 @@ function initializeSimplexGraph(datosGrafica) {
   showSimplexGraphInstructions()
 
   // Detectar tema desde localStorage (key: theme, value: 'dark' o 'light')
-  let theme = null
+  let theme = "light"
   try {
-    theme = localStorage.getItem('theme')
+    let darkMode = localStorage.getItem('darkmode')
+    if(darkMode === "true") theme = 'dark'
   } catch (e) {}
   if (theme === 'dark') {
     setTimeout(() => updateSimplexGraphTheme(true), 150)
