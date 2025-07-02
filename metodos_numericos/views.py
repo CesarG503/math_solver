@@ -205,7 +205,7 @@ def history_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('metodos_numericos:index')
+        return redirect('metodos_numericos:docs')
     
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -215,7 +215,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('metodos_numericos:index')
+                return redirect('metodos_numericos:docs')
             messages.error(request, 'Usuario o contraseña incorrectos')
             return render(request, 'auth/login.html', {'form': form})
         else:
@@ -226,13 +226,13 @@ def login_view(request):
 
 def sing_up_view(request):
     if request.user.is_authenticated:
-        return redirect('metodos_numericos:index')
+        return redirect('metodos_numericos:docs')
     
     if( request.method == 'POST'):
         form = FormCrearUsuario(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            return redirect('metodos_numericos:index')
+            return redirect('metodos_numericos:docs')
         else:
             return render(request, 'auth/register.html', {'form': form})
     else:
@@ -242,7 +242,7 @@ def sing_up_view(request):
 def logout_view(request):
     if request.user.is_authenticated:
         logout(request)
-    return redirect('metodos_numericos:index')
+    return redirect('metodos_numericos:docs')
 
 def simplex_view(request, id_ejercicio=None):
     """Vista para el método Simplex"""
