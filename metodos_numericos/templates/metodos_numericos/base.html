@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     {% load i18n static %}
-    <title>{% block title %}Metodos Numericos{% endblock %}</title>
+    <title>{% block title %}Simplex{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="{% static 'metodos_numericos/img/char.svg' %}" type="image/png">
     <!-- MathJax para renderizado de ecuaciones -->
@@ -42,6 +43,7 @@
     <script defer src="https://unpkg.com/mathlive"></script>
     <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive-static.css">
 
+    {% comment %} CDN RETRO SCI-Fi {% endcomment %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Mixgyt/RetroSci-Fi_library/dist/css/sci-fi.css">
     
     <link rel="stylesheet" href="{% static 'metodos_numericos/css/style.css' %}">
@@ -53,7 +55,7 @@
 <body>
     <nav class="navbar bg-secondary estilo-brillo border border-secondary hover-neon  position-sticky top-0 p-1">
     <div class="navbar-header justify-content-between ">
-        <div class="navbar-brand fst-italic fs-sm-3"> <i class="fa-solid fa-chart-simple fst-italic text-primary "></i> SimpleX</div>
+        <div class="navbar-brand fst-italic ps-5 fs-sm-3"> <i class="fa-solid fa-chart-simple fst-italic" style='color:#DCC9A9'></i> SimpleX</div>
             <button class="navbar-toggle">
             <div class="img-menu-white"></div>
             </button>
@@ -61,14 +63,14 @@
             <button id="button-small" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
         {% endif %}
         </div>
-        <div class="navbar-nav">
+        <div class="navbar-nav px-5">
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:docs' %}">Inicio</a>
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:simplex' %}">Simplex</a>
         {% if request.user.is_authenticated %}
         </div>
-                <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
+                <button id="button-normal" class="btn ps-5 btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
         {% else %}
-                <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">{%trans "Login"%}</a>
+                <a class="nav-item rounded-pill ps-5 text-nowrap" href="{% url 'metodos_numericos:login' %}">{%trans "Login"%}</a>
         </div>
         {% endif %}
     </nav>
