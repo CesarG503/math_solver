@@ -66,12 +66,12 @@
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:docs' %}">Inicio</a>
             <a class="nav-item rounded-pill" href="{% url 'metodos_numericos:simplex' %}">Simplex</a>
         {% if request.user.is_authenticated %}
-        </div>
-                <button id="button-normal" class="btn ps-5 btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
+        
+                <button id="button-normal" class="btn  btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
         {% else %}
                 <a class="nav-item rounded-pill ps-5 text-nowrap" href="{% url 'metodos_numericos:login' %}">{%trans "Login"%}</a>
-        </div>
         {% endif %}
+        </div>
     </nav>
 
     {% if request.user.is_authenticated %}
