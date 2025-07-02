@@ -1,3 +1,19 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: .\metodos_numericos\templates\metodos_numericos\base.html:42
 msgid "Materia"
 msgstr "Optimization Methods"
@@ -88,3 +104,419 @@ msgstr "Instructions for Use"
 #: .\metodos_numericos\templates\metodos_numericos\perfil.html:76
 msgid "Cambiar idioma"
 msgstr "Change language"
+
+############################
+#  Translations for the Simplex Method documentation
+############################
+
+msgid "NavInicio"
+msgstr "Home"
+
+msgid "NavTeoria"
+msgstr "Theory"
+
+msgid "NavManual"
+msgstr "Manual"
+
+msgid "NavNosotros"
+msgstr "AboutUs"
+
+msgid "HeroTitulo"
+msgstr "Simplex Method"
+
+msgid "HeroSubtitulo"
+msgstr "Documentation"
+
+msgid "HeroDescripcion"
+msgstr "The Simplex method is detailed and error-prone if a calculation fails. That’s why it’s crucial to understand each step of the process."
+
+msgid "HeroBotonComenzar"
+msgstr "Start"
+
+msgid "HeroBotonProyecto"
+msgstr "Project"
+
+msgid "Section2Title"
+msgstr "What is the Simplex method?"
+
+msgid "Section2Description"
+msgstr "The Simplex method is an iterative procedure for solving linear programming problems, where the goal is to find the optimal solution of the objective function that satisfies the set of constraints."
+
+msgid "CardTitle"
+msgstr "Basic Concepts"
+
+msgid "CardIntro"
+msgstr "To better understand the Simplex method, let's review some definitions. The method is based on two important statements."
+
+msgid "CardPoint1"
+msgstr "The set of possible solutions—or feasible region—of any linear programming problem can be represented as a convex polyhedron."
+
+msgid "CardPoint2"
+msgstr "If a linear programming problem has an optimal and finite solution, it will lie at a vertex of the convex polyhedron representing the problem."
+
+msgid "StepsTitle"
+msgstr "Simplex Method Steps"
+
+msgid "StepsPoint1"
+msgstr "Define the problem in standard form and generate our matrix."
+
+msgid "StepsPoint2"
+msgstr "Determine the initial basic solution."
+
+msgid "StepsPoint3"
+msgstr "Select the entering variable using the optimality condition. If no entering variable can be selected, it means we are at the optimal condition and iterations end. Otherwise, proceed to the next step."
+
+msgid "StepsPoint4"
+msgstr "Select the leaving variable using the feasibility condition."
+
+msgid "StepsPoint5"
+msgstr "Update our matrix by performing Gauss-Jordan operations. Return to step number 3."
+
+msgid "Detail1Title"
+msgstr "Simplex Method Steps Explained in Detail"
+
+msgid "Detail1Step1Summary"
+msgstr "Define the problem in standard form and build our matrix"
+
+msgid "Detail1Intro"
+msgstr "A linear programming problem has the following form"
+
+msgid "DetailObjectiveHeader"
+msgstr "Objective Function"
+
+msgid "DetailObjectiveAction"
+msgstr "Maximize or Minimize"
+
+msgid "DetailSubjectToHeader"
+msgstr "Subject to"
+
+msgid "DetailConstraint1"
+msgstr "c₁₁x₁ + c₁₂x₂ + … + c₁ₙxₙ (≥, ≤, =) b₁"
+
+msgid "DetailConstraint2"
+msgstr "c₂₁x₁ + c₂₂x₂ + … + c₂ₙxₙ (≥, ≤, =) b₂"
+
+msgid "DetailConstraintN"
+msgstr "cₘ₁x₁ + cₘ₂x₂ + … + cₘₙxₙ (≥, ≤, =) bₘ"
+
+msgid "DetailNonNegativity"
+msgstr "x₁ ≥ 0,  x₂ ≥ 0,  …,  xₙ ≥ 0"
+
+msgid "DetailVariablesNote"
+msgstr "Where x₁, x₂, …, xₙ are the problem variables."
+
+msgid "PreStandardNote"
+msgstr "Before converting to standard form, verify all right-hand sides are non-negative."
+
+msgid "NegativeSideQuestion"
+msgstr "What if the right-hand side of a constraint is negative?"
+
+msgid "NegativeSideExplanation"
+msgstr "Multiply the entire constraint — including its sign — by -1 to make the right-hand side positive."
+
+msgid "NegativeStep1"
+msgstr "If it is ≥, change it to ≤."
+
+msgid "NegativeStep2"
+msgstr "If it is ≤, change it to ≥."
+
+msgid "NegativeStep3"
+msgstr "If it is an equality, keep the sign."
+
+msgid "ConvertToEqualitiesTitle"
+msgstr "Convert Constraints into Equalities"
+
+msgid "ConvertToEqualitiesNote"
+msgstr "How to convert constraints into equalities depends on their sign"
+
+msgid "CaseLessEqual"
+msgstr "If the constraint is ≤:"
+
+msgid "CaseLessEqualDesc"
+msgstr "Introduce a non-negative slack variable."
+
+msgid "CaseGreaterEqual"
+msgstr "If the constraint is ≥:"
+
+msgid "CaseGreaterEqualDesc"
+msgstr "Subtract an excess variable and add an artificial variable."
+
+msgid "CaseEqual"
+msgstr "If the constraint is =:"
+
+msgid "CaseEqualDesc"
+msgstr "Subtract an excess variable and add an artificial variable."
+
+msgid "SimplexMethodScope"
+msgstr "The Simplex method covered here applies to LP problems with ≤ constraints. For artificial variables use the two-phase or Big-M method."
+
+msgid "GenerateMatrixTitle"
+msgstr "Build the Problem Matrix"
+
+msgid "GenerateMatrixIntro"
+msgstr "Once in standard form, assemble the matrix of objective and constraint coefficients."
+
+msgid "AfterConstraintsConverted"
+msgstr "After converting constraints to equations, construct our matrix:"
+
+msgid "MatrixOverview"
+msgstr "In our matrix we can identify:"
+
+msgid "MatrixItem1Title"
+msgstr "Cost Vector:"
+
+msgid "MatrixItem1Desc"
+msgstr "Contains all objective coefficients; variables are listed below in order."
+
+msgid "MatrixItem2Title"
+msgstr "Solution Vector:"
+
+msgid "MatrixItem2Desc"
+msgstr "Holds the initial basic solution; Cb shows each variable’s cost coefficient."
+
+msgid "MatrixItem3Title"
+msgstr "Constraint Coefficients:"
+
+msgid "MatrixItem3Desc"
+msgstr "Coefficients of constraints in original order; R column is the resource vector."
+
+msgid "MatrixItem4Title"
+msgstr "Reduced Cost Vector:"
+
+msgid "MatrixItem4Desc"
+msgstr "Also called shadow prices: computed by multiplying the solution vector by constraint coefficients and subtracting the cost vector."
+
+msgid "Detail2Summary"
+msgstr "Determine the initial basic solution"
+
+msgid "Detail2Description1"
+msgstr "As mentioned, the Simplex method starts at a vertex of the feasible region, that is, an extreme point. With each iteration we move from vertex to vertex until we reach the optimal solution. In our case, in the prepared tableau we can see the initial basic solution, which is S₁=35, S₂=18, and S₃=26; each variable of the solution vector is set to the value found in the R column. These are called basic variables. The initial Z value is also shown in column R and is 0."
+
+msgid "Detail2Description2"
+msgstr "Variables not in the basis are called non-basic variables; in this case X₁ and X₂, both of which are 0. With this solution, do we have the best Z value? To find out, we must proceed to the next step:"
+
+msgid "Detail3Summary"
+msgstr "Select the entering variable using the optimality condition"
+
+msgid "Detail3OptimalityTitle"
+msgstr "Optimality Condition"
+
+msgid "Detail3OptimalityDesc"
+msgstr "The optimality condition checks whether the current solution in the tableau is optimal or can be improved."
+
+msgid "Detail3OptimalityPoint1"
+msgstr "In a maximization problem, if all reduced cost coefficients are ≥ 0, we are at the optimal point and the process ends."
+
+msgid "Detail3OptimalityPoint2"
+msgstr "If a linear programming problem has an optimal and finite solution, it will lie at a vertex of the convex polyhedron representing the feasible region."
+
+msgid "Detail3OptimalityNote"
+msgstr "In our maximization example, there are negative values in the reduced cost vector; therefore, we must begin iterations by selecting the entering variable."
+
+msgid "Detail3EntryVarTitle"
+msgstr "Entering Variable"
+
+msgid "Detail3EntryVarDesc1"
+msgstr "The entering variable refers to one of the non-basic variables that will enter the basis and become part of the solution."
+
+msgid "Detail3EntryVarDesc2"
+msgstr "The criteria for choosing the entering variable depend on whether the problem is maximization or minimization:"
+
+msgid "Detail3EntryVarPoint1"
+msgstr "For maximization, choose the non-basic variable with the most negative reduced cost coefficient."
+
+msgid "Detail3EntryVarPoint2"
+msgstr "For minimization, choose the non-basic variable with the most positive reduced cost coefficient."
+
+msgid "Detail3PivotNote"
+msgstr "The column containing the selected variable is called the pivot column."
+
+msgid "Detail3ExampleNote"
+msgstr "In the example, the entering variable is X₁ since it has the most negative value (–3) in the reduced cost vector:"
+
+msgid "Detail4Summary"
+msgstr "Select the Leaving Variable Using the Feasibility Condition"
+
+msgid "Detail4FeasibilityTitle"
+msgstr "Feasibility Condition"
+
+msgid "Detail4FeasibilityDesc1"
+msgstr "The feasibility condition is used to determine which basic variable will leave the basis and be replaced by the entering variable. This uses the minimum ratio test."
+
+msgid "Detail4FeasibilityDesc2"
+msgstr "The minimum ratio is calculated by dividing the value in column R by the value in the pivot column. The smallest ratio indicates the leaving variable."
+
+msgid "Detail4FeasibilityDesc3"
+msgstr "If the minimum ratio is negative or zero, no basic variable can leave the basis and the problem has no solution."
+
+msgid "Detail4ExitVarTitle"
+msgstr "Leaving Variable"
+
+msgid "Detail4ExitVarDesc1"
+msgstr "To identify the leaving variable, divide each R value by its corresponding pivot column coefficient, provided that coefficient is positive."
+
+msgid "Detail4ExitVarDesc2"
+msgstr "The smallest result corresponds to the pivot row, which contains the leaving variable."
+
+msgid "Detail4Example1"
+msgstr "In our example, the pivot column is for entering variable X₁. The pivot row is the one with the smallest ratio (18/3=6), corresponding to S₂."
+
+msgid "Detail4Example2"
+msgstr "Thus, the leaving variable is S₂. The intersection of pivot row and pivot column gives the pivot element; here it is 3."
+
+msgid "Detail5Summary"
+msgstr "Update the Matrix"
+
+msgid "Detail5Intro"
+msgstr "Once our pivot element is determined, we perform Gauss-Jordan operations to form the identity matrix. The new value for each row is calculated as follows:"
+
+msgid "Detail5PivotTitle"
+msgstr "For the pivot row:"
+
+msgid "Detail5PivotDesc"
+msgstr "The new pivot row value is obtained by dividing its current value by the pivot element."
+
+msgid "Detail5OtherTitle"
+msgstr "For the other rows:"
+
+msgid "Detail5OtherDesc"
+msgstr "The new row value is calculated by subtracting from its current value the product of the pivot column entry and the new pivot row value."
+
+msgid "Detail5ExampleIntro"
+msgstr "To illustrate, let's continue with the example. We begin with the pivot row:"
+
+msgid "Detail5AfterpivotIntro"
+msgstr "For the other rows, we perform calculations differently. We start with row S₁:"
+
+msgid "Detail5RowS3Intro"
+msgstr "For row S₃ we have:"
+
+msgid "Detail5RowZIntro"
+msgstr "Finally, for row Z we have:"
+
+msgid "Detail5PostOperations"
+msgstr "After performing Gauss-Jordan, our matrix becomes:"
+
+msgid "Detail5MatrixIdentityDesc"
+msgstr "As you can see, the pivot position is now 1 and the other entries in that column become 0. This begins forming our identity matrix."
+
+msgid "Detail5ReturnStep"
+msgstr "Return to step number 3"
+
+msgid "Detail5ReturnDesc"
+msgstr "With this result, we go back to step 3 and repeat the process. Since there are still negative values in the reduced cost vector, we can continue optimizing."
+
+msgid "Detail5NegativeValueDesc"
+msgstr "The only negative value is -4, so the entering variable will be X₂."
+
+msgid "Detail5ChooseExitVarDesc"
+msgstr "To choose the leaving variable, divide each R value by its corresponding X₂ column coefficient (the latter must be positive)."
+
+msgid "Detail5IgnoreNegative"
+msgstr "The X₂ column entry is negative, so it's not considered."
+
+msgid "Detail5SmallestValueDesc"
+msgstr "The smallest ratio occurs in row S₃, so that variable leaves the basis. The pivot element is 16/3."
+
+msgid "Detail5NextIterationIntro"
+msgstr "We perform another iteration and obtain the following result:"
+
+msgid "Detail5OptReached"
+msgstr "In this final tableau, the reduced cost vector has no negative entries, indicating we've reached the optimal solution. We'll extract the basic variables and Z as follows:"
+
+msgid "Detail5NonBasisZero"
+msgstr "Non-basic variables will have value 0."
+
+msgid "Detail5Solution"
+msgstr "Solution: X₁ = 31/4, X₂ = 21/8, S₁ = 51/8, S₂ = 0, S₃ = 0, Z = 57/2"
+
+msgid "AlertTextPrefix"
+msgstr "This theory has been extracted from the following source:"
+
+msgid "AlertTextLink"
+msgstr "Plan de Mejora"
+
+msgid "Section3Title"
+msgstr "User Manual"
+
+msgid "Section3Description"
+msgstr "Here you will find step-by-step instructions for entering data, interpreting results, and making the most of the tool."
+
+msgid "ManualSectionTitle"
+msgstr "Step-by-Step Explanation of How to Solve an Exercise"
+
+msgid "ManualStep1Title"
+msgstr "Enter values into the calculator"
+
+msgid "ManualStep1ImageAlt"
+msgstr "Screenshot of the value-entry section"
+
+msgid "ManualStep1Item1"
+msgstr "You can choose the problem type—Maximization or Minimization—and select the number of variables from 2 up to X."
+
+msgid "ManualStep1Item2"
+msgstr "You can assign names to the variables; by default they are x₁, x₂ … xₙ."
+
+msgid "ManualStep1Item3"
+msgstr "Section for inputting objective function values, each following the order of the variables."
+
+msgid "ManualStep2ImageAlt"
+msgstr "Screenshot of the constraints section"
+
+msgid "ManualStep2Item4"
+msgstr "The delete button removes a constraint that is no longer needed or if you have added extra constraints."
+
+msgid "ManualStep2Item5"
+msgstr "The constraints panel is where you enter the problem constraints; each must follow the order of variables."
+
+msgid "ManualStep2Item6"
+msgstr "The add button inserts another constraint if desired. The load-example button populates the app with a sample linear-programming problem so you can see how it works."
+
+msgid "ManualStep2Item7"
+msgstr "The solve button runs the algorithm once all required values have been entered."
+
+msgid "ManualStep2Item8"
+msgstr "The preview panel shows how the entered problem will appear before solving it."
+
+msgid "ManualResultsTitle"
+msgstr "Results Display"
+
+msgid "ManualResultsImageAlt"
+msgstr "Screenshot of the quick answer panel"
+
+msgid "ManualResultsItem1"
+msgstr "The Quick Answer panel provides the solution for those who don't want to see the entire process."
+
+msgid "ManualResultsDetailImageAlt"
+msgstr "Screenshot of the step-by-step panel"
+
+msgid "ManualResultsItem2"
+msgstr "The step-by-step panel shows how the problem was solved, with each step explained in detail."
+
+msgid "TeamSectionTitle"
+msgstr "DEVELOPMENT TEAM"
+
+msgid "ToolDescription"
+msgstr "An advanced tool for solving linear programming problems using the Simplex method."
+
+msgid "ProjectInfoTitle"
+msgstr "Project Information"
+
+msgid "ProjectInfoDesc"
+msgstr "Project developed as part of the Optimization Methods course."
+
+msgid "ButtonStart"
+msgstr "Get Started"
+
+msgid "ButtonProject"
+msgstr "Project"
+
+msgid "UniversityName"
+msgstr "National University of El Salvador"
+
+msgid "FooterCopyright"
+msgstr "Math Solver. All rights reserved."
+
+############################
+# End of the Simplex Method documentation
+############################
