@@ -225,6 +225,11 @@
 
 {% block scripts %}
 <script src="{% static 'metodos_numericos/js/mathlive-config.js' %}"></script>
+{% if funcion_input_db %}
+<script>
+    console.log(`{{ funcion_input_db }}`);
+</script>
+{% endif %}
 <script>
 // Limpia y convierte la función a notación Python/SymPy antes de enviar
 function limpiarFuncionInput(str) {

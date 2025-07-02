@@ -28,3 +28,13 @@ def ejercicios(request):
     ejercicios = Ejercicio.objects.filter(user=request.user.id)
     data = [{'id': ejercicio.id,'tipo': ejercicio.tipo, 'ecuacion': ejercicio.ecuacion, 'fecha_creacion': ejercicio.fecha_creacion, 'respuesta': ejercicio.solucion} for ejercicio in ejercicios]
     return JsonResponse(data, safe=False)
+
+@login_required
+def eliminar_hermite(request, id_ejercicio):
+    try:
+        ejercicio = Ejercicio.objects.get(id=id_ejercicio, user=request.user.id)
+        ejercicio.delete()
+        messages.success(request, 'Ejercicio eliminado correctamente.')
+    except Ejercicio.DoesNotExist:
+        messages.error(request, 'El ejercicio no existe o no pertenece a tu cuenta.')
+    return redirect('metodos_numericos:index')

@@ -119,6 +119,7 @@ function validarEmail(email) {
     return regex.test(email);
 }
 
+/*
 function getListaEjercicios(){
     fetch(`/ejercicios/`)
       .then(response => response.json())
@@ -134,19 +135,25 @@ function getListaEjercicios(){
             const tipo = document.createElement('td');
             const respuesta = document.createElement('td');
             const editar = document.createElement('td');
+            const eliminar = document.createElement('td');
 
-            tipo.textContent = ejercicio.tipo;
             respuesta.classList.add('math-display','respuesta-ecuacion');
             respuesta.textContent = `$$${ejercicio.respuesta}$$`;
             if( ejercicio.tipo === "hermite"){
+                tipo.textContent = "H";
+                eliminar.classList.add('p-0');
                 editar.innerHTML = `<a href="/hermite/${ejercicio.id}/" class="btn btn-white rounded-pill fs-6 text-nowrap m-0">Editar <i class="fa fa-pencil"></i></a>`;
+                eliminar.innerHTML = `<a href="/eliminar-hermite/${ejercicio.id}/" class="btn btn-danger rounded-pill fs-6 text-nowrap m-0">Eliminar <i class="fa fa-trash"></i></a>`;
             }
             else if(ejercicio.tipo === "integracion"){
+                tipo.textContent = "I";
                 editar.innerHTML = `<a href="/integracion/${ejercicio.id}/" class="btn btn-white rounded-pill fs-6 text-nowrap m-0">Editar <i class="fa fa-pencil"></i></a>`;
+                eliminar.innerHTML = `<a href="/eliminar-integracion/${ejercicio.id}/" class="btn btn-danger rounded-pill fs-6 text-nowrap m-0">Eliminar <i class="fa fa-trash"></i></a>`;
             }
             fila.appendChild(tipo);
             fila.appendChild(respuesta);
             fila.appendChild(editar);
+            fila.appendChild(eliminar);
             lista.appendChild(fila);
 
             MathJax.typeset();  // Renderiza las ecuaciones matemáticas
@@ -155,4 +162,4 @@ function getListaEjercicios(){
       });
 }
 
-getListaEjercicios();
+getListaEjercicios();*/

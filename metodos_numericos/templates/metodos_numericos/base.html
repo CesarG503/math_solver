@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Métodos Numéricos{% endblock %}</title>
+    {% load i18n %}
+    <title>{% block title %}Metodos Numericos{% endblock %}</title>
     
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
@@ -41,7 +42,7 @@
 <body>
     <nav class="navbar bg-secondary estilo-brillo border border-secondary hover-neon  position-sticky top-0 p-1">
         <div class="navbar-header">
-        <div class="navbar-brand">Analisis Numerico
+        <div class="navbar-brand">{%trans "Materia"%}
         </div>
         <button class="navbar-toggle">
             <div class="img-menu-white"></div>
@@ -59,7 +60,7 @@
         </div>
                 <button id="button-normal" class="btn btn-secondary border-0" onclick="toggleProfilePanel()"><img width="35px" src="{{ request.user.usuarios.image.url }}" alt="perfil"></button>
         {% else %}
-                <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">Iniciar sesión</a>
+                <a class="nav-item rounded-pill text-nowrap" href="{% url 'metodos_numericos:login' %}">{%trans "Login"%}</a>
         </div>
         {% endif %}
     </nav>
